@@ -4,17 +4,46 @@ import React from "react";
 import Link from "next/link";
 import Home from "./(portfolio)/Home/page";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+
+import { Variants } from "framer-motion";
+
+// Define type-safe variants
+const sectionVariants: Variants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+};
+
+
+
 
 function Page() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 scroll-smooth">
       {/* Home Page Full Section */}
-      <Home />
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
+        <Home />
+      </motion.div>
 
       {/* Preview Sections Container */}
       <div className="max-w-7xl mx-auto">
         {/* About Section Preview */}
-        <section className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20">
+        <motion.section
+          className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-medium mb-6">
               About Our Institution
@@ -34,10 +63,16 @@ function Page() {
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
         {/* Programs Section Preview */}
-        <section className="py-20 px-6 lg:px-8">
+        <motion.section
+          className="py-20 px-6 lg:px-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-medium mb-6">
               Academic Excellence
@@ -57,10 +92,16 @@ function Page() {
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
         {/* Admissions Section Preview */}
-        <section className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-purple-50 dark:from-gray-800 dark:to-purple-900/20">
+        <motion.section
+          className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-purple-50 dark:from-gray-800 dark:to-purple-900/20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-sm font-medium mb-6">
               Start Your Journey
@@ -80,10 +121,16 @@ function Page() {
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
         {/* Faculty Section Preview */}
-        <section className="py-20 px-6 lg:px-8">
+        <motion.section
+          className="py-20 px-6 lg:px-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-6">
               Expert Educators
@@ -103,10 +150,16 @@ function Page() {
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
 
         {/* Gallery Section Preview */}
-        <section className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-pink-50 dark:from-gray-800 dark:to-pink-900/20">
+        <motion.section
+          className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-pink-50 dark:from-gray-800 dark:to-pink-900/20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-sm font-medium mb-6">
               Campus Life
@@ -126,7 +179,7 @@ function Page() {
               <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-        </section>
+        </motion.section>
       </div>
     </div>
   );
