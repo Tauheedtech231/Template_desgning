@@ -728,76 +728,79 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Enhanced Footer */}
-      <footer className="bg-gray-900 text-white py-16 px-4 sm:px-6 relative overflow-hidden">
-        {/* Footer background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="container mx-auto max-w-6xl relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-            {/* Brand */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">P</span>
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Portfolio Handler
-                </span>
-              </div>
-              <p className="text-gray-400 text-lg leading-relaxed max-w-md">
-                Simplifying college portfolio management with cutting-edge technology and beautiful design.
-              </p>
-            </div>
+    {/* Enhanced Footer */}
+<footer className="bg-gray-900 text-white py-16 px-4 sm:px-6 relative overflow-hidden">
+  {/* Footer background pattern */}
+  <div className="absolute inset-0 opacity-5">
+    <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
+  </div>
 
-            {/* Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-6 text-white">Quick Links</h3>
-              <div className="space-y-4">
-                {['Features', 'Themes', 'About', 'Contact'].map((link) => (
-                  <button
-                    key={link}
-                    onClick={() => scrollToSection(link.toLowerCase())}
-                    className="block text-gray-400 hover:text-white transition-colors duration-300 text-left w-full"
-                  >
-                    {link}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h3 className="text-lg font-semibold mb-6 text-white">Contact</h3>
-              <div className="space-y-4 text-gray-400">
-                <p>support@portfoliohandler.com</p>
-                <p>+1 (555) 123-4567</p>
-                <p>Mon-Fri 9:00AM - 6:00PM</p>
-              </div>
-            </div>
+  <div className="container mx-auto max-w-6xl relative z-10">
+    {/* Responsive grid: 2 columns on very small, 3 on medium, 4 on large */}
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12">
+      
+      {/* Brand */}
+      <div className="col-span-2 md:col-span-1 lg:col-span-2">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <span className="text-white font-bold text-lg">P</span>
           </div>
-
-          {/* Bottom section */}
-          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-            <div className="text-gray-400 text-center md:text-left">
-              © 2025 College Portfolio Handler System. All rights reserved.
-            </div>
-            <div className="flex space-x-4">
-              {['Twitter', 'Facebook', 'LinkedIn', 'GitHub'].map((social) => (
-                <div
-                  key={social}
-                  className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gray-700 transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-110 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600"
-                >
-                  <span className="text-xs font-semibold">{social.charAt(0)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Portfolio Handler
+          </span>
         </div>
-      </footer>
+        <p className="text-gray-400 text-lg leading-relaxed max-w-md">
+          Simplifying college portfolio management with cutting-edge technology and beautiful design.
+        </p>
+      </div>
+
+      {/* Quick Links */}
+      <div>
+        <h3 className="text-lg font-semibold mb-6 text-white">Quick Links</h3>
+        <div className="space-y-4">
+          {['Features', 'Themes', 'About', 'Contact'].map((link) => (
+            <button
+              key={link}
+              onClick={() => scrollToSection(link.toLowerCase())}
+              className="block text-gray-400 hover:text-white transition-colors duration-300 text-left w-full"
+            >
+              {link}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Contact */}
+      <div>
+        <h3 className="text-lg font-semibold mb-6 text-white">Contact</h3>
+        <div className="space-y-4 text-gray-400 break-words">
+          <p className="truncate sm:whitespace-normal">support@portfoliohandler.com</p>
+          <p>+1 (555) 123-4567</p>
+          <p>Mon-Fri 9:00AM - 6:00PM</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Bottom Section */}
+    <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <div className="text-gray-400 text-center md:text-left">
+        © 2025 College Portfolio Handler System. All rights reserved.
+      </div>
+      <div className="flex space-x-4">
+        {['Twitter', 'Facebook', 'LinkedIn', 'GitHub'].map((social) => (
+          <div
+            key={social}
+            className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gray-700 transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-110 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600"
+          >
+            <span className="text-xs font-semibold">{social.charAt(0)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>
+
     </div>
   );
 }
