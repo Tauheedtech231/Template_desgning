@@ -259,9 +259,9 @@ export function CoursesSection({ data, college, onUpdate }: CoursesSectionProps)
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   {course.name}
                 </h3>
-                <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                {/* <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                   {course.department}
-                </span>
+                </span> */}
               </div>
 
               {course.image && (
@@ -293,7 +293,7 @@ export function CoursesSection({ data, college, onUpdate }: CoursesSectionProps)
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 {course.syllabus && (
                   <Button variant="secondary" size="sm" asChild>
                     <a href={course.syllabus} target="_blank" rel="noopener noreferrer">
@@ -310,7 +310,7 @@ export function CoursesSection({ data, college, onUpdate }: CoursesSectionProps)
                     </a>
                   </Button>
                 )}
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
