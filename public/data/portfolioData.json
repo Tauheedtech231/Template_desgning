@@ -1,0 +1,110 @@
+{
+  "college": {
+    "id": "tech-college-001",
+    "name": "Institute of Advanced Technology",
+    "shortDescription": "Premier institution for technology and innovation education",
+    "longDescription": "Founded in 1995, the Institute of Advanced Technology has been at the forefront of technical education, providing cutting-edge programs in computer science, engineering, and information technology. Our institution is committed to fostering innovation, research, and industry collaboration.",
+    "mission": "To empower students through excellence in technical education, research, and innovation while fostering ethical leadership and social responsibility.",
+    "vision": "To be a globally recognized center of excellence in technology education that transforms lives and drives innovation.",
+    "logo": "https://images.unsplash.com/photo-1562813733-b31f71025d54?ixlib=rb-4.0.3&w=400",
+    "coverImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&w=1200",
+    "contact": {
+      "email": "admissions@iatech.edu",
+      "phone": "+1 (555) 123-4567",
+      "address": "123 Innovation Drive, Tech City, TC 12345",
+      "website": "https://iatech.edu",
+      "socialMedia": {
+        "facebook": "https://facebook.com/iatech",
+        "twitter": "https://twitter.com/iatech",
+        "linkedin": "https://linkedin.com/school/iatech",
+        "instagram": "https://instagram.com/iatech"
+      }
+    }
+  },
+  "faculty": [
+    {
+      "id": "fac-001",
+      "name": "Dr. Sarah Chen",
+      "position": "Professor & Head of Department",
+      "department": "Computer Science",
+      "email": "s.chen@iatech.edu",
+      "image": "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&w=400",
+      "bio": "Dr. Chen specializes in Artificial Intelligence and Machine Learning with over 15 years of academic and industry experience. She has published numerous research papers in top-tier conferences.",
+      "order": 1
+    },
+    {
+      "id": "fac-002",
+      "name": "Prof. Michael Rodriguez",
+      "position": "Associate Professor",
+      "department": "Electrical Engineering",
+      "email": "m.rodriguez@iatech.edu",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&w=400",
+      "bio": "Expert in renewable energy systems and power electronics. Leads multiple government-funded research projects on sustainable energy solutions.",
+      "order": 2
+    }
+  ],
+  "events": [
+    {
+      "id": "event-001",
+      "title": "Annual Tech Symposium 2024",
+      "description": "Join us for our flagship technology conference featuring industry leaders, workshops, and student project demonstrations.",
+      "date": "2024-03-15",
+      "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&w=600",
+      "location": "Main Campus Auditorium",
+      "type": "event",
+      "featured": true
+    },
+    {
+      "id": "event-002",
+      "title": "Admissions Open House",
+      "description": "Prospective students and parents are invited to tour our campus, meet faculty, and learn about our programs.",
+      "date": "2024-04-10",
+      "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&w=600",
+      "location": "Campus Grounds",
+      "type": "event",
+      "featured": false
+    }
+  ],
+  "gallery": [
+    {
+      "id": "gallery-001",
+      "title": "Best Engineering College Award 2023",
+      "description": "Recognized for excellence in engineering education and infrastructure",
+      "date": "2023-12-15",
+      "image": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&w=600",
+      "category": "award"
+    },
+    {
+      "id": "gallery-002",
+      "title": "Campus Innovation Center",
+      "description": "New state-of-the-art innovation and research facility",
+      "date": "2023-11-20",
+      "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&w=600",
+      "category": "photo"
+    }
+  ],
+  "courses": [
+    {
+      "id": "course-001",
+      "name": "Computer Science and Engineering",
+      "duration": "4 Years",
+      "department": "Computer Science",
+      "description": "Comprehensive program covering software engineering, algorithms, AI, and system design. Prepares students for careers in technology and innovation.",
+      "image": "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&w=600",
+      "credits": 160,
+      "syllabus": "/syllabus/cse.pdf",
+      "feeStructure": "/fees/cse.pdf"
+    },
+    {
+      "id": "course-002",
+      "name": "Electrical and Electronics Engineering",
+      "duration": "4 Years",
+      "department": "Electrical Engineering",
+      "description": "Focuses on electrical systems, electronics, power generation, and renewable energy technologies with hands-on laboratory experience.",
+      "image": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&w=600",
+      "credits": 155,
+      "syllabus": "/syllabus/eee.pdf"
+    }
+  ],
+  "flexibleSections": []
+}

@@ -285,10 +285,14 @@ export default function LandingPage() {
           
 
               {/* Enhanced Admin Portal Button */}
-              <button className="hidden lg:block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-500 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl relative overflow-hidden group">
-                <span className="relative z-10">Admin Portal</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </button>
+              <button
+  onClick={() => window.location.href = "/Portfolio_Handler"}
+  className="hidden lg:block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-500 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl relative overflow-hidden group"
+>
+  <span className="relative z-10">Admin Portal</span>
+  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+</button>
+
 
               {/* Enhanced Mobile Menu Button */}
               <button
@@ -323,9 +327,13 @@ export default function LandingPage() {
                   </span>
                 </button>
               ))}
-              <button className="w-full mx-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-500 ease-in-out transform hover:scale-105 shadow-lg mt-4">
-                Admin Portal
-              </button>
+              <button
+  onClick={() => window.location.href = "/Portfolio_Handler"}
+  className="w-full mx-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-500 ease-in-out transform hover:scale-105 shadow-lg mt-4"
+>
+  Admin Portal
+</button>
+
             </div>
           </div>
         </div>
