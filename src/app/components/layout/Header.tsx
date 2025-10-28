@@ -20,13 +20,13 @@ export function Header({ collegeName }: HeaderProps) {
           className="flex flex-col"
         >
           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            Portfolio Handler
+          College Portfolio Portal
           </h1>
           {collegeName && (
             <p className="text-sm sm:text-base mt-1 text-gray-600 dark:text-gray-400 tracking-wide">
-  Managing content for{" "}
+  Managing content {" "}
   <span className="font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-    Portfolios
+    
   </span>
 </p>
 

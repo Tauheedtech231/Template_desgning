@@ -1,114 +1,188 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import  Dashboard  from '../components/Dashboard';
-import { CollegeData } from '../lib/gsap';
+// app/dashboard/page.tsx
+'use client';
 
-interface RawData {
-  college: {
-    id: string;
-    name: string;
-    shortDescription: string;
-    longDescription: string;
-    mission: string;
-    vision: string;
-    logo?: string;
-    coverImage?: string;
-    contact: {
-      email: string;
-      phone: string;
-      address: string;
-      website?: string;
-      socialMedia?: {
-        facebook?: string;
-        twitter?: string;
-        linkedin?: string;
-        instagram?: string;
-      };
-    };
+import { MainLayout } from './components/layout/main-layout';
+import { StatsCard } from './components/dashboard/stats-card';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { College } from '@/app/types';
+import { Plus, Palette, Download } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+export default function DashboardPage() {
+  const [colleges, setColleges] = useState<College[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedColleges = localStorage.getItem('colleges');
+    if (storedColleges) {
+      setColleges(JSON.parse(storedColleges));
+    }
+  }, []);
+
+  const totalColleges = colleges.length;
+  const activeColleges = colleges.filter((c) => c.status === 'active').length;
+  const inactiveColleges = colleges.filter((c) => c.status === 'inactive').length;
+
+  const handleAddCollege = () => {
+    router.push('/Portfolio_Handler/colleges');
   };
-  faculty: Array<{
-    id: string;
-    name: string;
-    position: string;
-    department: string;
-    email: string;
-    image?: string;
-    bio: string;
-  }>;
-  events: Array<{
-    id: string;
-    title: string;
-    description: string;
-    date: string;
-    image?: string;
-    location: string;
-    type: 'event' | 'announcement';
-    featured?: boolean;
-  }>;
-  gallery: Array<{
-    id: string;
-    title: string;
-    description: string;
-    date: string;
-    image?: string;
-    category: string;
-  }>;
-  courses: Array<{
-    id: string;
-    name: string;
-    duration: string;
-    department: string;
-    description: string;
-    image?: string;
-    credits: number;
-    syllabus?: string;
-    feeStructure?: string;
-  }>;
-}
 
-export default async function Page() {
-  const jsonPath = path.join(process.cwd(), 'public', 'data', 'portfolioData.json');
-  const jsonData = await fs.readFile(jsonPath, 'utf-8');
-  const rawData = JSON.parse(jsonData) as RawData;
+  const handleManageThemes = () => {
+    router.push('/Portfolio_Handler/themes');
+  };
 
-  const collegeData: CollegeData = {
-    college: {
-      id: rawData.college.id,
-      name: rawData.college.name,
-      shortDescription: rawData.college.shortDescription,
-      longDescription: rawData.college.longDescription,
-      mission: rawData.college.mission,
-      vision: rawData.college.vision,
-      logo: rawData.college.logo,
-      coverImage: rawData.college.coverImage,
-      contact: rawData.college.contact
-    },
-    faculty: rawData.faculty.map((f, index) => ({
-      ...f,
-      order: index + 1
-    })),
-    events: rawData.events.map(e => ({
-      ...e,
-      featured: e.featured || false
-    })),
-    gallery: rawData.gallery.map(item => ({
-      id: item.id,
-      title: item.title,
-      description: item.description,
-      date: item.date,
-      image: item.image || '',
-      category: item.category === 'photo' ? 'photo' : 'achievement'
-    })),
-    courses: rawData.courses,
-    flexibleSections: []
+  const handleBackupData = () => {
+    const data = {
+      colleges: localStorage.getItem('colleges'),
+      themes: localStorage.getItem('themes'),
+      announcements: localStorage.getItem('announcements'),
+      settings: localStorage.getItem('settings'),
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'portfolio-backup.json';
+    link.click();
   };
 
   return (
-    <div className="min-h-screen">
-      <Dashboard initialData={collegeData} />
-    </div>
+    <MainLayout>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-8 transition-colors duration-300 bg-gray-50 dark:bg-gray-900 min-h-screen p-6 rounded-lg"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+            Dashboard
+          </h1>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StatsCard
+            title="Total Colleges"
+            value={totalColleges.toString()}
+            description="All registered colleges"
+            trend="+2 this month"
+          />
+          <StatsCard
+            title="Active Colleges"
+            value={activeColleges.toString()}
+            description="Currently active portfolios"
+            trend="+12% from last month"
+          />
+          <StatsCard
+            title="Disabled Colleges"
+            value={inactiveColleges.toString()}
+            description="Inactive portfolios"
+            trend="-5% from last month"
+          />
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Add College */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleAddCollege}
+            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
+            bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-blue-400/40 
+            dark:from-blue-500 dark:to-blue-700 hover:scale-[1.03]"
+          >
+            <Plus size={24} />
+            <div className="text-left">
+              <h3 className="font-semibold">Add College</h3>
+              <p className="text-blue-100 text-sm">Register new college</p>
+            </div>
+          </motion.button>
+
+          {/* Manage Themes */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleManageThemes}
+            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
+            bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:shadow-purple-400/40 
+            dark:from-purple-500 dark:to-purple-700 hover:scale-[1.03]"
+          >
+            <Palette size={24} />
+            <div className="text-left">
+              <h3 className="font-semibold">Manage Themes</h3>
+              <p className="text-purple-100 text-sm">Customize appearance</p>
+            </div>
+          </motion.button>
+
+          {/* Backup Data */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleBackupData}
+            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
+            bg-gradient-to-r from-green-600 to-green-700 text-white hover:shadow-green-400/40 
+            dark:from-green-500 dark:to-green-700 hover:scale-[1.03]"
+          >
+            <Download size={24} />
+            <div className="text-left">
+              <h3 className="font-semibold">Backup Data</h3>
+              <p className="text-green-100 text-sm">Export all data</p>
+            </div>
+          </motion.button>
+        </div>
+
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* College Status Distribution */}
+          <div className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">
+              College Status Distribution
+            </h3>
+            <div className="space-y-4 text-gray-700 dark:text-gray-300">
+              <div className="flex justify-between items-center">
+                <span>Active Colleges</span>
+                <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-green-500 h-2 rounded-full"
+                    style={{
+                      width: `${totalColleges ? (activeColleges / totalColleges) * 100 : 0}%`,
+                    }}
+                  ></div>
+                </div>
+                <span>{activeColleges}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Inactive Colleges</span>
+                <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-red-500 h-2 rounded-full"
+                    style={{
+                      width: `${totalColleges ? (inactiveColleges / totalColleges) * 100 : 0}%`,
+                    }}
+                  ></div>
+                </div>
+                <span>{inactiveColleges}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="p-6 rounded-2xl shadow-md bg-white dark:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">
+              Recent Activity
+            </h3>
+            <div className="text-gray-600 dark:text-gray-300 space-y-1">
+              <p>Last backup: {new Date().toLocaleDateString()}</p>
+              <p>Total themes: 5</p>
+              <p>System status: Operational</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </MainLayout>
   );
 }
-
-
-

@@ -1,68 +1,53 @@
+// types/index.ts
+export interface ThemeColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+}
 export interface College {
   id: string;
   name: string;
-  description: string;
-  logo?: string;
-  coverImage?: string;
-  contact: {
-    email: string;
-    phone: string;
-    address: string;
+  representativeName: string;
+  logo: string;
+  status: 'active' | 'inactive';
+  theme: string;
+   customTheme?: ThemeColors;
+  modules: {
+    about: boolean;
+    faculty: boolean;
+    events: boolean;
+    gallery: boolean;
+    achievements: boolean;
+    contact?: boolean; // ✅ Added new "Contact" module
+    [key: string]: boolean | undefined; // ✅ Supports additional dynamic modules
   };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface Faculty {
-  id: string;
-  name: string;
-  position: string;
-  department: string;
-  image?: string;
-  bio: string;
-  email: string;
-}
 
-export interface Event {
+export interface Announcement {
   id: string;
   title: string;
-  description: string;
-  date: string;
-  image?: string;
-  location: string;
-  type: 'event' | 'announcement';
+  message: string;
+  targetCollege: string; // 'all' or college id
+  createdAt: Date;
 }
 
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  image?: string;
-  category: 'award' | 'certificate' | 'recognition';
-}
-
-export interface Course {
+export interface Theme {
   id: string;
   name: string;
-  description: string;
-  duration: string;
-  department: string;
-  image?: string;
-  syllabus?: string;
-  feeStructure?: string;
-  credits: number;
-}
-
-export interface PortfolioData {
-  college: College;
-  about: {
-    description: string;
-    mission: string;
-    vision: string;
-    faculty: Faculty[];
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
   };
-  events: Event[];
-  gallery: Achievement[];
-  courses: Course[];
+  isCustom?: boolean;
 }
 
-export type SectionType = 'about' | 'events' | 'gallery' | 'courses';
+export interface AppSettings {
+  darkMode: boolean;
+  accentColor: 'blue' | 'purple' | 'green';
+}
