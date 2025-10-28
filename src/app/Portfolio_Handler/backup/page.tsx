@@ -1,25 +1,35 @@
-// app/backup/page.tsx
 'use client';
+/* eslint-disable */
 import { MainLayout } from '../components/layout/main-layout';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Download, Upload, Trash2, Database, AlertTriangle } from 'lucide-react';
-/* eslint-disable */
+
 export default function BackupPage() {
   const [storageSize, setStorageSize] = useState<string>('0 KB');
   const [lastBackup, setLastBackup] = useState<string>('Never');
   const [showClearModal, setShowClearModal] = useState(false);
+  const [dataSummary, setDataSummary] = useState<{ [key: string]: number }>({});
 
+  // ✅ Run only on client side
   useEffect(() => {
-    calculateStorageSize();
-    loadLastBackupTime();
+    if (typeof window !== 'undefined') {
+      calculateStorageSize();
+      loadLastBackupTime();
+      calculateDataSummary();
+    }
   }, []);
 
+  // ✅ Calculate localStorage total size
   const calculateStorageSize = () => {
     let totalSize = 0;
+    if (typeof window === 'undefined') return;
+
     for (let key in localStorage) {
       if (localStorage.hasOwnProperty(key)) {
-        totalSize += localStorage[key].length * 2;
+        try {
+          totalSize += localStorage[key].length * 2;
+        } catch {}
       }
     }
     setStorageSize(formatBytes(totalSize));
@@ -33,14 +43,19 @@ export default function BackupPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // ✅ Load backup time
   const loadLastBackupTime = () => {
+    if (typeof window === 'undefined') return;
     const lastBackupTime = localStorage.getItem('lastBackupTime');
     if (lastBackupTime) {
       setLastBackup(new Date(lastBackupTime).toLocaleString());
     }
   };
 
+  // ✅ Export Data
   const exportData = () => {
+    if (typeof window === 'undefined') return;
+
     const data: { [key: string]: any } = {};
     for (let key in localStorage) {
       if (localStorage.hasOwnProperty(key)) {
@@ -65,7 +80,10 @@ export default function BackupPage() {
     setLastBackup(new Date(now).toLocaleString());
   };
 
+  // ✅ Import Data
   const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (typeof window === 'undefined') return;
+
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -87,11 +105,12 @@ export default function BackupPage() {
         localStorage.setItem('lastBackupTime', now);
         setLastBackup(new Date(now).toLocaleString());
         calculateStorageSize();
+        calculateDataSummary();
 
-        alert('Data imported successfully! Reloading...');
+        alert('✅ Data imported successfully! Reloading...');
         window.location.reload();
       } catch (error) {
-        alert('Error importing data. Invalid format.');
+        alert('❌ Error importing data. Invalid format.');
         console.error('Import error:', error);
       }
     };
@@ -99,13 +118,33 @@ export default function BackupPage() {
     event.target.value = '';
   };
 
+  // ✅ Clear all localStorage
   const clearAllData = () => {
+    if (typeof window === 'undefined') return;
     localStorage.clear();
     calculateStorageSize();
     setLastBackup('Never');
     setShowClearModal(false);
-    alert('All data cleared! Reloading...');
+    setDataSummary({});
+    alert('🗑️ All data cleared! Reloading...');
     window.location.reload();
+  };
+
+  // ✅ Calculate Data Summary safely
+  const calculateDataSummary = () => {
+    if (typeof window === 'undefined') return;
+
+    const summary: { [key: string]: number } = {};
+    const keys = ['colleges', 'announcements', 'settings'];
+    keys.forEach((key) => {
+      const data = localStorage.getItem(key);
+      try {
+        summary[key] = data ? (key === 'settings' ? 1 : JSON.parse(data).length) : 0;
+      } catch {
+        summary[key] = 0;
+      }
+    });
+    setDataSummary(summary);
   };
 
   const backupActions = [
@@ -148,7 +187,7 @@ export default function BackupPage() {
 
         {/* Storage Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-all duration-300">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
             <div className="flex items-center space-x-3">
               <Database className="text-blue-600 dark:text-blue-400" size={24} />
               <div>
@@ -159,7 +198,7 @@ export default function BackupPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-all duration-300">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
             <div className="flex items-center space-x-3">
               <Download className="text-green-600 dark:text-green-400" size={24} />
               <div>
@@ -179,7 +218,7 @@ export default function BackupPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center transition-all duration-300"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center"
             >
               <action.icon size={48} className="mx-auto mb-4 text-gray-400 dark:text-gray-300" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
@@ -190,7 +229,7 @@ export default function BackupPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={action.onClick}
-                className={`w-full text-white py-2 px-4 rounded-lg ${action.color} transition-all duration-300`}
+                className={`w-full text-white py-2 px-4 rounded-lg ${action.color}`}
               >
                 {action.buttonText}
               </motion.button>
@@ -217,7 +256,7 @@ export default function BackupPage() {
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md transition-all duration-300"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md"
             >
               <div className="p-6">
                 <div className="flex items-center space-x-3 mb-4">
@@ -249,29 +288,29 @@ export default function BackupPage() {
           </motion.div>
         )}
 
-        {/* Data Summary */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-all duration-300">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-            Data Summary
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {['colleges', 'announcements', 'settings'].map((key) => {
-              const data = localStorage.getItem(key);
-              const count = data ? (key === 'settings' ? 1 : JSON.parse(data).length) : 0;
-              return (
+        {/* ✅ Safe Data Summary (client only) */}
+        {typeof window !== 'undefined' && (
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+              Data Summary
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {['colleges', 'announcements', 'settings'].map((key) => (
                 <div
                   key={key}
-                  className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-all duration-300"
+                  className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
                 >
-                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{count}</div>
+                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                    {dataSummary[key] || 0}
+                  </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
                     {key}
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </motion.div>
     </MainLayout>
   );
