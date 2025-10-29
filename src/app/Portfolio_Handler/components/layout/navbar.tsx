@@ -1,11 +1,10 @@
 'use client';
-import { Moon, Sun, Bell, User } from 'lucide-react';
+import { Moon, Sun, Bell, User, Home as HomeIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
 
-  // Load and apply theme on mount
   useEffect(() => {
     const settings = localStorage.getItem('settings');
     if (settings) {
@@ -19,11 +18,9 @@ export function Navbar() {
     }
   }, []);
 
-  // Toggle and save dark mode
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
-
     const settings = localStorage.getItem('settings');
     const currentSettings = settings ? JSON.parse(settings) : {};
     const updatedSettings = { ...currentSettings, darkMode: newDarkMode };
@@ -36,8 +33,12 @@ export function Navbar() {
     }
   };
 
-  const handleNavigate = () => {
+  const handleNavigateCollege = () => {
     window.location.href = '/College_Portfolio_Handler';
+  };
+
+  const handleNavigateHome = () => {
+    window.location.href = '/';
   };
 
   return (
@@ -53,17 +54,26 @@ export function Navbar() {
           </p>
         </div>
 
-        {/* Right side icons + Button */}
+        {/* Right side buttons + icons */}
         <div className="flex items-center space-x-3 sm:space-x-4 ml-auto">
-          {/* College Portfolio Handler Button */}
+          {/* Home Button */}
           <button
-            onClick={handleNavigate}
-            className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg shadow-md hover:opacity-90 active:scale-95 text-sm sm:text-base transition-all duration-300"
+            onClick={handleNavigateHome}
+            className="bg-gradient-to-r from-green-400 to-teal-500 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg shadow-md hover:opacity-90 active:scale-95 text-sm sm:text-base flex items-center gap-2 transition-all duration-300"
           >
-            College Portfolio Handler
+            <HomeIcon size={18} />
+            Home
           </button>
 
-          {/* Dark mode toggle (always visible) */}
+          {/* College Portfolio Handler Button */}
+          <button
+            onClick={handleNavigateCollege}
+            className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg shadow-md hover:opacity-90 active:scale-95 text-sm sm:text-base transition-all duration-300"
+          >
+            College Portfolio
+          </button>
+
+          {/* Dark mode toggle */}
           <button
             onClick={toggleDarkMode}
             className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
