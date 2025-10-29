@@ -182,7 +182,7 @@ export default function BackupPage() {
         className="space-y-6 transition-colors duration-300"
       >
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Data & Backup</h1>
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">Data & Backup</h1>
         </div>
 
         {/* Storage Info */}

@@ -1,4 +1,3 @@
-// app/dashboard/page.tsx
 'use client';
 
 import { MainLayout } from './components/layout/main-layout';
@@ -24,14 +23,8 @@ export default function DashboardPage() {
   const activeColleges = colleges.filter((c) => c.status === 'active').length;
   const inactiveColleges = colleges.filter((c) => c.status === 'inactive').length;
 
-  const handleAddCollege = () => {
-    router.push('/Portfolio_Handler/colleges');
-  };
-
-  const handleManageThemes = () => {
-    router.push('/Portfolio_Handler/themes');
-  };
-
+  const handleAddCollege = () => router.push('/Portfolio_Handler/colleges');
+  const handleManageThemes = () => router.push('/Portfolio_Handler/themes');
   const handleBackupData = () => {
     const data = {
       colleges: localStorage.getItem('colleges'),
@@ -57,9 +50,12 @@ export default function DashboardPage() {
       >
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">
             Dashboard
           </h1>
+          <p className="hidden sm:block text-gray-600 dark:text-gray-400">
+            Overview of your portfolio system
+          </p>
         </div>
 
         {/* Stats Grid */}
@@ -91,14 +87,14 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleAddCollege}
-            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
-            bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-blue-400/40 
-            dark:from-blue-500 dark:to-blue-700 hover:scale-[1.03]"
+            className="p-6 rounded-2xl shadow-lg flex items-center space-x-3 
+            bg-gradient-to-r from-blue-500 to-cyan-400 text-white 
+            hover:shadow-cyan-400/40 transition-all duration-300"
           >
             <Plus size={24} />
             <div className="text-left">
               <h3 className="font-semibold">Add College</h3>
-              <p className="text-blue-100 text-sm">Register new college</p>
+              <p className="text-cyan-100 text-sm">Register new college</p>
             </div>
           </motion.button>
 
@@ -107,14 +103,14 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleManageThemes}
-            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
-            bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:shadow-purple-400/40 
-            dark:from-purple-500 dark:to-purple-700 hover:scale-[1.03]"
+            className="p-6 rounded-2xl shadow-lg flex items-center space-x-3 
+            bg-gradient-to-r from-purple-500 to-pink-500 text-white 
+            hover:shadow-pink-400/40 transition-all duration-300"
           >
             <Palette size={24} />
             <div className="text-left">
               <h3 className="font-semibold">Manage Themes</h3>
-              <p className="text-purple-100 text-sm">Customize appearance</p>
+              <p className="text-pink-100 text-sm">Customize appearance</p>
             </div>
           </motion.button>
 
@@ -123,14 +119,14 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleBackupData}
-            className="p-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center space-x-3 
-            bg-gradient-to-r from-green-600 to-green-700 text-white hover:shadow-green-400/40 
-            dark:from-green-500 dark:to-green-700 hover:scale-[1.03]"
+            className="p-6 rounded-2xl shadow-lg flex items-center space-x-3 
+            bg-gradient-to-r from-green-500 to-emerald-600 text-white 
+            hover:shadow-green-400/40 transition-all duration-300"
           >
             <Download size={24} />
             <div className="text-left">
               <h3 className="font-semibold">Backup Data</h3>
-              <p className="text-green-100 text-sm">Export all data</p>
+              <p className="text-emerald-100 text-sm">Export all data</p>
             </div>
           </motion.button>
         </div>
@@ -147,7 +143,7 @@ export default function DashboardPage() {
                 <span>Active Colleges</span>
                 <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
-                    className="bg-green-500 h-2 rounded-full"
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
                     style={{
                       width: `${totalColleges ? (activeColleges / totalColleges) * 100 : 0}%`,
                     }}
@@ -159,7 +155,7 @@ export default function DashboardPage() {
                 <span>Inactive Colleges</span>
                 <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
-                    className="bg-red-500 h-2 rounded-full"
+                    className="bg-gradient-to-r from-red-400 to-pink-500 h-2 rounded-full"
                     style={{
                       width: `${totalColleges ? (inactiveColleges / totalColleges) * 100 : 0}%`,
                     }}

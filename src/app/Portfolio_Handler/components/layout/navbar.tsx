@@ -1,4 +1,3 @@
-// components/layout/navbar.tsx
 'use client';
 import { Moon, Sun, Bell, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -14,7 +13,6 @@ export function Navbar() {
       setDarkMode(darkMode);
       if (darkMode) document.documentElement.classList.add('dark');
     } else {
-      // Default to system preference if no saved setting
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setDarkMode(prefersDark);
       if (prefersDark) document.documentElement.classList.add('dark');
@@ -31,7 +29,6 @@ export function Navbar() {
     const updatedSettings = { ...currentSettings, darkMode: newDarkMode };
     localStorage.setItem('settings', JSON.stringify(updatedSettings));
 
-    // Apply theme
     if (newDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -39,39 +36,51 @@ export function Navbar() {
     }
   };
 
+  const handleNavigate = () => {
+    window.location.href = '/College_Portfolio_Handler';
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-8 py-4 transition-colors duration-500">
+    <div className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 px-4 sm:px-8 py-4 transition-colors duration-500">
       <div className="flex justify-between items-center">
-        {/* Left side */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        {/* Left side (hide on mobile) */}
+        <div className="hidden sm:block">
+          <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">
             Welcome back, Admin
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Manage your college portfolios efficiently
           </p>
         </div>
 
-        {/* Right side icons */}
-        <div className="flex items-center space-x-4">
-          {/* Dark mode toggle */}
+        {/* Right side icons + Button */}
+        <div className="flex items-center space-x-3 sm:space-x-4 ml-auto">
+          {/* College Portfolio Handler Button */}
+          <button
+            onClick={handleNavigate}
+            className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg shadow-md hover:opacity-90 active:scale-95 text-sm sm:text-base transition-all duration-300"
+          >
+            College Portfolio Handler
+          </button>
+
+          {/* Dark mode toggle (always visible) */}
           <button
             onClick={toggleDarkMode}
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* Notifications */}
-          <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 relative transition-colors">
+          {/* Notifications (hide on mobile) */}
+          <button className="hidden sm:flex p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative transition-colors">
             <Bell size={20} />
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
               3
             </span>
           </button>
 
-          {/* User icon */}
-          <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          {/* User icon (hide on mobile) */}
+          <button className="hidden sm:flex p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             <User size={20} />
           </button>
         </div>

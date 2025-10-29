@@ -1,4 +1,3 @@
-// app/announcements/page.tsx
 'use client';
 
 import { MainLayout } from '../components/layout/main-layout';
@@ -100,15 +99,27 @@ export default function AnnouncementsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-6 transition-colors duration-300"
       >
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Announcements</h1>
+        {/* Header (Responsive) */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">
+              Announcements
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Manage college-wide updates and notifications
+            </p>
+          </div>
+
           <motion.button
-            whileHover={{ scale: 1.03 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => setIsFormOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors duration-300"
+            className="px-4 py-2 rounded-lg font-semibold text-white 
+                       bg-gradient-to-r from-blue-600 to-indigo-600 
+                       hover:from-indigo-600 hover:to-blue-700 
+                       shadow-md transition-all duration-300 flex items-center justify-center space-x-2 w-full sm:w-auto"
           >
-            <Plus size={20} />
+            <Plus size={18} />
             <span>New Announcement</span>
           </motion.button>
         </div>
@@ -202,7 +213,7 @@ export default function AnnouncementsPage() {
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-blue-700 shadow-md transition-all duration-300"
                   >
                     {editingAnnouncement ? 'Update' : 'Create'} Announcement
                   </button>
@@ -235,7 +246,7 @@ export default function AnnouncementsPage() {
                   transition={{ delay: index * 0.1 }}
                   className="p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-all duration-300"
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start flex-col sm:flex-row sm:items-center">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                         {announcement.title}
@@ -253,7 +264,7 @@ export default function AnnouncementsPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex space-x-2 ml-4">
+                    <div className="flex space-x-2 mt-3 sm:mt-0 sm:ml-4">
                       <button
                         onClick={() => handleEdit(announcement)}
                         className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 p-2 transition-colors"

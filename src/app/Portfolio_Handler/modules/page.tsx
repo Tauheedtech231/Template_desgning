@@ -138,7 +138,7 @@ export default function ModulesPage() {
         className="space-y-6 transition-colors duration-300"
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">
             Module Control
           </h1>
         </div>

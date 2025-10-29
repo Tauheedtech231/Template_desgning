@@ -80,7 +80,7 @@ export default function SettingsPage() {
         className="space-y-6"
       >
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Settings</h1>
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">Settings</h1>
         </div>
 
         {/* Appearance Section */}

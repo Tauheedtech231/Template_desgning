@@ -126,7 +126,7 @@ export default function ThemesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h1 className="text-3xl font-bold">Theme Management</h1>
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">Theme Management</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Customize and apply themes to colleges
             </p>

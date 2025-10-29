@@ -1,4 +1,3 @@
-// app/colleges/page.tsx
 'use client';
 
 import { MainLayout } from '../components/layout/main-layout';
@@ -66,20 +65,27 @@ export default function CollegesPage() {
         className="space-y-6 transition-colors duration-500"
       >
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-            College Management
-          </h1>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors duration-300"
-          >
-            <Plus size={20} />
-            <span>Add College</span>
-          </motion.button>
-        </div>
+     {/* Header */}
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">
+    College Management
+  </h1>
+
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.97 }}
+    onClick={() => setIsAddModalOpen(true)}
+    className="px-4 py-2 rounded-lg font-semibold text-white 
+               bg-gradient-to-r from-blue-600 to-indigo-600 
+               hover:from-indigo-600 hover:to-blue-700 
+               shadow-md transition-all duration-300 flex items-center 
+               justify-center space-x-2 mx-auto sm:mx-0"
+  >
+    <Plus size={18} />
+    <span>Add College</span>
+  </motion.button>
+</div>
+
 
         {/* Filters */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-colors duration-500">
