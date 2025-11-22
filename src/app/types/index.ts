@@ -1,53 +1,59 @@
-// types/index.ts
-export interface ThemeColors {
-  primary: string;
-  secondary: string;
-  accent: string;
-  background: string;
-}
-export interface College {
-  id: string;
+export interface CollegeInfo {
   name: string;
-  representativeName: string;
-  logo: string;
-  status: 'active' | 'inactive';
-  theme: string;
-   customTheme?: ThemeColors;
-  modules: {
-    about: boolean;
-    faculty: boolean;
-    events: boolean;
-    gallery: boolean;
-    achievements: boolean;
-    contact?: boolean; // ✅ Added new "Contact" module
-    [key: string]: boolean | undefined; // ✅ Supports additional dynamic modules
-  };
-  createdAt: Date;
-  updatedAt: Date;
+  tagline: string;
+  description: string;
+  programs: Program[];
+  events: Event[];
+  faculty: FacultyMember[];
+  gallery: GalleryImage[];
+  contact: ContactInfo;
 }
 
-
-export interface Announcement {
+export interface Program {
   id: string;
   title: string;
-  message: string;
-  targetCollege: string; // 'all' or college id
-  createdAt: Date;
+  description: string;
+  duration: string;
+  degree: string;
+  icon: string;
 }
 
-export interface Theme {
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  image: string;
+}
+
+export interface FacultyMember {
   id: string;
   name: string;
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    background: string;
-  };
-  isCustom?: boolean;
+  position: string;
+  department: string;
+  bio: string;
+  image: string;
+  qualifications: string[];
 }
 
-export interface AppSettings {
-  darkMode: boolean;
-  accentColor: 'blue' | 'purple' | 'green';
+export interface GalleryImage {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  category: string;
+}
+
+export interface ContactInfo {
+  address: string;
+  phone: string;
+  email: string;
+  socialMedia: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
 }

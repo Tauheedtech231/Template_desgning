@@ -1,0 +1,211 @@
+"use client";
+
+import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { SectionTitle } from '../../../shared/SectionTitle';
+import { Card, CardContent } from '../../../shared/Card';
+
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register ScrollTrigger plugin
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+export const About: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Simple fade in animation for cards
+      gsap.fromTo('.about-element',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            end: "bottom 30%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const stats = [
+    { number: '50+', label: 'Academic Programs', icon: '📚' },
+    { number: '10k+', label: 'Students Enrolled', icon: '🎓' },
+    { number: '500+', label: 'Expert Faculty', icon: '👨‍🏫' },
+    { number: '95%', label: 'Success Rate', icon: '⭐' },
+  ];
+
+  const values = [
+    { 
+      icon: '🎯', 
+      title: 'Excellence', 
+      description: 'Commitment to the highest standards in teaching, research, and service.',
+    },
+    { 
+      icon: '💡', 
+      title: 'Innovation', 
+      description: 'Fostering creativity and cutting-edge research across all disciplines.',
+    },
+    { 
+      icon: '🤝', 
+      title: 'Community', 
+      description: 'Building inclusive environments that support diversity and collaboration.',
+    },
+  ];
+
+  return (
+    <section id="about" ref={sectionRef} className="py-20 bg-white dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Title */}
+        <SectionTitle
+          title="About Kips College"
+          subtitle="A legacy of excellence in education and innovation"
+          align="center"
+          underline={true}
+          underlineVariant="primary"
+          animation="fade"
+        />
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Left Column - College Image */}
+          <div className="about-element">
+            <div className="relative rounded-2xl overflow-hidden shadow-lg h-80 lg:h-full">
+              <Image
+                src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                alt="Kips College Campus"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              
+              {/* Experience Badge */}
+              <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">25+</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">Years Excellence</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - College Info */}
+          <div className="about-element space-y-6">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Welcome to Kips College
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                Kips College has been a leading institution dedicated to academic excellence, 
+                innovative research, and student success. We prepare future leaders through 
+                comprehensive programs and hands-on learning experiences.
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                For over 25 years, Kips College has been at the forefront of higher education, 
+                providing students with the knowledge, skills, and experiences needed to 
+                succeed in their chosen fields and make meaningful contributions to society.
+              </p>
+            </div>
+
+            {/* Mission & Vision Cards */}
+            <div className="grid grid-cols-1 gap-4">
+              <Card className="border-0 shadow-md bg-blue-50 dark:bg-blue-900/20">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">
+                      🎯
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Mission</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
+                        To provide exceptional education that transforms lives and serves society 
+                        through innovation, research, and community engagement.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-md bg-purple-50 dark:bg-purple-900/20">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm">
+                      🚀
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Vision</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
+                        To be a globally recognized institution known for academic excellence, 
+                        groundbreaking research, and positive societal impact.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {stats.map((stat, index) => (
+            <Card key={index} className="about-element text-center border-0 shadow-md">
+              <CardContent className="p-4">
+                <div className="text-2xl mb-2">{stat.icon}</div>
+                <div className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  {stat.number}
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {stat.label}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Values Section */}
+        <div className="about-element">
+          <div className="text-center mb-8">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+              Our Core Values
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm max-w-2xl mx-auto">
+              The principles that guide our institution and shape the future of our students
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {values.map((value, index) => (
+              <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow duration-200">
+                <CardContent className="p-5 text-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-lg mx-auto mb-3">
+                    {value.icon}
+                  </div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">
+                    {value.title}
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
+                    {value.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
