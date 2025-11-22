@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "College Portfolio Handler Portal",
+  title: "Templates",
   description: "Centralized portal for managing college portfolio content",
 };
 

@@ -65,24 +65,39 @@ export const Navbar: React.FC = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-              >
-                {item.name}
-              </a>
-            ))}
+  {navItems.map((item) => (
+    <a
+      key={item.name}
+      href={item.href}
+      className={`
+        px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105
+        ${
+          isScrolled
+            ? "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+            : "bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 hover:from-blue-500 hover:to-purple-600"
+        }
+      `}
+    >
+      {item.name}
+    </a>
+  ))}
 
-            {/* Join Now Button - Rounded to match hero */}
-            <button
-              onClick={scrollToContact}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-bold"
-            >
-              Join Now
-            </button>
-          </div>
+  {/* Join Now Button */}
+  <button
+    onClick={scrollToContact}
+    className={`
+      px-6 py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-lg
+      ${
+        isScrolled
+          ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+          : "bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 hover:from-blue-500 hover:to-purple-600"
+      }
+    `}
+  >
+    Join Now
+  </button>
+</div>
+
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
