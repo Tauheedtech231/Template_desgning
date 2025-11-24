@@ -29,8 +29,17 @@ export const Hero: React.FC = () => {
         {/* Central Content Block */}
         <div className="relative z-20 flex flex-col items-center justify-center gap-6 p-4 text-center text-white sm:gap-8">
           <div className="flex flex-col gap-2">
-            <h1 
-              className="text-2xl font-black leading-tight tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl"
+            
+            {/* Updated Responsive Heading */}
+            <h1
+              className="
+                text-4xl      /* mobile */
+                sm:text-5xl   /* small screens */
+                md:text-6xl   /* tablets */
+                lg:text-7xl   /* laptops */
+                xl:text-8xl   /* desktops */
+                font-black leading-tight tracking-tighter
+              "
               style={{
                 background: "linear-gradient(90deg, #2b6cee, #6A3F9C)",
                 WebkitBackgroundClip: "text",
@@ -40,7 +49,18 @@ export const Hero: React.FC = () => {
             >
               Kips College
             </h1>
-            <p className="mx-auto max-w-lg text-base font-normal text-white/90 sm:text-lg md:text-xl">
+
+            {/* Updated Responsive Paragraph */}
+            <p
+              className="
+                mx-auto max-w-lg
+                text-sm        /* mobile */
+                sm:text-base   /* small screens */
+                md:text-lg     /* tablets */
+                lg:text-xl     /* desktops */
+                font-normal text-white/90
+              "
+            >
               Innovate Your Future. Where Ambition Meets Opportunity.
             </p>
           </div>
