@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { SectionTitle } from '../../../shared/SectionTitle';
 import { Card, CardContent } from '../../../shared/Card';
@@ -13,10 +13,65 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+interface SectionContent {
+  images: {
+    coverImage: string;
+    logo: string;
+  };
+  text: {
+    longDescription: string;
+    mission: string;
+    name: string;
+    shortDescription: string;
+    vision: string;
+  };
+}
+
+interface AboutSection {
+  id: number;
+  template_id: number;
+  section_name: string;
+  content: SectionContent;
+}
+
 export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [aboutData, setAboutData] = useState<AboutSection | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchAboutData = async () => {
+      try {
+        const res = await fetch('https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=1&section_name=About', {
+          cache: "no-store"
+        });
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch data: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        // Assuming API returns an array of sections, take the first one
+        if (Array.isArray(data.sections) && data.sections.length > 0) {
+          setAboutData(data.sections[0]);
+        } else {
+          throw new Error('No section data found');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching about data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAboutData();
+  }, []);
+
+  useEffect(() => {
+    if (!aboutData) return;
+
     const ctx = gsap.context(() => {
       // Simple fade in animation for cards
       gsap.fromTo('.about-element',
@@ -38,8 +93,57 @@ export const About: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [aboutData]);
 
+  // Loading state
+  if (loading) {
+    return (
+      <section id="about" className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading content...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section id="about" className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-500">Error: {error}</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              Failed to load content. Please try again later.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Default fallback data
+  const defaultContent = {
+    images: {
+      coverImage: "https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+      logo: "https://images.unsplash.com/photo-1562813733-b31f71025d54?ixlib=rb-4.0.3&w=400"
+    },
+    text: {
+      longDescription: "Founded in 1995, the Institute of Advanced Technology has been at the forefront of technical education, providing cutting-edge programs in computer science, engineering, and information technology. Our institution is committed to fostering innovation, research, and industry collaboration.",
+      mission: "To empower students through excellence in technical education, research, and innovation while fostering ethical leadership and social responsibility.",
+      name: "Kips College",
+      shortDescription: "Premier institution for technology and innovation education",
+      vision: "To be a globally recognized center of excellence in technology education that transforms lives and drives innovation."
+    }
+  };
+
+  // Use API data if available, otherwise use default data
+  const content = aboutData?.content || defaultContent;
+
+  // Static data for stats and values (not provided in API)
   const stats = [
     { number: '50+', label: 'Academic Programs', icon: '📚' },
     { number: '10k+', label: 'Students Enrolled', icon: '🎓' },
@@ -70,8 +174,8 @@ export const About: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <SectionTitle
-          title="About Kips College"
-          subtitle="A legacy of excellence in education and innovation"
+          title={`About ${content.text.name}`}
+          subtitle={content.text.shortDescription}
           align="center"
           underline={true}
           underlineVariant="primary"
@@ -84,15 +188,16 @@ export const About: React.FC = () => {
           <div className="about-element">
             <div className="relative rounded-2xl overflow-hidden shadow-lg h-80 lg:h-full">
               <Image
-                src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                alt="Kips College Campus"
+                src={content.images.coverImage}
+                alt={`${content.text.name} Campus`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               
-              {/* Experience Badge */}
+              {/* Experience Badge - Static since not in API */}
               <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-3">
                 <div className="text-center">
                   <div className="text-lg font-bold text-gray-900 dark:text-white">25+</div>
@@ -106,17 +211,10 @@ export const About: React.FC = () => {
           <div className="about-element space-y-6">
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Welcome to Kips College
+                Welcome to {content.text.name}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                Kips College has been a leading institution dedicated to academic excellence, 
-                innovative research, and student success. We prepare future leaders through 
-                comprehensive programs and hands-on learning experiences.
-              </p>
               <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                For over 25 years, Kips College has been at the forefront of higher education, 
-                providing students with the knowledge, skills, and experiences needed to 
-                succeed in their chosen fields and make meaningful contributions to society.
+                {content.text.longDescription}
               </p>
             </div>
 
@@ -131,8 +229,7 @@ export const About: React.FC = () => {
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Mission</h4>
                       <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
-                        To provide exceptional education that transforms lives and serves society 
-                        through innovation, research, and community engagement.
+                        {content.text.mission}
                       </p>
                     </div>
                   </div>
@@ -148,8 +245,7 @@ export const About: React.FC = () => {
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Vision</h4>
                       <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
-                        To be a globally recognized institution known for academic excellence, 
-                        groundbreaking research, and positive societal impact.
+                        {content.text.vision}
                       </p>
                     </div>
                   </div>
@@ -159,7 +255,7 @@ export const About: React.FC = () => {
           </div>
         </div>
 
-        {/* Statistics */}
+        {/* Statistics - Static since not in API */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {stats.map((stat, index) => (
             <Card key={index} className="about-element text-center border-0 shadow-md">
@@ -176,7 +272,7 @@ export const About: React.FC = () => {
           ))}
         </div>
 
-        {/* Values Section */}
+        {/* Values Section - Static since not in API */}
         <div className="about-element">
           <div className="text-center mb-8">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
