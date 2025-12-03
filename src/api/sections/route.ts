@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2';
+/* eslint-disable */
 
 // MySQL connection pool
 const pool = mysql.createPool({

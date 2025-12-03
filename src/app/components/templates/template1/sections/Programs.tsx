@@ -168,7 +168,7 @@ export const Programs: React.FC = () => {
 
   // Use API data if available, otherwise use default data
   const content = coursesData?.content || {
-    courses: defaultCollegeInfo.programs.map((program, index) => ({
+    courses: defaultCollegeInfo.programs.map((program) => ({
       id: program.id.toString(),
       name: program.title,
       image: "",
