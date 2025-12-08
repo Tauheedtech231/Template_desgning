@@ -9,8 +9,9 @@ import { Events } from './sections/Events';
 import { Gallery } from './sections/Gallery';
 import { Faculty } from './sections/Faculty';
 import { Contact } from './sections/Contact';
-import { Navbar } from '../../shared/Navbar';
+
 import { Footer } from '../../shared/Footer';
+import Navbar from '../../shared/Navbar';
 
 export const Template1: React.FC = () => {
   useEffect(() => {
