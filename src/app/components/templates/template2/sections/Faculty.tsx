@@ -1,224 +1,200 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { SectionTitle } from '../../../shared/SectionTitle';
-import { Card, CardContent, CardHeader } from '../../../shared/Card';
-import { defaultCollegeInfo } from '../data/collegeInfo';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-interface FacultyMember {
-  id: string;
-  name: string;
-  position: string;
-  department: string;
-  bio: string;
-  email?: string; // optional now
+interface Faculty {
   image: string;
-  order?: number; // optional now
-  qualifications?: string[];
+  name: string;
+  designation: string;
+  linkedin?: string;
 }
 
-interface FacultySection {
-  id: number;
-  template_id: number;
-  section_name: string;
-  content: {
-    faculty: FacultyMember[];
-    title?: string;
-    subtitle?: string;
-  };
-  created_at: string;
-}
+const facultyMembers: Faculty[] = [
+  {
+    image: "/template2_faculty/fac1.jpg",
+    name: "Amir Aziz",
+    designation: "General Manager at Mansol Manpower Solutions",
+    linkedin: "https://www.linkedin.com/in/amir-aziz-7b117b4a/",
+  },
+  {
+    image: "/template2_faculty/fac2.jpg",
+    name: "Taiba Malik",
+    designation: "HR Manager at Mansol Institute",
+    linkedin: "https://www.linkedin.com/in/taiba-malik-b76948325/",
+  },
+  {
+    image: "/template2_faculty/fac3.jpg",
+    name: "Abdul Khalique Khan",
+    designation: "Chief Executive at Mansol Manpower Solutions",
+    linkedin: "https://www.linkedin.com/in/abdul-khalique-khan-36837227/",
+  },
+];
 
-export const Faculty: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [facultyData, setFacultyData] = useState<FacultySection | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const FacultySection: React.FC = () => {
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>(0);
+  const scrollPositionRef = useRef<number>(0);
 
-  useEffect(() => {
-    const fetchFacultyData = async () => {
-      try {
-        const res = await fetch(
-          'https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=1&section_name=Faculty',
-          { cache: "no-store" }
-        );
-        if (!res.ok) throw new Error(`Failed to fetch data: ${res.status}`);
-
-        const data = await res.json();
-
-        if (Array.isArray(data.sections) && data.sections.length > 0) {
-          setFacultyData(data.sections[0]);
-        } else {
-          throw new Error('No faculty data found');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
+  // Continuous scrolling animation
+  const animate = () => {
+    if (sliderRef.current && isAutoPlaying) {
+      scrollPositionRef.current += 0.5; // Adjust speed here
+      
+      if (scrollPositionRef.current >= sliderRef.current.scrollWidth / 2) {
+        scrollPositionRef.current = 0;
       }
-    };
+      
+      sliderRef.current.scrollLeft = scrollPositionRef.current;
+    }
+    
+    animationRef.current = requestAnimationFrame(animate);
+  };
 
-    fetchFacultyData();
-  }, []);
-
+  // Start/stop animation
   useEffect(() => {
-    if (!facultyData) return;
+    if (isAutoPlaying) {
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      cancelAnimationFrame(animationRef.current);
+    }
+    
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+    };
+  }, [isAutoPlaying]);
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.faculty-card',
-        { opacity: 0, y: 60, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 70%",
-            end: "bottom 30%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-
-      gsap.fromTo(
-        '.faculty-stat',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: statsRef.current,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [facultyData]);
-
-  if (loading) {
-    return (
-      <section id="faculty" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading faculty information...</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section id="faculty" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-red-500">Error: {error}</p>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Failed to load faculty information. Using default data.
-          </p>
-        </div>
-      </section>
-    );
-  }
-
-  const content = facultyData?.content || {
-    faculty: defaultCollegeInfo.faculty as FacultyMember[],
-    title: "Meet Our Faculty",
-    subtitle: "Distinguished educators and researchers dedicated to your success"
+  // Pause on hover
+  const handleMouseEnter = () => {
+    setIsAutoPlaying(false);
   };
 
-  const facultyMembers: FacultyMember[] = content.faculty
-    ? [...content.faculty].sort((a, b) => (a.order || 0) - (b.order || 0))
-    : defaultCollegeInfo.faculty;
-
-  const getQualifications = (faculty: FacultyMember): string[] => {
-    if (faculty.qualifications && faculty.qualifications.length > 0) return faculty.qualifications;
-    return ['PhD in Computer Science', 'MSc in Software Engineering', '10+ Years Experience'];
+  const handleMouseLeave = () => {
+    setIsAutoPlaying(true);
   };
+
+  // Manual scroll with buttons
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+    setIsAutoPlaying(false);
+    setTimeout(() => setIsAutoPlaying(true), 3000);
+  };
+
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+    setIsAutoPlaying(false);
+    setTimeout(() => setIsAutoPlaying(true), 3000);
+  };
+
+  // Duplicate faculty members for seamless loop
+  const sliderFaculty = [...facultyMembers, ...facultyMembers, ...facultyMembers];
 
   return (
-    <section id="faculty" ref={sectionRef} className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-     <SectionTitle
-  title={content.title || "Meet Our Faculty"}
-  subtitle={content.subtitle || "Distinguished educators and researchers dedicated to your success"}
-  align="center"
-  underline
-  underlineVariant="primary"
-  animation="fade"
-/>
+    <section id="faculty" className="py-16 md:py-20 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Heading */}
+        <div className="text-center mb-12 md:mb-14">
+          <h3 className="text-sm sm:text-base font-medium text-red-600 uppercase tracking-wider mb-2">
+            Our Team
+          </h3>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+            Meet Our <span className="text-blue-700">Faculty</span>
+          </h1>
+        </div>
 
+        {/* Continuous Slider Container */}
+        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          {/* Navigation Buttons */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </button>
 
-        {facultyMembers.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-300">No faculty information available at the moment.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {facultyMembers.map((faculty) => (
-              <Card
-                key={faculty.id}
-                hover
-                className="faculty-card group border-0 shadow-lg hover:shadow-xl flex flex-col h-full transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <CardHeader className="text-center pb-4 pt-6">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <button
+            onClick={scrollRight}
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
+
+          {/* Continuous Slider */}
+          <div 
+            ref={sliderRef}
+            className="overflow-x-auto scrollbar-hide"
+            style={{ cursor: 'grab' }}
+          >
+            <div className="flex gap-6 md:gap-8 py-4 min-w-max">
+              {sliderFaculty.map((faculty, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 p-6 w-64 md:w-72 flex-shrink-0"
+                >
+                  {/* Avatar Circle */}
+                  <div className="relative w-32 h-32 mx-auto mb-6">
                     <Image
-                      src={faculty.image || "/default-avatar.png"}
+                      src={faculty.image}
                       alt={faculty.name}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/default-avatar.png";
-                      }}
+                      fill
+                      className="object-cover rounded-full border-4 border-white shadow-lg"
+                      sizes="128px"
                     />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{faculty.name}</h3>
-                  <p className="text-blue-600 dark:text-blue-400 font-semibold text-sm mb-1">{faculty.position}</p>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">{faculty.department}</p>
-                  {faculty.email && (
-                    <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{faculty.email}</p>
-                  )}
-                </CardHeader>
-                <CardContent className="flex-grow flex flex-col p-5">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 flex-grow">{faculty.bio}</p>
-                  <div className="flex flex-wrap gap-1.5 justify-center mb-4">
-                    {getQualifications(faculty).map((qual, index) => (
-                      <div
-                        key={index}
-                        className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-200 dark:border-gray-700"
+                  
+                  {/* Content Container */}
+                  <div className="text-center">
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
+                      {faculty.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                      {faculty.designation}
+                    </p>
+                    
+                    {faculty.linkedin && (
+                      <a
+                        href={faculty.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center w-10 h-10 mx-auto rounded-full bg-blue-700 hover:bg-blue-800 text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                        aria-label={`Connect with ${faculty.name} on LinkedIn`}
                       >
-                        {qual}
-                      </div>
-                    ))}
+                        <Linkedin className="w-4 h-4" />
+                      </a>
+                    )}
                   </div>
-                  <button className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg text-sm">
-                    View Profile
-                  </button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
-        )}
+
+          {/* Auto Play Indicator */}
+      
+        </div>
+
+        {/* Description */}
+       
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };
+
+export default FacultySection;
