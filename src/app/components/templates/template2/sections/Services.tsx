@@ -11,8 +11,6 @@ const courses = [
     duration: null,
     instructor: "Masol Hab",
     category: "First Aid – First Aid Training",
-    price: "Rs18,000",
-    oldPrice: "Rs20,000",
   },
   {
     image: "/cu2.jpg",
@@ -21,8 +19,6 @@ const courses = [
     duration: "12h 30m",
     instructor: "Masol Hab",
     category: "All In One",
-    price: "Rs100,000",
-    oldPrice: "Rs150,000",
   },
   {
     image: "/cu3.jpg",
@@ -31,8 +27,6 @@ const courses = [
     duration: "6h",
     instructor: "Masol Hab",
     category: "BOSH – Basic Occupational Safety & Health",
-    price: "Rs16,000",
-    oldPrice: "Rs20,000",
   },
   {
     image: "/cu4.jpg",
@@ -41,8 +35,6 @@ const courses = [
     duration: "8h",
     instructor: "Masol Hab",
     category: "Fire Safety – Fire Training",
-    price: "Rs18,000",
-    oldPrice: "Rs20,000",
   },
   {
     image: "/cu5.jpg",
@@ -51,8 +43,6 @@ const courses = [
     duration: "10h",
     instructor: "Masol Hab",
     category: "OSHA – Occupational Safety & Health Administration",
-    price: "Rs40,000",
-    oldPrice: "Rs50,000",
   },
   {
     image: "/cu6.jpg",
@@ -61,14 +51,12 @@ const courses = [
     duration: "4h",
     instructor: "Masol Hab",
     category: "Hole Watcher",
-    price: "Rs18,000",
-    oldPrice: "Rs20,000",
   },
 ];
 
 export const CoursesSection: React.FC = () => {
   return (
-    <section  id="courses" className="py-16 md:py-20 bg-[#F8FAFC]">
+    <section id="courses" className="py-16 md:py-20 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading Section */}
         <div className="text-center mb-12 md:mb-16">
@@ -104,7 +92,9 @@ export const CoursesSection: React.FC = () => {
                 {/* Rating Stars */}
                 <div className="flex mb-3">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-300 text-sm">★</span>
+                    <span key={i} className="text-yellow-300 text-sm">
+                      ★
+                    </span>
                   ))}
                 </div>
 
@@ -133,25 +123,15 @@ export const CoursesSection: React.FC = () => {
                   </div>
                   <div className="text-sm leading-tight">
                     <p className="font-medium">By {course.instructor}</p>
-                    <p className="text-white/70 text-xs truncate">
-                      In {course.category}
-                    </p>
+                    <p className="text-white/70 text-xs truncate">{course.category}</p>
                   </div>
                 </div>
 
-                {/* Price + Button */}
+                {/* Action Button */}
                 <div className="mt-auto pt-5 border-t border-white/20">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="font-bold text-xl">{course.price}</span>
-                      <span className="line-through text-white/60 text-sm">
-                        {course.oldPrice}
-                      </span>
-                    </div>
-                    <button className="px-5 py-2.5 border border-white rounded-full hover:bg-white hover:text-blue-900 transition-all duration-300 font-medium text-sm">
-                      Buy Course
-                    </button>
-                  </div>
+                  <button className="w-full px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-full transition-all duration-300 font-medium text-sm">
+                    Apply Now
+                  </button>
                 </div>
               </div>
             </div>
