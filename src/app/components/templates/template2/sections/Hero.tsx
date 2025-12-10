@@ -28,11 +28,11 @@ const slides = [
 
 const HeroSlider: React.FC = () => {
   const [current, setCurrent] = useState(0);
-  const [typingIndex, setTypingIndex] = useState(0);
   const [typingText, setTypingText] = useState("");
 
   const handleNext = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const handlePrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  const handlePrev = () =>
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   // Auto Slide
   useEffect(() => {
@@ -48,10 +48,7 @@ const HeroSlider: React.FC = () => {
     const typingInterval = setInterval(() => {
       setTypingText(fullText.slice(0, i));
       i++;
-
-      if (i > fullText.length) {
-        clearInterval(typingInterval);
-      }
+      if (i > fullText.length) clearInterval(typingInterval);
     }, 75);
 
     return () => clearInterval(typingInterval);
@@ -82,7 +79,6 @@ const HeroSlider: React.FC = () => {
 
       {/* Content */}
       <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-12 md:px-24 lg:px-36 z-20">
-
         {/* Typing Subtitle */}
         <h2 className="text-white text-2xl md:text-4xl uppercase tracking-widest font-semibold mb-3">
           {typingText}
@@ -107,8 +103,8 @@ const HeroSlider: React.FC = () => {
         View Courses
       </a>
 
-      {/* Navigation Arrows */}
-      <div className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col space-y-6 z-30">
+      {/* Navigation Arrows - hidden on mobile */}
+      <div className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col space-y-6 z-30 hidden md:flex">
         <button
           onClick={handleNext}
           className="bg-white hover:bg-gray-200 text-black p-4 rounded-full transition-all duration-300"

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
+import {  ChevronRight, ChevronLeft } from "lucide-react";
 
 interface Certificate {
   image: string;
@@ -21,7 +21,7 @@ const certificates: Certificate[] = [
   { image: "/c8.jpg", title: "AWS", subtitle: "Member Institute" },
 ];
 
-const ceoImages = ["/ceo1.jpg", "/ceo2.jpg"];
+
 
 const CertificatesSection: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -32,16 +32,17 @@ const CertificatesSection: React.FC = () => {
   const animationRef = useRef<number>(0);
   const scrollPositionRef = useRef<number>(0);
 
-  // Continuous scrolling animation
+  // Right to left continuous scrolling animation
   const animate = () => {
     if (sliderRef.current && isAutoPlaying) {
-      scrollPositionRef.current += currentSpeed; // Adjust speed here
+      scrollPositionRef.current -= currentSpeed; // Negative for right to left
       
-      if (scrollPositionRef.current >= sliderRef.current.scrollWidth / 2) {
+      // Reset when scrolled past half
+      if (Math.abs(scrollPositionRef.current) >= sliderRef.current.scrollWidth / 2) {
         scrollPositionRef.current = 0;
       }
       
-      sliderRef.current.scrollLeft = scrollPositionRef.current;
+      sliderRef.current.scrollLeft = Math.abs(scrollPositionRef.current);
     }
     
     animationRef.current = requestAnimationFrame(animate);
@@ -69,18 +70,18 @@ const CertificatesSection: React.FC = () => {
     setIsAutoPlaying(true);
   };
 
-  // Manual scroll with buttons
-  const scrollLeft = () => {
+  // Manual scroll buttons - reversed for right to left
+  const scrollRight = () => { // Actually moves to next (left)
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 3000);
   };
 
-  const scrollRight = () => {
+  const scrollLeft = () => { // Actually moves to previous (right)
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
     }
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 3000);
@@ -98,14 +99,14 @@ const CertificatesSection: React.FC = () => {
     setIsAutoPlaying(true);
   };
 
-  // Duplicate certificates for seamless loop
+  // Duplicate certificates for seamless loop - Now for right to left
   const sliderCertificates = [...certificates, ...certificates, ...certificates];
 
   // Speed control
 
 
   return (
-    <section className="bg-gradient-to-b from-gray-100 to-white py-16 md:py-24">
+    <section className="bg-gradient-to-b from-gray-100 to-white py-16 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Beautiful Heading */}
         <div className="text-center mb-12 md:mb-16">
@@ -117,13 +118,13 @@ const CertificatesSection: React.FC = () => {
           </h1>
         </div>
 
-        {/* Continuous Slider Container */}
+        {/* Continuous Slider Container - Now moving from right to left */}
         <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          {/* Navigation Buttons */}
+          {/* Navigation Buttons - Swapped for right to left movement */}
           <button
             onClick={scrollLeft}
             className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
-            aria-label="Scroll left"
+            aria-label="Previous"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
@@ -131,12 +132,12 @@ const CertificatesSection: React.FC = () => {
           <button
             onClick={scrollRight}
             className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
-            aria-label="Scroll right"
+            aria-label="Next"
           >
             <ChevronRight className="w-5 h-5 text-gray-700" />
           </button>
 
-          {/* Continuous Slider */}
+          {/* Continuous Slider - Now moving right to left */}
           <div 
             ref={sliderRef}
             className="overflow-x-auto scrollbar-hide"
@@ -169,22 +170,13 @@ const CertificatesSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls */}
+          {/* Speed and Control Indicator */}
          
         </div>
 
         {/* CEO Button */}
-        <div className="mt-12 text-center">
-          <button
-            onClick={() => openModal(ceoImages)}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-3 rounded-full font-medium transition-all shadow-lg hover:shadow-xl"
-          >
-            <Play className="w-5 h-5" />
-            Watch our CEO share insights
-          </button>
-        </div>
+      
 
-        {/* Description */}
       
       </div>
 
@@ -227,6 +219,15 @@ const CertificatesSection: React.FC = () => {
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
+        }
+        
+        @keyframes rightToLeft {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
       `}</style>
     </section>
