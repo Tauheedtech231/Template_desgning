@@ -7,7 +7,7 @@ export default async function Home({
 }) {
 
   const params = await searchParams; // 👈 IMPORTANT
-  const templateId = params.template || "1"; // default template = 1
+  const templateId = params.template || "2"; // default template = 1
 
   const Template = TEMPLATE_MAP[templateId] || TEMPLATE_MAP["1"];
 

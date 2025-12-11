@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export const About: React.FC = () => {
+ const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftColumnRef = useRef<HTMLDivElement>(null);
   const rightColumnRef = useRef<HTMLDivElement>(null);
@@ -497,3 +497,4 @@ export const About: React.FC = () => {
     </section>
   );
 };
+export default About;

@@ -5,14 +5,14 @@ import React, { useEffect } from "react";
 import { Navbar } from "./sections/Navbar";
 import HeroSlider from "./sections/Hero";
 import { About } from "./sections/About";
-import { CoursesSection } from "./sections/Services";
+import { Footer } from "./sections/Footer";
 
 
 
 
-import { FacultySection } from "./sections/Faculty";
-import { GallerySection } from "./sections/Gallery";
-import { ContactSection } from "./sections/Contact";
+
+
+
 
 
 export const Template2: React.FC = () => {
@@ -34,11 +34,10 @@ export const Template2: React.FC = () => {
       <Navbar />
       <HeroSlider />
       <About />
-      <CoursesSection />
+  
       {/* <CertificatesSection /> */}
-      <FacultySection />
-      <GallerySection />
-      <ContactSection />
+      <Footer/>
+      
     </div>
   );
 };

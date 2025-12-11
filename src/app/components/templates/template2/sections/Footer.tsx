@@ -1,278 +1,481 @@
-// import React, { useEffect, useState } from 'react';
-// import { defaultCollegeInfo } from '../templates/template1/data/collegeInfo';
-// /* eslint-disable */
+"use client";
 
-// // Updated ContactInfo interface with website property
-// interface ContactInfo {
-//   address: string;
-//   email: string;
-//   phone: string;
-//   website: string; // Add website property here
-//   socialMedia: {
-//     twitter: string;
-//     facebook: string;
-//     linkedin: string;
-//     instagram: string;
-//   };
-// }
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { 
+  FaMapMarkerAlt, 
+  FaPhone, 
+  FaEnvelope, 
+  FaClock,
+  FaLinkedin,
+  FaInstagram,
+  FaFacebook,
+  FaYoutube,
+  FaArrowUp,
+  FaChevronRight,
+  FaCertificate,
+  FaShieldAlt
+} from "react-icons/fa";
 
-// interface ContactsSection {
-//   id: number;
-//   template_id: number;
-//   section_name: string;
-//   content: {
-//     contactInfo: ContactInfo;
-//     collegeName?: string;
-//     description?: string;
-//   };
-//   created_at: string;
-// }
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-// export const Footer: React.FC = () => {
-//   const currentYear = new Date().getFullYear();
-//   const [contactsData, setContactsData] = useState<ContactsSection | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
+export const Footer: React.FC = () => {
+  const footerRef = useRef<HTMLDivElement>(null);
+  const currentYear = new Date().getFullYear();
 
-//   useEffect(() => {
-//     const fetchContactsData = async () => {
-//       try {
-//         const res = await fetch(
-//           "https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=1&section_name=Contacts",
-//           {
-//             cache: "no-store",
-//           }
-//         );
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Main footer elements animation - staggered entrance
+      gsap.fromTo(
+        ".footer-element",
+        {
+          opacity: 0,
+          y: 40,
+          scale: 0.9,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: {
+            each: 0.1,
+            from: "start",
+          },
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 90%",
+          },
+        }
+      );
 
-//         if (!res.ok) {
-//           throw new Error(`Failed to fetch data: ${res.status}`);
-//         }
+      // Social icons animation with bounce
+      gsap.fromTo(
+        ".social-icon",
+        {
+          scale: 0,
+          rotation: -180,
+        },
+        {
+          scale: 1,
+          rotation: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "elastic.out(1, 0.5)",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 90%",
+          },
+        }
+      );
 
-//         const data = await res.json();
-//         console.log("Fetched contact data:", data);
-        
-//         if (Array.isArray(data.sections) && data.sections.length > 0) {
-//           setContactsData(data.sections[0]);
-//         } else {
-//           throw new Error('No contacts data found');
-//         }
-//       } catch (err) {
-//         setError(err instanceof Error ? err.message : 'An error occurred');
-//         console.error("Error fetching contacts data:", err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+      // Footer links animation - cascade effect
+      gsap.fromTo(
+        ".footer-link",
+        {
+          opacity: 0,
+          x: -20,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.5,
+          stagger: {
+            each: 0.05,
+            from: "start",
+          },
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 90%",
+          },
+        }
+      );
 
-//     fetchContactsData();
-//   }, []);
+      // Back to top button animation - floating effect
+      gsap.to(".back-to-top", {
+        y: -10,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
 
-//   // Loading state
-//   if (loading) {
-//     return (
-//       <footer className="bg-gray-900 text-white">
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-//           <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-//           <p className="mt-2 text-gray-300 text-sm">Loading footer...</p>
-//         </div>
-//       </footer>
-//     );
-//   }
+      // Blue accent lines animation - draw effect
+      gsap.fromTo(
+        ".blue-accent-line",
+        { scaleX: 0, transformOrigin: "left center" },
+        {
+          scaleX: 1,
+          duration: 1.2,
+          ease: "power3.inOut",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 90%",
+          },
+        }
+      );
 
-//   // Safely extract contact info with defaults
-//   const getContactInfo = () => {
-//     if (contactsData?.content?.contactInfo) {
-//       const apiContact = contactsData.content.contactInfo;
-//       return {
-//         address: apiContact.address || "123 College Street, City, Country",
-//         email: apiContact.email || "info@college.edu",
-//         phone: apiContact.phone || "+1 (555) 123-4567",
-//         // Use the website property if it exists in API response, otherwise use default
-//         website: (apiContact as any).website || "https://www.college.edu",
-//         socialMedia: {
-//           twitter: apiContact.socialMedia?.twitter || "",
-//           facebook: apiContact.socialMedia?.facebook || "",
-//           linkedin: apiContact.socialMedia?.linkedin || "",
-//           instagram: apiContact.socialMedia?.instagram || "",
-//         }
-//       };
-//     }
+      // Background pattern animation
+      gsap.fromTo(
+        ".footer-pattern",
+        {
+          opacity: 0,
+          scale: 0.8,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 95%",
+          },
+        }
+      );
+
+      // Certification badges animation - staggered rotation
+      gsap.fromTo(
+        ".cert-badge",
+        {
+          opacity: 0,
+          rotation: -30,
+          scale: 0.5,
+        },
+        {
+          opacity: 1,
+          rotation: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 90%",
+          },
+        }
+      );
+
+      // Hover effects for footer links
+      document.querySelectorAll(".footer-link-item").forEach((item) => {
+        item.addEventListener("mouseenter", () => {
+          gsap.to(item, {
+            x: 5,
+            duration: 0.3,
+            ease: "power2.out",
+            color: "#2563EB",
+          });
+        });
+
+        item.addEventListener("mouseleave", () => {
+          gsap.to(item, {
+            x: 0,
+            duration: 0.3,
+            ease: "power2.out",
+            color: "#CCCCCC",
+          });
+        });
+      });
+
+      // Hover effects for social icons
+      document.querySelectorAll(".social-icon").forEach((icon) => {
+        icon.addEventListener("mouseenter", () => {
+          gsap.to(icon, {
+            scale: 1.2,
+            rotation: 15,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        icon.addEventListener("mouseleave", () => {
+          gsap.to(icon, {
+            scale: 1,
+            rotation: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }, footerRef);
+
+    return () => {
+      ctx.revert();
+      // Clean up event listeners
+      document.querySelectorAll(".footer-link-item").forEach((item) => {
+        item.removeEventListener("mouseenter", () => {});
+        item.removeEventListener("mouseleave", () => {});
+      });
+      document.querySelectorAll(".social-icon").forEach((icon) => {
+        icon.removeEventListener("mouseenter", () => {});
+        icon.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  const contactInfo = [
+    {
+      icon: <FaMapMarkerAlt />,
+      title: "Head Office",
+      details: ["Office No. 123, 1st Floor, Divine Mega-2", "New Airport Road, Opposite Honda Point", "Lahore, Pakistan"]
+    },
+    {
+      icon: <FaPhone />,
+      title: "Contact Numbers",
+      details: ["+92 (423) 5700362", "+92 (423) 7169399", "+92 (300) 1234567"]
+    },
+    {
+      icon: <FaEnvelope />,
+      title: "Email Addresses",
+      details: ["info@mansol.com.pk", "mtti@mansol.com.pk", "mes@mansol.com.pk"]
+    },
+    {
+      icon: <FaClock />,
+      title: "Business Hours",
+      details: ["Monday - Friday: 9:00 AM - 6:00 PM", "Saturday: 10:00 AM - 4:00 PM", "Sunday: Closed"]
+    }
+  ];
+
+  const quickLinks = [
+    { label: "Home", href: "#home" },
+    { label: "About Us", href: "#about" },
+    { label: "Courses", href: "#courses" },
+    { label: "Faculty", href: "#faculty" },
+    { label: "Gallery", href: "#gallery" },
+    { label: "Contact", href: "#contact" }
+  ];
+
+  const services = [
+    "Manpower Recruitment",
+    "Technical Training",
+    "Safety Certifications",
+    "Industry Consultancy",
+    "Workforce Development",
+    "Corporate Training",
+    "EPC Projects Staffing",
+    "GCC Operations Support"
+  ];
+
+  const certifications = [
+    { name: "PSDA Certified", icon: <FaCertificate /> },
+    { name: "TEVTA Approved", icon: <FaCertificate /> },
+    { name: "OSHAC Compliant", icon: <FaShieldAlt /> },
+    { name: "ISO 9001:2015", icon: <FaCertificate /> }
+  ];
+
+  const socialLinks = [
+    { icon: <FaLinkedin />, label: "LinkedIn", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+    { icon: <FaInstagram />, label: "Instagram", url: "https://www.instagram.com/mansol.hab.training.services/" },
+    { icon: <FaFacebook />, label: "Facebook", url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+    { icon: <FaYoutube />, label: "YouTube", url: "#" }
+  ];
+
+  return (
+    <footer ref={footerRef} className="relative bg-black text-white overflow-hidden">
+      {/* Top Gradient Line */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#2563EB] to-transparent"></div>
+
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5 footer-pattern">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 25px 25px, #2563EB 1px, transparent 0%)`,
+          backgroundSize: '50px 50px',
+        }}></div>
+      </div>
+
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 lg:gap-8">
+          {/* Column 1: Brand & Description */}
+          <div className="footer-element space-y-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#2563EB] to-[#1d4ed8] rounded-lg flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-xl">M</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  MANSOL
+                </h2>
+                <p className="text-sm text-gray-400">Hab Trainings & Solutions</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-400 text-sm leading-relaxed">
+              A premier institution delivering high-quality education, workforce training, 
+              and recruitment solutions empowering individuals and organizations worldwide.
+            </p>
+
+            {/* Social Media Links */}
+            <div className="pt-4">
+              <p className="text-gray-400 text-sm mb-4">Follow Us</p>
+              <div className="flex space-x-3">
+                {socialLinks.map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-icon w-10 h-10 rounded-full border border-gray-700 hover:border-[#2563EB] hover:bg-[#2563EB] transition-all duration-300 flex items-center justify-center text-gray-400 hover:text-white"
+                    aria-label={social.label}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Quick Links */}
+          <div className="footer-element">
+            <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-gray-800 relative">
+              Quick Links
+              <div className="w-12 h-1 bg-[#2563EB] blue-accent-line absolute bottom-0 left-0"></div>
+            </h3>
+            <ul className="space-y-3 footer-links">
+              {quickLinks.map((link, index) => (
+                <li key={index} className="footer-link">
+                  <a
+                    href={link.href}
+                    className="footer-link-item text-gray-400 hover:text-[#2563EB] transition-colors duration-300 flex items-center group"
+                  >
+                    <FaChevronRight className="w-3 h-3 text-[#2563EB] mr-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span>{link.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Services */}
+          <div className="footer-element">
+            <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-gray-800 relative">
+              Our Services
+              <div className="w-12 h-1 bg-[#2563EB] blue-accent-line absolute bottom-0 left-0"></div>
+            </h3>
+            <ul className="space-y-3">
+              {services.map((service, index) => (
+                <li key={index} className="footer-link flex items-center">
+                  <div className="w-2 h-2 bg-[#2563EB] rounded-full mr-3 flex-shrink-0"></div>
+                  <span className="text-gray-400 text-sm hover:text-white transition-colors duration-300">
+                    {service}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 4: Contact Info */}
+          <div className="footer-element">
+            <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-gray-800 relative">
+              Contact Info
+              <div className="w-12 h-1 bg-[#2563EB] blue-accent-line absolute bottom-0 left-0"></div>
+            </h3>
+            <div className="space-y-6">
+              {contactInfo.map((item, index) => (
+                <div key={index} className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center">
+                      <div className="text-[#2563EB]">
+                        {item.icon}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-white mb-1">
+                      {item.title}
+                    </h4>
+                    <div className="space-y-1">
+                      {item.details.map((detail, idx) => (
+                        <p key={idx} className="text-gray-400 text-sm leading-relaxed">
+                          {detail}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
     
-//     // Use default data
-//     return {
-//       address: defaultCollegeInfo.contact.address,
-//       email: defaultCollegeInfo.contact.email,
-//       phone: defaultCollegeInfo.contact.phone,
-//       // Use type assertion to access website if it exists in default data
-//       website: (defaultCollegeInfo.contact as any).website || "https://www.college.edu",
-//       socialMedia: defaultCollegeInfo.contact.socialMedia
-//     };
-//   };
 
-//   const contactInfo = getContactInfo();
-//   const collegeName = contactsData?.content?.collegeName || "Kips College";
-//   const description = contactsData?.content?.description || "Empowering students through quality education and innovative research since 1990.";
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+            {/* Copyright */}
+            <div className="text-center md:text-left">
+              <p className="text-gray-500 text-sm">
+                &copy; {currentYear} Mansol Hab Trainings. All rights reserved.
+              </p>
+              <p className="text-gray-600 text-xs mt-2">
+                Proudly serving industries across Pakistan and GCC countries since 2008
+              </p>
+            </div>
 
-//   return (
-//     <footer className="bg-gray-900 text-white">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-//         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-//           {/* College Info */}
-//           <div className="col-span-1 md:col-span-2">
-//             <h3 className="text-lg font-bold text-white mb-3">
-//               {collegeName}
-//             </h3>
-//             <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-//               {description}
-//             </p>
-//             <div className="flex space-x-2">
-//               {contactInfo.socialMedia.facebook && (
-//                 <a 
-//                   href={contactInfo.socialMedia.facebook} 
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   className="w-8 h-8 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-colors duration-200"
-//                 >
-//                   <span className="sr-only">Facebook</span>
-//                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-//                   </svg>
-//                 </a>
-//               )}
-//               {contactInfo.socialMedia.twitter && (
-//                 <a 
-//                   href={contactInfo.socialMedia.twitter} 
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   className="w-8 h-8 bg-gray-800 hover:bg-blue-500 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-colors duration-200"
-//                 >
-//                   <span className="sr-only">Twitter</span>
-//                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
-//                   </svg>
-//                 </a>
-//               )}
-//               {contactInfo.socialMedia.instagram && (
-//                 <a 
-//                   href={contactInfo.socialMedia.instagram} 
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   className="w-8 h-8 bg-gray-800 hover:bg-pink-600 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-colors duration-200"
-//                 >
-//                   <span className="sr-only">Instagram</span>
-//                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
-//                   </svg>
-//                 </a>
-//               )}
-//               {contactInfo.socialMedia.linkedin && (
-//                 <a 
-//                   href={contactInfo.socialMedia.linkedin} 
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   className="w-8 h-8 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-colors duration-200"
-//                 >
-//                   <span className="sr-only">LinkedIn</span>
-//                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-//                   </svg>
-//                 </a>
-//               )}
-//             </div>
-//           </div>
+            {/* Legal Links */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <a 
+                href="#" 
+                className="text-gray-500 hover:text-white text-sm transition-colors hover:underline"
+              >
+                Privacy Policy
+              </a>
+              <span className="text-gray-700">•</span>
+              <a 
+                href="#" 
+                className="text-gray-500 hover:text-white text-sm transition-colors hover:underline"
+              >
+                Terms of Service
+              </a>
+              <span className="text-gray-700">•</span>
+              <a 
+                href="#" 
+                className="text-gray-500 hover:text-white text-sm transition-colors hover:underline"
+              >
+                Sitemap
+              </a>
+              <span className="text-gray-700">•</span>
+              <a 
+                href="#" 
+                className="text-gray-500 hover:text-white text-sm transition-colors hover:underline"
+              >
+                Careers
+              </a>
+            </div>
 
-//           {/* Quick Links */}
-//           <div>
-//             <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
-//             <ul className="space-y-2">
-//               <li>
-//                 <a href="#home" className="text-gray-300 hover:text-white transition-colors duration-200 text-xs">
-//                   Home
-//                 </a>
-//               </li>
-//               <li>
-//                 <a href="#about" className="text-gray-300 hover:text-white transition-colors duration-200 text-xs">
-//                   About Us
-//                 </a>
-//               </li>
-//               <li>
-//                 <a href="#programs" className="text-gray-300 hover:text-white transition-colors duration-200 text-xs">
-//                   Programs
-//                 </a>
-//               </li>
-//               <li>
-//                 <a href="#events" className="text-gray-300 hover:text-white transition-colors duration-200 text-xs">
-//                   Events
-//                 </a>
-//               </li>
-//               <li>
-//                 <a href="#contact" className="text-gray-300 hover:text-white transition-colors duration-200 text-xs">
-//                   Contact
-//                 </a>
-//               </li>
-//             </ul>
-//           </div>
+            {/* Back to Top Button */}
+            <button
+              onClick={scrollToTop}
+              className="back-to-top w-12 h-12 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] transition-all duration-300 flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110"
+              aria-label="Back to top"
+            >
+              <FaArrowUp />
+            </button>
+          </div>
+        </div>
 
-//           {/* Contact Info */}
-//           <div>
-//             <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
-//             <address className="text-gray-300 not-italic space-y-2 text-xs">
-//               <p className="flex items-start">
-//                 <svg className="w-3 h-3 mt-0.5 mr-1.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-//                 </svg>
-//                 {contactInfo.address}
-//               </p>
-//               <p className="flex items-center">
-//                 <svg className="w-3 h-3 mr-1.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-//                 </svg>
-//                 {contactInfo.phone}
-//               </p>
-//               <p className="flex items-center">
-//                 <svg className="w-3 h-3 mr-1.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-//                 </svg>
-//                 {contactInfo.email}
-//               </p>
-//               {contactInfo.website && (
-//                 <p className="flex items-center">
-//                   <svg className="w-3 h-3 mr-1.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-//                   </svg>
-//                   <a 
-//                     href={contactInfo.website} 
-//                     target="_blank"
-//                     rel="noopener noreferrer"
-//                     className="hover:text-white transition-colors duration-200"
-//                   >
-//                     Visit Website
-//                   </a>
-//                 </p>
-//               )}
-//             </address>
-//           </div>
-//         </div>
+        {/* Industry Partners */}
+       
+      </div>
 
-//         <div className="border-t border-gray-700 mt-6 pt-6 text-center">
-//           <p className="text-gray-300 text-xs">
-//             &copy; {currentYear} <span className="text-white font-semibold">{collegeName}</span>. All rights reserved.
-//           </p>
-//           {contactInfo.website && (
-//             <p className="text-gray-400 text-xs mt-1">
-//               <a 
-//                 href={contactInfo.website} 
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//                 className="hover:text-white transition-colors duration-200"
-//               >
-//                 {contactInfo.website.replace(/^https?:\/\//, '')}
-//               </a>
-//             </p>
-//           )}
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// };
+      {/* Footer Bottom Gradient */}
+      <div className="relative h-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2563EB] to-transparent"></div>
+      </div>
+    </footer>
+  );
+};

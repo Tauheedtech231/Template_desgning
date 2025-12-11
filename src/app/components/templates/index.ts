@@ -1,5 +1,5 @@
 import { Template1 } from "./template1/Template1";
-import { Template2 } from "./template2/Template2";
+import { Template2 } from "./template2/page";
 // import { Template3 } from "./template3/Template3"; // example
 /* eslint-disable */
 export const TEMPLATE_MAP: Record<string, any> = {
