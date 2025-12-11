@@ -7,15 +7,7 @@ import HeroSlider from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
 
-
-
-
-
-
-
-
-
-export const Template2: React.FC = () => {
+const Template2: React.FC = () => {
   useEffect(() => {
     const storedData = localStorage.getItem("collegeInfo");
     if (!storedData) {
@@ -34,10 +26,10 @@ export const Template2: React.FC = () => {
       <Navbar />
       <HeroSlider />
       <About />
-  
       {/* <CertificatesSection /> */}
-      <Footer/>
-      
+      <Footer />
     </div>
   );
 };
+
+export default Template2; // ✅ default export
