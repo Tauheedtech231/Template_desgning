@@ -1,6 +1,23 @@
 "use client";
 
-import { Mail, MapPin, Phone, Linkedin, Instagram, Facebook } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { 
+  FaEnvelope, 
+  FaMapMarkerAlt, 
+  FaPhone, 
+  FaLinkedin, 
+  FaInstagram, 
+  FaFacebook,
+  FaPaperPlane,
+  FaUser,
+  FaBuilding
+} from "react-icons/fa";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const contacts = [
   {
@@ -22,119 +39,382 @@ const contacts = [
     phone: "+92 (423) 5700362",
   },
 ];
-const socialLinks = [
-  { icon: <Linkedin className="w-5 h-5" />, url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
-  { icon: <Instagram className="w-5 h-5" />, url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
-  { icon: <Facebook className="w-5 h-5" />, url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
-];
-const ContactSection = () => {
-  return (
-    <section id="contact" className="relative bg-[#111] text-white py-16 md:py-24 overflow-hidden">
-      {/* Background World Map */}
-      <div
-        className="absolute inset-0 opacity-5 bg-cover bg-center"
-        style={{ backgroundImage: "url('https://i.imgur.com/yd7Tb0X.png')" }}
-      />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <div className="text-center mb-12 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3">
-            Contact <span className="text-red-500">Us</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Get in touch with our specialized departments
-          </p>
+const socialLinks = [
+  { icon: <FaLinkedin />, url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+  { icon: <FaInstagram />, url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
+  { icon: <FaFacebook />, url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+];
+
+export const ContactSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Left side animations
+      gsap.fromTo(
+        ".contact-info",
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Right side animations
+      gsap.fromTo(
+        ".contact-form",
+        { x: 50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Icon animations
+      gsap.fromTo(
+        ".contact-icon",
+        { scale: 0, rotation: -90 },
+        {
+          scale: 1,
+          rotation: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Form element animations
+      gsap.fromTo(
+        ".form-element",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log("Form submitted:", formData);
+    // Reset form
+    setFormData({ name: "", email: "", subject: "", message: "" });
+  };
+
+  return (
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="relative min-h-screen"
+    >
+      {/* Split Layout Container */}
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Left Side - Contact Info (Black Background) */}
+        <div className="lg:w-1/2 bg-black text-white p-8 lg:p-16">
+          <div className="h-full flex flex-col justify-between contact-info">
+            {/* Section Header */}
+            <div>
+              <div className="mb-8">
+                <span className="text-[#2563EB] text-sm font-light tracking-widest uppercase">
+                  Get in Touch
+                </span>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                Contact Us
+              </h1>
+              
+              <p className="text-[#CCCCCC] text-lg mb-12 max-w-lg">
+                Connect with our specialized departments for inquiries, partnerships, or any assistance you may need.
+              </p>
+            </div>
+
+            {/* Contact Cards */}
+            <div className="space-y-8 mb-12">
+              {contacts.map((contact, index) => (
+                <div 
+                  key={index} 
+                  className="p-6 border border-white/10 rounded-lg hover:border-[#2563EB]/30 transition-all duration-300"
+                >
+                  <div className="flex items-start mb-4">
+                    <div className="contact-icon mr-4">
+                      <div className="w-12 h-12 rounded-full border-2 border-[#2563EB] flex items-center justify-center">
+                        <FaBuilding className="text-[#2563EB] text-lg" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        {contact.title}
+                      </h3>
+                      <div className="w-16 h-0.5 bg-[#2563EB] mb-4"></div>
+                    </div>
+                  </div>
+
+                  {/* Contact Details */}
+                  <div className="space-y-4">
+                    {/* Email */}
+                    <div className="flex items-center">
+                      <div className="contact-icon mr-4">
+                        <div className="w-10 h-10 rounded-full border border-[#2563EB] flex items-center justify-center">
+                          <FaEnvelope className="text-[#2563EB]" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[#CCCCCC] text-sm mb-1">Email</p>
+                        <a 
+                          href={`mailto:${contact.email}`}
+                          className="text-white hover:text-[#2563EB] transition-colors"
+                        >
+                          {contact.email}
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-start">
+                      <div className="contact-icon mr-4 mt-1">
+                        <div className="w-10 h-10 rounded-full border border-[#2563EB] flex items-center justify-center">
+                          <FaMapMarkerAlt className="text-[#2563EB]" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[#CCCCCC] text-sm mb-1">Location</p>
+                        <p className="text-white">
+                          {contact.location}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Phone */}
+                    <div className="flex items-center">
+                      <div className="contact-icon mr-4">
+                        <div className="w-10 h-10 rounded-full border border-[#2563EB] flex items-center justify-center">
+                          <FaPhone className="text-[#2563EB]" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[#CCCCCC] text-sm mb-1">Phone</p>
+                        <a 
+                          href={`tel:${contact.phone.replace(/\D/g, '')}`}
+                          className="text-white hover:text-[#2563EB] transition-colors"
+                        >
+                          {contact.phone}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Social Links */}
+            <div className="pt-8 border-t border-white/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[#CCCCCC] text-sm mb-4">
+                    Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM
+                  </p>
+                  <div className="flex space-x-4">
+                    {socialLinks.map((social, idx) => (
+                      <a
+                        key={idx}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-full border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white transition-all duration-300 flex items-center justify-center"
+                      >
+                        {social.icon}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-[#CCCCCC] text-sm">
+                  &copy; {new Date().getFullYear()} Mansol Group. All Rights Reserved.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Contact Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-8">
-          {contacts.map((contact, index) => (
-            <div 
-              key={index} 
-              className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 md:p-8 hover:border-gray-700 transition-all duration-300"
-            >
-              {/* Contact Title */}
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center text-white">
-                {contact.title}
-              </h3>
+        {/* Right Side - Contact Form (White Background) */}
+        <div className="lg:w-1/2 bg-white p-8 lg:p-16 flex items-center justify-center">
+          <div className="w-full max-w-lg contact-form">
+            <div className="mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+                Send Us a Message
+              </h2>
+              <p className="text-gray-600">
+                Fill out the form below and our team will get back to you within 24 hours.
+              </p>
+            </div>
 
-              {/* Contact Details Container */}
-              <div className="space-y-6 md:space-y-8">
-                {/* Email Section */}
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-                    <Mail className="text-white w-6 h-6" />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Name Field */}
+              <div className="form-element">
+                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="name">
+                  Your Name
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <FaUser className="text-gray-400" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-gray-400 text-sm mb-1">Email Us</p>
-                    <a 
-                      href={`mailto:${contact.email}`}
-                      className="font-medium text-white hover:text-red-400 transition-colors break-words"
-                    >
-                      {contact.email}
-                    </a>
-                  </div>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full pl-12 pr-4 py-3 border border-[#E5E5E5] rounded-lg focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition-all duration-300"
+                    placeholder="John Doe"
+                  />
                 </div>
+              </div>
 
-                {/* Location Section */}
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-                    <MapPin className="text-white w-6 h-6" />
+              {/* Email Field */}
+              <div className="form-element">
+                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="email">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <FaEnvelope className="text-gray-400" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-gray-400 text-sm mb-1">Location</p>
-                    <p className="font-medium text-white leading-relaxed">
-                      {contact.location}
-                    </p>
-                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full pl-12 pr-4 py-3 border border-[#E5E5E5] rounded-lg focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition-all duration-300"
+                    placeholder="john@example.com"
+                  />
                 </div>
+              </div>
 
-                {/* Phone Section */}
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-                    <Phone className="text-white w-6 h-6" />
+              {/* Subject Field */}
+              <div className="form-element">
+                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="subject">
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition-all duration-300"
+                  placeholder="What is this regarding?"
+                />
+              </div>
+
+              {/* Message Field */}
+              <div className="form-element">
+                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="message">
+                  Your Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
+                  rows={5}
+                  className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition-all duration-300 resize-none"
+                  placeholder="Please provide details about your inquiry..."
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="form-element pt-4">
+                <button
+                  type="submit"
+                  className="w-full py-4 px-6 bg-[#2563EB] text-white font-semibold rounded-lg hover:bg-[#1d4ed8] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
+                >
+                  <FaPaperPlane className="mr-3" />
+                  Send Message
+                </button>
+              </div>
+
+              {/* Privacy Notice */}
+              <div className="form-element">
+                <p className="text-gray-500 text-sm text-center">
+                  By submitting this form, you agree to our{" "}
+                  <a href="#" className="text-[#2563EB] hover:underline">
+                    Privacy Policy
+                  </a>
+                  . We will never share your information with third parties.
+                </p>
+              </div>
+            </form>
+
+            {/* Contact Methods Alternative */}
+            <div className="mt-12 pt-8 border-t border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="text-center p-4 border border-gray-100 rounded-lg hover:border-[#2563EB]/20 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-full bg-[#2563EB]/10 flex items-center justify-center mx-auto mb-3">
+                    <FaEnvelope className="text-[#2563EB]" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-gray-400 text-sm mb-1">Call Us</p>
-                    <a 
-                      href={`tel:${contact.phone.replace(/\D/g, '')}`}
-                      className="font-medium text-white hover:text-red-400 transition-colors"
-                    >
-                      {contact.phone}
-                    </a>
+                  <p className="text-sm text-gray-600 mb-1">Email Response Time</p>
+                  <p className="font-semibold text-black">Within 24 Hours</p>
+                </div>
+                <div className="text-center p-4 border border-gray-100 rounded-lg hover:border-[#2563EB]/20 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-full bg-[#2563EB]/10 flex items-center justify-center mx-auto mb-3">
+                    <FaPhone className="text-[#2563EB]" />
                   </div>
+                  <p className="text-sm text-gray-600 mb-1">Phone Response Time</p>
+                  <p className="font-semibold text-black">Within 2 Hours</p>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div className="mt-16 md:mt-20 pt-8 border-t border-gray-700 text-center space-y-4">
-          <p className="text-gray-400 text-sm mb-2">
-            Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM
-          </p>
-          <div className="flex justify-center gap-6">
-            {socialLinks.map((social, idx) => (
-              <a
-                key={idx}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-red-500 transition-colors"
-              >
-                {social.icon}
-              </a>
-            ))}
           </div>
-          <p className="text-gray-400 text-sm mt-2">
-            &copy; {new Date().getFullYear()} Mansol Group. All Rights Reserved.
-          </p>
         </div>
       </div>
     </section>
   );
 };
-
-export default ContactSection;

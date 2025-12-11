@@ -6,10 +6,14 @@ import { Navbar } from "./sections/Navbar";
 import HeroSlider from "./sections/Hero";
 import { About } from "./sections/About";
 import { CoursesSection } from "./sections/Services";
-import CertificatesSection from "./sections/Certificates";
-import FacultySection from "./sections/Faculty";
-import GallerySection from "./sections/Gallery";
-import ContactSection from "./sections/Contact";
+
+
+
+
+import { FacultySection } from "./sections/Faculty";
+import { GallerySection } from "./sections/Gallery";
+import { ContactSection } from "./sections/Contact";
+
 
 export const Template2: React.FC = () => {
   useEffect(() => {
@@ -31,7 +35,7 @@ export const Template2: React.FC = () => {
       <HeroSlider />
       <About />
       <CoursesSection />
-      <CertificatesSection />
+      {/* <CertificatesSection /> */}
       <FacultySection />
       <GallerySection />
       <ContactSection />

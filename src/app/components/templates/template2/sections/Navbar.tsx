@@ -68,19 +68,20 @@ export const Navbar: React.FC = () => {
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-black/95 backdrop-blur-md shadow-lg border-b border-gray-800"
-          : "bg-transparent"
+          ? "bg-white shadow-md border-b border-gray-200"
+          : "bg-white/70 backdrop-blur-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3 md:py-4">
+          
           {/* Logo */}
           <div className="flex items-center">
             <Image
               src="/mansol_logo.jpg"
               alt="Mansol Logo"
               width={100}
-              height={100}
+              height={40}
               className="object-contain"
             />
           </div>
@@ -94,10 +95,10 @@ export const Navbar: React.FC = () => {
                     onMouseEnter={() => setActiveDropdown(item.name)}
                     onMouseLeave={() => setActiveDropdown(null)}
                     onClick={() => toggleMobileDropdown(item.name)}
-                    className="relative group px-2 py-2 font-medium text-white tracking-wide"
+                    className="relative group px-2 py-2 font-medium text-black tracking-wide"
                   >
                     {item.name}
-                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300"></span>
+                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                   </button>
 
                   <AnimatePresence>
@@ -108,8 +109,6 @@ export const Navbar: React.FC = () => {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
                         className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50"
-                        onMouseEnter={() => setActiveDropdown(item.name)}
-                        onMouseLeave={() => setActiveDropdown(null)}
                       >
                         <div className="max-h-80 overflow-y-auto">
                           {item.subItems.map((sub, i) => (
@@ -130,10 +129,10 @@ export const Navbar: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => scrollToSection(item.href)}
-                  className="relative group px-2 py-2 font-medium text-white tracking-wide"
+                  className="relative group px-2 py-2 font-medium text-black tracking-wide"
                 >
                   {item.name}
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </button>
               )
             )}
@@ -141,7 +140,7 @@ export const Navbar: React.FC = () => {
             {/* Contact Button */}
             <button
               onClick={() => scrollToSection("#contact")}
-              className="ml-4 px-6 py-2.5 text-white bg-blue-700 hover:bg-blue-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
+              className="ml-4 px-6 py-2.5 text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-200 font-medium"
             >
               Contact Us
             </button>
@@ -150,7 +149,7 @@ export const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="md:hidden text-black p-2 hover:bg-black/5 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             <svg
@@ -176,7 +175,7 @@ export const Navbar: React.FC = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-black/95 backdrop-blur-lg border-t border-gray-800"
+              className="md:hidden bg-white border-t border-gray-200"
             >
               <div className="px-4 py-4 space-y-1">
                 {navItems.map((item, idx) =>
@@ -184,7 +183,7 @@ export const Navbar: React.FC = () => {
                     <div key={idx} ref={mobileDropdownRef}>
                       <button
                         onClick={() => toggleMobileDropdown(item.name)}
-                        className="w-full flex justify-between items-center px-4 py-3 text-white font-medium hover:bg-white/5 rounded-lg transition-colors"
+                        className="w-full flex justify-between items-center px-4 py-3 text-black font-medium hover:bg-black/5 rounded-lg"
                       >
                         <span>{item.name}</span>
                         <svg
@@ -205,13 +204,13 @@ export const Navbar: React.FC = () => {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="ml-4 space-y-1 border-l border-gray-700"
+                            className="ml-4 space-y-1 border-l border-gray-300"
                           >
                             {item.subItems.map((sub, i) => (
                               <button
                                 key={i}
                                 onClick={() => scrollToSection(sub.href)}
-                                className="block w-full text-left px-4 py-2.5 text-gray-300 hover:text-white hover:bg-blue-900/20 rounded-md transition-colors"
+                                className="block w-full text-left px-4 py-2.5 text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-md"
                               >
                                 {sub.name}
                               </button>
@@ -224,7 +223,7 @@ export const Navbar: React.FC = () => {
                     <button
                       key={idx}
                       onClick={() => scrollToSection(item.href)}
-                      className="w-full text-left px-4 py-3 text-white font-medium hover:bg-white/5 rounded-lg transition-colors"
+                      className="w-full text-left px-4 py-3 text-black font-medium hover:bg-black/5 rounded-lg"
                     >
                       {item.name}
                     </button>
@@ -232,11 +231,12 @@ export const Navbar: React.FC = () => {
                 )}
 
                 <button
-                  onClick={() => scrollToSection("#contact")}
-                  className="w-full mt-4 px-4 py-3.5 text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors font-medium"
-                >
-                  Contact Us
-                </button>
+  onClick={() => scrollToSection("#contact")}
+  className="w-full mt-4 px-6 py-3.5 bg-[#2563EB] hover:bg-[#1E40AF] text-white rounded-full font-semibold shadow-md transition-all duration-300"
+>
+  Contact Us
+</button>
+
               </div>
             </motion.div>
           )}

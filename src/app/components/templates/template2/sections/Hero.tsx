@@ -55,7 +55,7 @@ const HeroSlider: React.FC = () => {
   }, [current]);
 
   return (
-    <section id="home" className="relative w-full h-screen overflow-hidden">
+    <section id="home" className="relative w-full h-screen overflow-hidden bg-black">
       {/* Background Image */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -73,24 +73,25 @@ const HeroSlider: React.FC = () => {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/60" />
         </motion.div>
       </AnimatePresence>
 
       {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-12 md:px-24 lg:px-36 z-20">
+      <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-10 md:px-20 lg:px-36 z-20">
+        
         {/* Typing Subtitle */}
-        <h2 className="text-white text-2xl md:text-4xl uppercase tracking-widest font-semibold mb-3">
+        <h2 className="text-white text-2xl md:text-4xl uppercase tracking-[0.3em] font-semibold mb-4">
           {typingText}
-          <span className="text-red-500 animate-pulse">|</span>
+          <span className="text-[#2563EB] animate-pulse">|</span>
         </h2>
 
         {/* Main Title */}
-        <h1 className="text-5xl md:text-7xl font-extrabold italic leading-tight text-white drop-shadow-xl">
+        <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-white drop-shadow-2xl">
           {slides[current].title}
         </h1>
 
-        <p className="text-lg md:text-xl text-gray-200 max-w-xl mt-4 drop-shadow-md">
+        <p className="text-lg md:text-xl text-gray-200 max-w-xl mt-5 drop-shadow-lg leading-relaxed">
           {slides[current].description}
         </p>
       </div>
@@ -98,23 +99,23 @@ const HeroSlider: React.FC = () => {
       {/* View Courses Button */}
       <a
         href="#courses"
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 border border-white rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 z-30"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 px-7 py-3 rounded-full bg-[#2563EB] text-white font-semibold shadow-lg hover:bg-[#1E40AF] transition-all duration-300 z-30"
       >
         View Courses
       </a>
 
-      {/* Navigation Arrows - hidden on mobile */}
+      {/* Navigation Arrows */}
       <div className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col space-y-6 z-30 hidden md:flex">
         <button
           onClick={handleNext}
-          className="bg-white hover:bg-gray-200 text-black p-4 rounded-full transition-all duration-300"
+          className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border border-white/20 p-4 rounded-full transition-all duration-300"
         >
           <ChevronRight size={25} />
         </button>
 
         <button
           onClick={handlePrev}
-          className="bg-white/40 hover:bg-white/70 text-white hover:text-black p-4 rounded-full transition-all duration-300"
+          className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border border-white/20 p-4 rounded-full transition-all duration-300"
         >
           <ChevronLeft size={25} />
         </button>
