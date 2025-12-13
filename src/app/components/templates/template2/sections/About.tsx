@@ -3,82 +3,106 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { FaRocket, FaEye, FaBullseye, FaLightbulb } from "react-icons/fa";
+import { FaRocket, FaBullseye, FaChartLine, FaUsers, FaAward, FaGlobe, FaShieldAlt, FaGraduationCap, FaIndustry, FaCertificate, FaCheckCircle, FaStar, FaHandshake, FaUserGraduate, FaClock, FaMedal, FaBuilding, FaHandsHelping, FaUsersCog } from "react-icons/fa";
+/* eslint-disable */
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export const About: React.FC = () => {
+export  const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const heroImageRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const statsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const heading1Ref = useRef<HTMLHeadingElement>(null);
+  const heading2Ref = useRef<HTMLHeadingElement>(null);
+  const topHeadingRef = useRef<HTMLDivElement>(null);
   const leftColumnRef = useRef<HTMLDivElement>(null);
   const rightColumnRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const missionSectionRef = useRef<HTMLDivElement>(null);
+  const approachSectionRef = useRef<HTMLDivElement>(null);
+  const whyChooseRef = useRef<HTMLDivElement>(null);
+  const statsContainerRef = useRef<HTMLDivElement>(null);
+  const pillarsHeadingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Section title entrance with smooth slide from left
-      gsap.fromTo(
-        ".section-title",
-        {
-          opacity: 0,
-          x: -80,
-          rotation: -5,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          rotation: 0,
-          duration: 1.2,
-          ease: "expo.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 85%",
+      // Clean smooth scroll for entire page
+      gsap.utils.toArray("section").forEach((section: any) => {
+        gsap.fromTo(section,
+          {
+            opacity: 0,
+            y: 50,
           },
-        }
-      );
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      });
 
-      // Section tag animation - fade in from top
+      // Top heading smooth fade in
       gsap.fromTo(
-        ".section-tag",
-        {
+        topHeadingRef.current,
+        { 
           opacity: 0,
-          y: -30,
+          y: 30 
         },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
+          duration: 1,
+          ease: "power3.out",
+        }
+      );
+
+      // Hero image parallax with smooth movement
+      gsap.to(heroImageRef.current, {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroImageRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.5,
+        },
+      });
+
+      // Hero content fade in
+      gsap.fromTo(
+        [heading1Ref.current, heading2Ref.current, contentRef.current],
+        { 
+          opacity: 0,
+          y: 30 
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.2,
           ease: "power3.out",
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 90%",
+            trigger: heroImageRef.current,
+            start: "top 80%",
           },
         }
       );
 
-      // Blue line animation - draw from center
-      gsap.fromTo(
-        ".section-tag-line",
-        { scaleX: 0, transformOrigin: "center" },
-        {
-          scaleX: 1,
-          duration: 1.2,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 88%",
-          },
-        }
-      );
-
-      // Left column content slide in from left
+      // Mission and Approach sections - smooth slide in from sides
       gsap.fromTo(
         leftColumnRef.current,
         {
           opacity: 0,
-          x: -100,
+          x: -50,
         },
         {
           opacity: 1,
@@ -87,17 +111,16 @@ export const About: React.FC = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: leftColumnRef.current,
-            start: "top 80%",
+            start: "top 85%",
           },
         }
       );
 
-      // Right column content slide in from right
       gsap.fromTo(
         rightColumnRef.current,
         {
           opacity: 0,
-          x: 100,
+          x: 50,
         },
         {
           opacity: 1,
@@ -106,128 +129,52 @@ export const About: React.FC = () => {
           ease: "power3.out",
           scrollTrigger: {
             trigger: rightColumnRef.current,
-            start: "top 80%",
+            start: "top 85%",
           },
         }
       );
 
-      // Image reveal with parallax effect
+      // Mission section fade up
       gsap.fromTo(
-        imageRef.current,
+        missionSectionRef.current,
         {
           opacity: 0,
-          scale: 0.8,
-          y: 50,
-          rotationY: -10,
+          y: 40,
         },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          rotationY: 0,
-          duration: 1.4,
+          duration: 1,
           ease: "power3.out",
           scrollTrigger: {
-            trigger: imageRef.current,
+            trigger: missionSectionRef.current,
             start: "top 85%",
           },
         }
       );
 
-      // Icon animation with bounce effect
+      // Why Choose Us section fade up
       gsap.fromTo(
-        ".icon-container",
-        {
-          scale: 0,
-          rotation: 180,
-        },
-        {
-          scale: 1,
-          rotation: 0,
-          duration: 0.8,
-          ease: "elastic.out(1, 0.5)",
-          stagger: {
-            each: 0.15,
-            from: "start",
-          },
-          scrollTrigger: {
-            trigger: ".about-card",
-            start: "top 85%",
-          },
-        }
-      );
-
-      // Card content reveal with slight delay after icons
-      gsap.fromTo(
-        ".card-content",
+        whyChooseRef.current,
         {
           opacity: 0,
-          y: 20,
+          y: 40,
         },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          delay: 0.3,
-          stagger: {
-            each: 0.1,
-          },
-          ease: "power2.out",
+          duration: 1,
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: ".about-card",
+            trigger: whyChooseRef.current,
             start: "top 85%",
           },
         }
       );
 
-      // Industry expertise items animation - cascade effect
+      // Pillars heading fade up
       gsap.fromTo(
-        ".industry-item",
-        {
-          opacity: 0,
-          x: -30,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.5,
-          stagger: {
-            each: 0.08,
-            from: "start",
-          },
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".industry-item",
-            start: "top 90%",
-          },
-        }
-      );
-
-      // Stats counting animation
-      const stats = document.querySelectorAll(".stat-number");
-      stats.forEach((stat) => {
-        gsap.fromTo(
-          stat,
-          {
-            textContent: 0,
-          },
-          {
-            textContent: stat.textContent,
-            duration: 2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: stat,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-            snap: { textContent: 1 },
-          }
-        );
-      });
-
-      // Stats container animation
-      gsap.fromTo(
-        ".stat-item",
+        pillarsHeadingRef.current,
         {
           opacity: 0,
           y: 30,
@@ -235,20 +182,41 @@ export const About: React.FC = () => {
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          stagger: {
-            each: 0.1,
-          },
-          ease: "power2.out",
+          duration: 0.8,
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: ".stat-item",
+            trigger: pillarsHeadingRef.current,
             start: "top 90%",
           },
         }
       );
 
-      // Hover effects for cards
-      document.querySelectorAll(".about-card").forEach((card) => {
+      // Pillars cards - smooth staggered fade up
+      gsap.fromTo(
+        cardsRef.current,
+        {
+          opacity: 0,
+          y: 40,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".cards-container",
+            start: "top 85%",
+          },
+        }
+      );
+
+      // Pillars cards hover effects (unchanged)
+      cardsRef.current.forEach((card) => {
+        if (!card) return;
+        
         card.addEventListener("mouseenter", () => {
           gsap.to(card, {
             y: -8,
@@ -266,232 +234,618 @@ export const About: React.FC = () => {
         });
       });
 
-      // Image hover effect
-      if (imageRef.current) {
-        imageRef.current.addEventListener("mouseenter", () => {
-          gsap.to(imageRef.current, {
-            scale: 1.02,
-            duration: 0.4,
-            ease: "power2.out",
-          });
-        });
+      // Stats container fade up
+      gsap.fromTo(
+        statsContainerRef.current,
+        {
+          opacity: 0,
+          y: 50,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".stats-section",
+            start: "top 85%",
+          },
+        }
+      );
 
-        imageRef.current.addEventListener("mouseleave", () => {
-          gsap.to(imageRef.current, {
-            scale: 1,
-            duration: 0.4,
-            ease: "power2.out",
-          });
-        });
-      }
+      // Stats counting animation (unchanged)
+      gsap.fromTo(
+        ".stat-number",
+        { textContent: 0 },
+        {
+          textContent: ( target:any) => target.getAttribute("data-value"),
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".stats-section",
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Why Choose Us cards - smooth staggered fade up
+      gsap.fromTo(
+        ".why-choose-card",
+        { 
+          opacity: 0, 
+          y: 20 
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".why-choose-section",
+            start: "top 90%",
+          },
+        }
+      );
+
+      // Decorative elements fade in
+      gsap.fromTo(
+        ".decorative-element",
+        { opacity: 0, scale: 0.8 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+          },
+        }
+      );
+
+      // Continuous subtle floating animation for some elements
+      gsap.to(".float-element", {
+        y: -10,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
     }, sectionRef);
 
-    return () => {
-      ctx.revert();
-      // Clean up hover event listeners
-      document.querySelectorAll(".about-card").forEach((card) => {
-        card.removeEventListener("mouseenter", () => {});
-        card.removeEventListener("mouseleave", () => {});
-      });
-    };
+    return () => ctx.revert();
   }, []);
 
-  const aboutData = [
+  const aboutCards = [
     {
       id: 1,
-      icon: FaRocket,
-      title: "Our Mission",
-      description: "Mansol is a leading organization in manpower recruitment and training, with enriched experience in local and international markets. Our expertise includes providing skilled human resources to major industries including Oil & Gas, Chemical, Construction, and other Electro-Mechanical EPC projects and shutdowns across GCC countries.",
-      accentColor: "#2563EB",
+      icon: FaShieldAlt,
+      title: "Industry Leadership",
+      description: "15+ years of excellence in safety training, setting industry standards and benchmarks for professional development.",
+      color: "#06B6D4",
     },
     {
       id: 2,
-      icon: FaEye,
-      title: "Our Vision",
-      description: "Our vision is to lead in the creation and delivery of innovative workforce solutions and services that empower our clients to succeed in the evolving global employment landscape.",
-      accentColor: "#2563EB",
+      icon: FaGraduationCap,
+      title: "Expert Training",
+      description: "Internationally certified trainers with real-world experience delivering practical, hands-on safety education.",
+      color: "#10B981",
     },
     {
       id: 3,
-      icon: FaBullseye,
-      title: "Our Values",
-      description: "We uphold integrity, excellence, and innovation in all our endeavors. Our commitment to quality training and ethical recruitment practices sets us apart in the industry.",
-      accentColor: "#2563EB",
+      icon: FaIndustry,
+      title: "Global Standards",
+      description: "Curriculum aligned with NEBOSH, IOSH, OSHA, and other international safety certification requirements.",
+      color: "#F97316",
     },
     {
       id: 4,
-      icon: FaLightbulb,
-      title: "Our Approach",
-      description: "We combine industry expertise with modern training methodologies to deliver workforce solutions that meet the evolving demands of global markets and empower individuals for success.",
-      accentColor: "#2563EB",
+      icon: FaCertificate,
+      title: "Certified Excellence",
+      description: "98% certification success rate with comprehensive assessment and continuous improvement programs.",
+      color: "#8B5CF6",
     },
+  ];
+
+  const whyChooseUs = [
+    {
+      icon: FaStar,
+      title: "Proven Excellence",
+      description: "Consistently rated 4.9+ by professionals across industries",
+    },
+    {
+      icon: FaUserGraduate,
+      title: "Expert Faculty",
+      description: "Industry veterans with 20+ years of safety experience",
+    },
+    {
+      icon: FaHandshake,
+      title: "Industry Partnerships",
+      description: "Collaborations with top organizations for placement",
+    },
+    {
+      icon: FaClock,
+      title: "Flexible Scheduling",
+      description: "Weekend, evening, and customized corporate batches",
+    },
+    {
+      icon: FaMedal,
+      title: "Premium Facilities",
+      description: "State-of-the-art training labs and equipment",
+    },
+    {
+      icon: FaCheckCircle,
+      title: "Post-Course Support",
+      description: "Lifetime career guidance and certification renewal",
+    },
+  ];
+
+  const highlights = [
+    "NEBOSH Certification Programs",
+    "IOSH Managing Safely",
+    "OSHA Standards Training",
+    "Fire Safety Training",
+    "First Aid & CPR Certification",
+    "Risk Assessment Training",
   ];
 
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-24 bg-white overflow-hidden"
+      className="relative bg-white overflow-hidden"
     >
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-[0.02]">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(45deg, #2563EB 1px, transparent 1px),
-                           linear-gradient(-45deg, #2563EB 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}></div>
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute decorative-element w-2 h-2 rounded-full bg-[#06B6D4]/5"
+            style={{
+              left: `${10 + i * 8}%`,
+              top: `${15 + (i % 4) * 25}%`,
+            }}
+          ></div>
+        ))}
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block mb-4">
-            <span className="section-tag text-[#2563EB] text-sm font-light tracking-widest uppercase">
-              About Mansol
-            </span>
-            <div className="w-12 h-px bg-[#2563EB] mx-auto mt-2 section-tag-line transform origin-left"></div>
-          </div>
-          
-          <h1 className="section-title text-4xl md:text-5xl font-thin italic font-serif text-black mb-6">
-            Empowering Workforce Excellence
-          </h1>
-          
-          <div className="card-content">
-            <p className="text-[#555555] text-lg max-w-3xl mx-auto leading-relaxed">
-              Mansol Hab Trainings is a premier institution delivering high-quality education, 
-              workforce training, and recruitment solutions empowering individuals and organizations.
+      {/* Top Heading Section - BEFORE Image */}
+      <div 
+        ref={topHeadingRef}
+        className="relative bg-gradient-to-b from-white to-gray-50 py-12 md:py-16"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            {/* Decorative line */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="w-10 h-0.5 bg-[#06B6D4] rounded-full"></div>
+              <div className="w-2 h-2 bg-[#06B6D4] rounded-full float-element"></div>
+              <div className="w-10 h-0.5 bg-[#06B6D4] rounded-full"></div>
+            </div>
+            
+            {/* First Heading */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#111827] mb-2">
+              About <span className="text-[#06B6D4]">Mansol</span>
+            </h1>
+            
+            {/* Second Heading */}
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#475569]">
+              Pakistan Premier Safety Training Institute
+            </h2>
+            
+            {/* Description */}
+            <p className="mt-6 text-sm md:text-base text-[#64748b] max-w-2xl mx-auto leading-relaxed">
+              Transforming workplace safety through world-class certification programs and 
+              hands-on training that meets international standards.
             </p>
           </div>
         </div>
+        
+        {/* Arrow pointing down to image */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
+          <div className="animate-bounce">
+            <svg className="w-6 h-6 text-[#06B6D4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Column: Image and About */}
-          <div ref={leftColumnRef} className="space-y-8">
-            {/* About Card */}
-            <div className="about-card bg-white rounded-lg p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start mb-6">
-                <div className="flex-shrink-0 icon-container">
-                  <div className="w-14 h-14 rounded-full border-2 border-[#2563EB] flex items-center justify-center">
-                    <FaRocket className="text-[#2563EB] text-xl" />
-                  </div>
-                </div>
-                <div className="ml-6 card-content">
-                  <h3 className="text-2xl font-bold text-black mb-2">
-                    About Mansol
-                  </h3>
-                  <div className="w-16 h-0.5 bg-[#2563EB] mb-4"></div>
-                  <p className="text-[#555555] leading-relaxed">
-                    As a premier workforce development institution, we specialize in bridging the gap 
-                    between industry requirements and individual capabilities. Our comprehensive training 
-                    programs and strategic recruitment solutions are designed to meet the evolving demands 
-                    of global markets.
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* Hero Image Section - Full Width */}
+      <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
+        <div 
+          ref={heroImageRef}
+          className="absolute inset-0 w-full h-full"
+        >
+          <img
+            src="/about.jpg"
+            alt="Mansol Institute Training Center"
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#06B6D4]/20 via-transparent to-[#0891b2]/20"></div>
+        </div>
 
-            {/* Image Container */}
-            <div 
-              ref={imageRef}
-              className="about-card overflow-hidden rounded-lg transform transition-transform duration-300"
-            >
-              <div className="relative">
-                <img
-                  src="/mansol_logo_about.jpg"
-                  alt="Mansol Training Facility"
-                  className="w-full h-auto object-cover rounded-lg shadow-md"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                
-                {/* Animated overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-500/0 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700"></div>
+        {/* Content Inside Image */}
+        <div 
+          ref={contentRef}
+          className="absolute inset-0 flex items-center"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-xl">
+              {/* Headings Inside Image */}
+              <div className="mb-6">
+                <h1 
+                  ref={heading1Ref}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
+                >
+                  Established
+                  <span className="block text-[#06B6D4] mt-1">Since 2008</span>
+                </h1>
               </div>
+
+              {/* Divider */}
+              <div className="w-14 h-0.5 bg-gradient-to-r from-white/40 via-[#06B6D4] to-white/40 mb-4 rounded-full"></div>
+
+              {/* Second Heading Inside Image */}
+              <div className="mb-6">
+                <h2 
+                  ref={heading2Ref}
+                  className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight"
+                >
+                  Leading Safety Education
+                  <span className="block">in Pakistan</span>
+                </h2>
+              </div>
+              
+              <p className="text-sm md:text-base text-white/85 mb-8 max-w-lg leading-relaxed">
+                15+ years of excellence in professional safety training, empowering 
+                thousands of professionals to achieve international safety standards.
+              </p>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Right Column: Vision, Values, Approach Cards */}
-          <div ref={rightColumnRef} className="space-y-8">
-            {aboutData.slice(1).map((item) => (
-              <div
-                key={item.id}
-                className="about-card bg-white rounded-lg p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-start mb-6">
-                  <div className="flex-shrink-0 icon-container">
-                    <div className="w-14 h-14 rounded-full border-2 border-[#2563EB] flex items-center justify-center">
-                      <item.icon className="text-[#2563EB] text-xl" />
+      {/* Main Content Section */}
+      <div className="relative bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+          {/* Left-Right Animation Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20">
+            {/* Left Column - Mission */}
+            <div 
+              ref={leftColumnRef}
+              className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 md:p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-[#06B6D4]/10 flex items-center justify-center">
+                  <FaBuilding className="text-[#06B6D4] text-lg" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-[#111827]">
+                  Our Mission
+                </h3>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                  To revolutionize workplace safety standards in Pakistan by providing world-class, 
+                  practical safety education that empowers professionals to create safer working 
+                  environments across all industries.
+                </p>
+                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                  We aim to bridge the gap between theoretical knowledge and practical application, 
+                  ensuring every graduate is job-ready and capable of implementing international 
+                  safety standards in local contexts.
+                </p>
+              </div>
+
+              {/* Key Focus Areas */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <h4 className="font-semibold text-[#111827] mb-4 flex items-center gap-2">
+                  <FaBullseye className="text-[#06B6D4]" />
+                  Key Focus Areas
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {["Practical Training", "Industry Standards", "Certification", "Career Support"].map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-[#06B6D4] rounded-full float-element"></div>
+                      <span className="text-sm text-[#475569]">{item}</span>
                     </div>
-                  </div>
-                  <div className="ml-6 card-content">
-                    <h3 className="text-2xl font-bold text-black mb-2">
-                      {item.title}
-                    </h3>
-                    <div className="w-16 h-0.5 bg-[#2563EB] mb-4"></div>
-                    <p className="text-[#555555] leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
 
-            {/* Industry Expertise */}
-            <div className="about-card bg-white rounded-lg p-8 border border-gray-100 shadow-sm">
-              <div className="card-content">
-                <h3 className="text-2xl font-bold text-black mb-6">
-                  Industry Expertise
+            {/* Right Column - Approach */}
+            <div 
+              ref={rightColumnRef}
+              className="bg-gradient-to-br from-[#06B6D4]/5 to-white rounded-xl p-6 md:p-8 border border-[#06B6D4]/20 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-[#06B6D4] flex items-center justify-center">
+                  <FaHandsHelping className="text-white text-lg" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-[#111827]">
+                  Our Approach
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                  We believe in learning by doing. Our training methodology combines theoretical 
+                  knowledge with extensive hands-on practice, using state-of-the-art equipment 
+                  and real-world scenarios.
+                </p>
+                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                  Each program is designed with industry requirements in mind, ensuring graduates 
+                  are equipped with skills that are immediately applicable in their workplaces.
+                </p>
+              </div>
+
+              {/* Methodology Points */}
+              <div className="mt-8 pt-6 border-t border-[#06B6D4]/10">
+                <h4 className="font-semibold text-[#111827] mb-4 flex items-center gap-2">
+                  <FaUsersCog className="text-[#06B6D4]" />
+                  Training Methodology
+                </h4>
+                <div className="space-y-3">
                   {[
-                    { name: "Oil & Gas" },
-                    { name: "Chemical" },
-                    { name: "Construction" },
-                    { name: "Electro-Mechanical" },
-                    { name: "EPC Projects" },
-                    { name: "GCC Operations" },
-                  ].map((industry, index) => (
-                    <div
-                      key={index}
-                      className="industry-item flex items-center p-3 rounded-lg border border-gray-100 hover:border-[#2563EB]/20 transition-colors duration-200 group"
-                    >
-                      <div className="w-2 h-2 bg-[#2563EB] rounded-full mr-3 transition-transform duration-300 group-hover:scale-125"></div>
-                      <span className="text-[#555555] text-sm font-medium group-hover:text-[#2563EB] transition-colors duration-300">
-                        {industry.name}
-                      </span>
+                    "70% Practical, 30% Theoretical",
+                    "Industry Expert Instructors",
+                    "Real Case Studies",
+                    "Simulation Exercises"
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-white/50 rounded-lg hover:bg-[#06B6D4]/5 transition-colors">
+                      <FaCheckCircle className="text-[#06B6D4] flex-shrink-0" />
+                      <span className="text-sm text-[#475569]">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 pt-16 border-t border-gray-100">
-          {[
-            { number: "15", suffix: "+", label: "Years Experience" },
-            { number: "5000", suffix: "+", label: "Professionals Trained" },
-            { number: "50", suffix: "+", label: "Industry Partners" },
-            { number: "98", suffix: "%", label: "Success Rate" },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="stat-item text-center p-6 hover:bg-gray-50 rounded-lg transition-all duration-300 group"
-            >
-              <div className="flex items-center justify-center mb-2">
-                <span className="stat-number text-4xl font-bold text-black group-hover:text-[#2563EB] transition-colors duration-300">
-                  {stat.number}
-                </span>
-                <span className="text-4xl font-bold text-black group-hover:text-[#2563EB] transition-colors duration-300 ml-1">
-                  {stat.suffix}
-                </span>
+          {/* Introduction Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20">
+            {/* Left Column - Introduction */}
+            <div ref={missionSectionRef} className="space-y-8">
+              <div className="section-header">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-0.5 bg-[#06B6D4]"></div>
+                  <span className="text-[#06B6D4] text-xs font-semibold uppercase tracking-wider">
+                    Our Journey & Vision
+                  </span>
+                  <div className="w-10 h-0.5 bg-[#06B6D4]"></div>
+                </div>
+                
+                <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-6">
+                  Building a <span className="text-[#06B6D4]">Safer Pakistan</span>
+                </h2>
+                
+                <div className="space-y-4">
+                  <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                    Founded in 2008, Mansol Institute emerged with a singular vision: to revolutionize 
+                    workplace safety standards in Pakistan. What began as a small training center has 
+                    grown into the nations most trusted safety education provider.
+                  </p>
+                  <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                    Our mission extends beyond certification - we are cultivating a culture of safety 
+                    consciousness that permeates every industry, ensuring professionals are not just 
+                    qualified, but truly equipped to save lives and prevent accidents.
+                  </p>
+                </div>
               </div>
-              <div className="text-[#555555] text-sm group-hover:text-black transition-colors duration-300">
-                {stat.label}
+
+              {/* Highlights */}
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <h3 className="text-lg md:text-xl font-bold text-[#111827] mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 flex items-center justify-center">
+                    <FaBullseye className="text-[#06B6D4]" />
+                  </div>
+                  Core Training Programs
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {highlights.map((item, index) => (
+                    <div 
+                      key={index} 
+                      className="group flex items-center gap-2 p-3 bg-white rounded-lg border border-gray-100 hover:border-[#06B6D4] hover:shadow-sm transition-all duration-200"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-[#06B6D4]/10 flex items-center justify-center group-hover:bg-[#06B6D4] group-hover:scale-110 transition-all">
+                        <FaCheckCircle className="text-[#06B6D4] text-xs group-hover:text-white" />
+                      </div>
+                      <span className="text-xs md:text-sm text-[#475569] group-hover:text-[#06B6D4]">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          ))}
+
+            {/* Right Column - Why Choose Us */}
+            <div ref={whyChooseRef} className="why-choose-section">
+              <div className="sticky top-20">
+                <div className="bg-gradient-to-br from-[#111827] to-[#1e293b] rounded-xl p-6 md:p-8 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/20 flex items-center justify-center">
+                      <FaRocket className="text-[#06B6D4] text-sm" />
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold">Why Choose Mansol?</h3>
+                  </div>
+                  <p className="text-white/80 mb-6 text-sm">
+                    What makes us the preferred choice for safety professionals
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {whyChooseUs.map((item, index) => (
+                      <div 
+                        key={index}
+                        className="why-choose-card group bg-white/5 backdrop-blur-sm rounded-lg p-3 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-[#06B6D4]/30"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#06B6D4] to-[#0891b2] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <item.icon className="text-white text-xs" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-white text-sm mb-1">{item.title}</h4>
+                            <p className="text-xs text-white/70">{item.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About Cards Grid */}
+          <div className="cards-container mb-16 md:mb-20">
+            <div ref={pillarsHeadingRef} className="text-center mb-12">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-[#06B6D4]"></div>
+                <span className="text-[#06B6D4] text-xs font-semibold uppercase tracking-wider">
+                  Our Excellence Pillars
+                </span>
+                <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-[#06B6D4]"></div>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-4">
+                Built on <span className="text-[#06B6D4]">Four Pillars</span>
+              </h2>
+              <p className="text-sm text-[#475569] max-w-2xl mx-auto leading-relaxed">
+                Each aspect of our training methodology is designed to deliver unparalleled results
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {aboutCards.map((card, index) => (
+                <div
+                  key={card.id}
+                  ref={(el) => { cardsRef.current[index] = el; }}
+                  className="group bg-white rounded-lg p-5 md:p-6 border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex flex-col h-full">
+                    {/* Icon with gradient */}
+                    <div className="relative mb-4">
+                      <div 
+                        className="w-12 h-12 rounded-lg flex items-center justify-center relative overflow-hidden"
+                        style={{ background: `linear-gradient(135deg, ${card.color}, ${card.color}80)` }}
+                      >
+                        <div className="absolute inset-0 bg-white/10"></div>
+                        <card.icon className="text-white text-lg relative z-10" />
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <h3 className="text-base md:text-lg font-bold text-[#111827] mb-3 group-hover:text-[#06B6D4] transition-colors">
+                      {card.title}
+                    </h3>
+                    
+                    <p className="text-xs md:text-sm text-[#475569] leading-relaxed flex-grow mb-4">
+                      {card.description}
+                    </p>
+
+                    {/* Number indicator */}
+                    <div className="mt-auto pt-4 border-t border-gray-100 group-hover:border-[#06B6D4] transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs font-medium text-[#06B6D4]">Learn More →</div>
+                        <div className="text-lg font-bold text-gray-300">0{card.id}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div ref={statsContainerRef} className="stats-section mb-16 md:mb-20">
+            <div className="bg-gradient-to-br from-gray-900 to-[#111827] rounded-xl md:rounded-2xl p-6 md:p-8 relative overflow-hidden">
+              {/* Background pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#06B6D4] rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#0891b2] rounded-full blur-2xl"></div>
+              </div>
+              
+              <div className="relative z-10">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 mb-3">
+                    <FaChartLine className="text-[#06B6D4]" />
+                    <span className="text-[#06B6D4] text-xs font-semibold uppercase tracking-wider">
+                      Our Impact
+                    </span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                    Transforming <span className="text-[#06B6D4]">Safety Education</span>
+                  </h2>
+                  <p className="text-white/80 max-w-xl mx-auto text-sm">
+                    Measuring our contribution to professional safety standards
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                  {[
+                    { value: 15, suffix: "+", label: "Years Experience", icon: FaChartLine },
+                    { value: 5000, suffix: "+", label: "Professionals", icon: FaUsers },
+                    { value: 98, suffix: "%", label: "Success Rate", icon: FaAward },
+                    { value: 50, suffix: "+", label: "Industry Partners", icon: FaGlobe },
+                  ].map((stat, index) => (
+                    <div
+                      key={index}
+                      className="group text-center p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-[#06B6D4]/30"
+                    >
+                      <div className="flex justify-center mb-4">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#06B6D4]/20 to-transparent flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <stat.icon className="text-lg text-[#06B6D4]" />
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-center gap-1 mb-2">
+                        <span 
+                          className="stat-number text-2xl md:text-3xl font-bold text-white" 
+                          data-value={stat.value}
+                        >
+                          {stat.value}
+                        </span>
+                        <span className="text-2xl md:text-3xl font-bold text-white">
+                          {stat.suffix}
+                        </span>
+                      </div>
+                      
+                      <div className="text-sm font-semibold text-white">
+                        {stat.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Accreditation & Recognition */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-4 bg-gradient-to-r from-white to-gray-50 rounded-lg px-6 py-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <FaShieldAlt className="text-2xl text-[#06B6D4]" />
+              <div className="text-left">
+                <div className="font-bold text-[#111827] text-base mb-0.5">Government Recognized</div>
+                <div className="text-xs text-[#475569]">Registered with TEVTA, PSB & International Bodies</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom border */}
+        <div className="py-6 border-t border-gray-200 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-center text-xs text-[#475569]">
+              Trusted by 500+ organizations across Pakistan including Fortune 500 companies, 
+              government agencies, and leading industrial groups
+            </p>
+          </div>
         </div>
       </div>
     </section>
