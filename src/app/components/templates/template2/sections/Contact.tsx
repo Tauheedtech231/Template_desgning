@@ -19,35 +19,37 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const contacts = [
-  {
-    title: "Mansol Manpower Solutions",
-    email: "info@mansol.com.pk",
-    location: "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
-    phone: "+92 (423) 5700362",
-  },
-  {
-    title: "Mansol Technical Training Institute",
-    email: "mtti@mansol.com.pk",
-    location: "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
-    phone: "+92 (423) 7169399",
-  },
-  {
-    title: "Mansol Engineering Services",
-    email: "mes@mansol.com.pk",
-    location: "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
-    phone: "+92 (423) 5700362",
-  },
-];
+interface ContactCard {
+  title: string;
+  email: string;
+  location: string;
+  phone: string;
+}
 
-const socialLinks = [
-  { icon: <FaLinkedin />, url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
-  { icon: <FaInstagram />, url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
-  { icon: <FaFacebook />, url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
-];
+interface SocialLink {
+  platform: string;
+  url: string;
+}
+
+interface ContactData {
+  cards: ContactCard[];
+  socialLinks: SocialLink[];
+  formHeader?: string;
+  formDescription?: string;
+  operatingHours?: string;
+}
 
 export const ContactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [contactData, setContactData] = useState<ContactData>({
+    cards: [],
+    socialLinks: [],
+    formHeader: "Send Us a Message",
+    formDescription: "Fill out the form below and our team will get back to you within 24 hours.",
+    operatingHours: "Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM"
+  });
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,7 +57,200 @@ export const ContactSection = () => {
     message: "",
   });
 
+  // ✅ Load contact data from database with template_id = 2
   useEffect(() => {
+    const loadContactData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `/api/sections?template_id=2&section_name=Contacts`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched contact data:', data);
+          
+          if (data.sections && data.sections.length > 0) {
+            const dbContent = data.sections[0].content;
+            
+            // Map database data to component format
+            const mappedData: ContactData = {
+              // If we have contactInfo in database, create cards from it
+              cards: dbContent.contactInfo ? [
+                {
+                  title: "Mansol Manpower Solutions",
+                  email: dbContent.contactInfo.email || "info@mansol.com.pk",
+                  location: dbContent.contactInfo.address || "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: dbContent.contactInfo.contactNumbers?.phone || "+92 (423) 5700362"
+                },
+                {
+                  title: "Mansol Technical Training Institute",
+                  email: dbContent.contactInfo.email || "mtti@mansol.com.pk",
+                  location: dbContent.contactInfo.address || "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
+                  phone: dbContent.contactInfo.contactNumbers?.office || "+92 (423) 7169399"
+                },
+                {
+                  title: "Mansol Engineering Services",
+                  email: dbContent.contactInfo.email || "mes@mansol.com.pk",
+                  location: dbContent.contactInfo.address || "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: dbContent.contactInfo.contactNumbers?.phone || "+92 (423) 5700362"
+                }
+              ] : [
+                // Fallback default data
+                {
+                  title: "Mansol Manpower Solutions",
+                  email: "info@mansol.com.pk",
+                  location: "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: "+92 (423) 5700362",
+                },
+                {
+                  title: "Mansol Technical Training Institute",
+                  email: "mtti@mansol.com.pk",
+                  location: "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
+                  phone: "+92 (423) 7169399",
+                },
+                {
+                  title: "Mansol Engineering Services",
+                  email: "mes@mansol.com.pk",
+                  location: "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: "+92 (423) 5700362",
+                },
+              ],
+              
+              // Social links from database or default
+              socialLinks: dbContent.contactInfo?.socialMedia ? 
+                Object.entries(dbContent.contactInfo.socialMedia)
+                  .filter(([_, url]) => url && typeof url === 'string')
+                  .map(([platform, url]) => ({
+                    platform,
+                    url: url as string
+                  }))
+                  .slice(0, 3) // Take only first 3
+              : [
+                { platform: "linkedin", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+                { platform: "instagram", url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
+                { platform: "facebook", url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+              ],
+              
+              formHeader: "Send Us a Message",
+              formDescription: "Fill out the form below and our team will get back to you within 24 hours.",
+              operatingHours: dbContent.contactInfo?.workingHours 
+                ? `Operating Hours: Weekdays ${dbContent.contactInfo.workingHours.weekdays || '9:00 AM - 6:00 PM'}, Saturday ${dbContent.contactInfo.workingHours.saturday || '9:00 AM - 2:00 PM'}, Sunday ${dbContent.contactInfo.workingHours.sunday || 'Closed'}`
+                : "Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM"
+            };
+            
+            setContactData(mappedData);
+          } else {
+            // Use default data if no data in database
+            setContactData({
+              cards: [
+                {
+                  title: "Mansol Manpower Solutions",
+                  email: "info@mansol.com.pk",
+                  location: "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: "+92 (423) 5700362",
+                },
+                {
+                  title: "Mansol Technical Training Institute",
+                  email: "mtti@mansol.com.pk",
+                  location: "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
+                  phone: "+92 (423) 7169399",
+                },
+                {
+                  title: "Mansol Engineering Services",
+                  email: "mes@mansol.com.pk",
+                  location: "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                  phone: "+92 (423) 5700362",
+                },
+              ],
+              socialLinks: [
+                { platform: "linkedin", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+                { platform: "instagram", url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
+                { platform: "facebook", url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+              ],
+              formHeader: "Send Us a Message",
+              formDescription: "Fill out the form below and our team will get back to you within 24 hours.",
+              operatingHours: "Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM"
+            });
+          }
+        } else {
+          console.error('Failed to fetch contact data');
+          // Use default data on error
+          setContactData({
+            cards: [
+              {
+                title: "Mansol Manpower Solutions",
+                email: "info@mansol.com.pk",
+                location: "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                phone: "+92 (423) 5700362",
+              },
+              {
+                title: "Mansol Technical Training Institute",
+                email: "mtti@mansol.com.pk",
+                location: "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
+                phone: "+92 (423) 7169399",
+              },
+              {
+                title: "Mansol Engineering Services",
+                email: "mes@mansol.com.pk",
+                location: "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+                phone: "+92 (423) 5700362",
+              },
+            ],
+            socialLinks: [
+              { platform: "linkedin", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+              { platform: "instagram", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+              { platform: "facebook", url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+            ],
+            formHeader: "Send Us a Message",
+            formDescription: "Fill out the form below and our team will get back to you within 24 hours.",
+            operatingHours: "Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM"
+          });
+        }
+      } catch (error) {
+        console.error('Error loading contact data:', error);
+        // Use default data on error
+        setContactData({
+          cards: [
+            {
+              title: "Mansol Manpower Solutions",
+              email: "info@mansol.com.pk",
+              location: "Office No. 123, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+              phone: "+92 (423) 5700362",
+            },
+            {
+              title: "Mansol Technical Training Institute",
+              email: "mtti@mansol.com.pk",
+              location: "E-210, Gulshan Ali Colony, New Airport Road, Lahore",
+              phone: "+92 (423) 7169399",
+            },
+            {
+              title: "Mansol Engineering Services",
+              email: "mes@mansol.com.pk",
+              location: "Office No. 122, 1st Floor, Divine Mega-2, New Airport Road, Opposite Honda Point, Lahore",
+              phone: "+92 (423) 5700362",
+            },
+          ],
+          socialLinks: [
+            { platform: "linkedin", url: "https://www.linkedin.com/in/mansol-hab-traning-services-b7b4b1296/" },
+            { platform: "instagram", url: "https://www.instagram.com/mansol.hab.training.services/?next=%2F&hl=en" },
+            { platform: "facebook", url: "https://www.facebook.com/people/Mansol-Hab/61567152315949/" },
+          ],
+          formHeader: "Send Us a Message",
+          formDescription: "Fill out the form below and our team will get back to you within 24 hours.",
+          operatingHours: "Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadContactData();
+  }, []);
+
+  useEffect(() => {
+    if (isLoading || contactData.cards.length === 0) return;
+
     const ctx = gsap.context(() => {
       // Left side animations
       gsap.fromTo(
@@ -126,7 +321,7 @@ export const ContactSection = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isLoading, contactData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -143,6 +338,35 @@ export const ContactSection = () => {
     // Reset form
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
+
+  // Helper function to get social icon
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'linkedin':
+        return <FaLinkedin />;
+      case 'instagram':
+        return <FaInstagram />;
+      case 'facebook':
+        return <FaFacebook />;
+      case 'twitter':
+        return null; // Add if needed
+      default:
+        return null;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <section id="contact" className="relative min-h-screen flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB]"></div>
+            <span className="ml-3 text-gray-600">Loading contact information...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -174,7 +398,7 @@ export const ContactSection = () => {
 
             {/* Contact Cards */}
             <div className="space-y-8 mb-12">
-              {contacts.map((contact, index) => (
+              {contactData.cards.map((contact, index) => (
                 <div 
                   key={index} 
                   className="p-6 border border-white/10 rounded-lg hover:border-[#2563EB]/30 transition-all duration-300"
@@ -255,10 +479,10 @@ export const ContactSection = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[#CCCCCC] text-sm mb-4">
-                    Operating Hours: Monday - Friday, 9:00 AM - 6:00 PM
+                    {contactData.operatingHours}
                   </p>
                   <div className="flex space-x-4">
-                    {socialLinks.map((social, idx) => (
+                    {contactData.socialLinks.map((social, idx) => (
                       <a
                         key={idx}
                         href={social.url}
@@ -266,7 +490,7 @@ export const ContactSection = () => {
                         rel="noopener noreferrer"
                         className="w-10 h-10 rounded-full border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white transition-all duration-300 flex items-center justify-center"
                       >
-                        {social.icon}
+                        {getSocialIcon(social.platform)}
                       </a>
                     ))}
                   </div>
@@ -284,10 +508,10 @@ export const ContactSection = () => {
           <div className="w-full max-w-lg contact-form">
             <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
-                Send Us a Message
+                {contactData.formHeader}
               </h2>
               <p className="text-gray-600">
-                Fill out the form below and our team will get back to you within 24 hours.
+                {contactData.formDescription}
               </p>
             </div>
 

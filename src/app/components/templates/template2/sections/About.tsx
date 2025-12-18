@@ -1,20 +1,49 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FaRocket, FaBullseye, FaChartLine, FaUsers, FaAward, FaGlobe, FaShieldAlt, FaGraduationCap, FaIndustry, FaCertificate, FaCheckCircle, FaStar, FaHandshake, FaUserGraduate, FaClock, FaMedal, FaBuilding, FaHandsHelping, FaUsersCog } from "react-icons/fa";
 /* eslint-disable */
-
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export  const About: React.FC = () => {
+// Interface for the fetched data structure
+interface AboutData {
+  name: string;
+  tagline: string;
+  shortDescription: string;
+  longDescription: string;
+  mission: string;
+  vision: string;
+  establishedYear: string;
+  highlights: string[];
+  pillars: Array<{
+    id: number;
+    title: string;
+    description: string;
+  }>;
+  whyChooseUs: Array<{
+    id: number;
+    title: string;
+    description: string;
+  }>;
+  stats: Array<{
+    id: number;
+    label: string;
+    value: number;
+    suffix: string;
+  }>;
+  accreditation: string;
+  coverImage: string;
+  logo: string;
+}
+
+export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const statsRef = useRef<(HTMLDivElement | null)[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const heading2Ref = useRef<HTMLHeadingElement>(null);
@@ -27,7 +56,166 @@ export  const About: React.FC = () => {
   const statsContainerRef = useRef<HTMLDivElement>(null);
   const pillarsHeadingRef = useRef<HTMLDivElement>(null);
 
+  // State for dynamic data
+  const [aboutData, setAboutData] = useState<AboutData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data from database on component mount
   useEffect(() => {
+    const fetchAboutData = async () => {
+      try {
+        const response = await fetch(
+          `https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=2&section_name=About`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.sections && data.sections.length > 0) {
+            setAboutData(data.sections[0].content);
+          }
+        } else {
+          console.error('Failed to fetch about data');
+        }
+      } catch (error) {
+        console.error('Error loading about data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAboutData();
+  }, []);
+
+  // Extract data with fallbacks
+  const instituteName = aboutData?.name || "Mansol";
+  const tagline = aboutData?.tagline || "Pakistan Premier Safety Training Institute";
+  const description = aboutData?.shortDescription || 
+    "Transforming workplace safety through world-class certification programs and hands-on training that meets international standards.";
+  const mission = aboutData?.mission || 
+    "To revolutionize workplace safety standards in Pakistan by providing world-class, practical safety education that empowers professionals to create safer working environments across all industries.";
+  const vision = aboutData?.vision || 
+    "Founded in 2008, Mansol Institute emerged with a singular vision: to revolutionize workplace safety standards in Pakistan. What began as a small training center has grown into the nations most trusted safety education provider.";
+  const establishedYear = aboutData?.establishedYear || "2008";
+  const longDescription = aboutData?.longDescription || 
+    "Established\nSince 2008\nLeading Safety Education\nin Pakistan\n15+ years of excellence in professional safety training, empowering thousands of professionals to achieve international safety standards.";
+  const coverImage = aboutData?.coverImage || "/about.jpg";
+  const highlights = aboutData?.highlights || [
+    "NEBOSH Certification Programs",
+    "IOSH Managing Safely",
+    "OSHA Standards Training",
+    "Fire Safety Training",
+    "First Aid & CPR Certification",
+    "Risk Assessment Training",
+  ];
+
+  // Parse the long description
+  const longDescLines = longDescription.split('\n');
+  const heroLines = {
+    line1: longDescLines[0] || "Established",
+    line2: longDescLines[1] || `Since ${establishedYear}`,
+    line3: longDescLines[2] || "Leading Safety Education",
+    line4: longDescLines[3] || "in Pakistan",
+    line5: longDescLines[4] || "15+ years of excellence in professional safety training, empowering thousands of professionals to achieve international safety standards."
+  };
+
+  // Use pillars from database or fallback
+  const aboutCards = aboutData?.pillars || [
+    {
+      id: 1,
+      title: "Industry Leadership",
+      description: "15+ years of excellence in safety training, setting industry standards and benchmarks for professional development.",
+    },
+    {
+      id: 2,
+      title: "Expert Training",
+      description: "Internationally certified trainers with real-world experience delivering practical, hands-on safety education.",
+    },
+    {
+      id: 3,
+      title: "Global Standards",
+      description: "Curriculum aligned with NEBOSH, IOSH, OSHA, and other international safety certification requirements.",
+    },
+    {
+      id: 4,
+      title: "Certified Excellence",
+      description: "98% certification success rate with comprehensive assessment and continuous improvement programs.",
+    },
+  ];
+
+  // Map icon to each pillar (fallback if not in database)
+  const pillarWithIcons = aboutCards.map((pillar, index) => {
+    const icons = [FaShieldAlt, FaGraduationCap, FaIndustry, FaCertificate];
+    const colors = ["#06B6D4", "#10B981", "#F97316", "#8B5CF6"];
+    return {
+      ...pillar,
+      icon: icons[index] || FaShieldAlt,
+      color: colors[index] || "#06B6D4"
+    };
+  });
+
+  const whyChooseUs = aboutData?.whyChooseUs || [
+    {
+      id: 1,
+      title: "Proven Excellence",
+      description: "Consistently rated 4.9+ by professionals across industries",
+    },
+    {
+      id: 2,
+      title: "Expert Faculty",
+      description: "Industry veterans with 20+ years of safety experience",
+    },
+    {
+      id: 3,
+      title: "Industry Partnerships",
+      description: "Collaborations with top organizations for placement",
+    },
+    {
+      id: 4,
+      title: "Flexible Scheduling",
+      description: "Weekend, evening, and customized corporate batches",
+    },
+    {
+      id: 5,
+      title: "Premium Facilities",
+      description: "State-of-the-art training labs and equipment",
+    },
+    {
+      id: 6,
+      title: "Post-Course Support",
+      description: "Lifetime career guidance and certification renewal",
+    },
+  ];
+
+  // Map icons for why choose us
+  const whyChooseUsWithIcons = whyChooseUs.map((item, index) => {
+    const icons = [FaStar, FaUserGraduate, FaHandshake, FaClock, FaMedal, FaCheckCircle];
+    return {
+      ...item,
+      icon: icons[index] || FaStar
+    };
+  });
+
+  const stats = aboutData?.stats || [
+    { id: 1, label: "Years Experience", value: 15, suffix: "+" },
+    { id: 2, label: "Professionals", value: 5000, suffix: "+" },
+    { id: 3, label: "Success Rate", value: 98, suffix: "%" },
+    { id: 4, label: "Industry Partners", value: 50, suffix: "+" },
+  ];
+
+  // Map icons for stats
+  const statsWithIcons = stats.map((stat, index) => {
+    const icons = [FaChartLine, FaUsers, FaAward, FaGlobe];
+    return {
+      ...stat,
+      icon: icons[index] || FaChartLine
+    };
+  });
+
+  const accreditation = aboutData?.accreditation || "National Education Board Certified";
+
+  useEffect(() => {
+    if (loading || !sectionRef.current) return;
+
     const ctx = gsap.context(() => {
       // Clean smooth scroll for entire page
       gsap.utils.toArray("section").forEach((section: any) => {
@@ -213,7 +401,7 @@ export  const About: React.FC = () => {
         }
       );
 
-      // Pillars cards hover effects (unchanged)
+      // Pillars cards hover effects
       cardsRef.current.forEach((card) => {
         if (!card) return;
         
@@ -253,7 +441,7 @@ export  const About: React.FC = () => {
         }
       );
 
-      // Stats counting animation (unchanged)
+      // Stats counting animation
       gsap.fromTo(
         ".stat-number",
         { textContent: 0 },
@@ -317,80 +505,21 @@ export  const About: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [loading]);
 
-  const aboutCards = [
-    {
-      id: 1,
-      icon: FaShieldAlt,
-      title: "Industry Leadership",
-      description: "15+ years of excellence in safety training, setting industry standards and benchmarks for professional development.",
-      color: "#06B6D4",
-    },
-    {
-      id: 2,
-      icon: FaGraduationCap,
-      title: "Expert Training",
-      description: "Internationally certified trainers with real-world experience delivering practical, hands-on safety education.",
-      color: "#10B981",
-    },
-    {
-      id: 3,
-      icon: FaIndustry,
-      title: "Global Standards",
-      description: "Curriculum aligned with NEBOSH, IOSH, OSHA, and other international safety certification requirements.",
-      color: "#F97316",
-    },
-    {
-      id: 4,
-      icon: FaCertificate,
-      title: "Certified Excellence",
-      description: "98% certification success rate with comprehensive assessment and continuous improvement programs.",
-      color: "#8B5CF6",
-    },
-  ];
-
-  const whyChooseUs = [
-    {
-      icon: FaStar,
-      title: "Proven Excellence",
-      description: "Consistently rated 4.9+ by professionals across industries",
-    },
-    {
-      icon: FaUserGraduate,
-      title: "Expert Faculty",
-      description: "Industry veterans with 20+ years of safety experience",
-    },
-    {
-      icon: FaHandshake,
-      title: "Industry Partnerships",
-      description: "Collaborations with top organizations for placement",
-    },
-    {
-      icon: FaClock,
-      title: "Flexible Scheduling",
-      description: "Weekend, evening, and customized corporate batches",
-    },
-    {
-      icon: FaMedal,
-      title: "Premium Facilities",
-      description: "State-of-the-art training labs and equipment",
-    },
-    {
-      icon: FaCheckCircle,
-      title: "Post-Course Support",
-      description: "Lifetime career guidance and certification renewal",
-    },
-  ];
-
-  const highlights = [
-    "NEBOSH Certification Programs",
-    "IOSH Managing Safely",
-    "OSHA Standards Training",
-    "Fire Safety Training",
-    "First Aid & CPR Certification",
-    "Risk Assessment Training",
-  ];
+  // Show loading state
+  if (loading) {
+    return (
+      <section id="about" className="relative bg-white overflow-hidden min-h-screen">
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-[#06B6D4] border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading about section...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -426,20 +555,19 @@ export  const About: React.FC = () => {
               <div className="w-10 h-0.5 bg-[#06B6D4] rounded-full"></div>
             </div>
             
-            {/* First Heading */}
+            {/* First Heading - Dynamic */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#111827] mb-2">
-              About <span className="text-[#06B6D4]">Mansol</span>
+              About <span className="text-[#06B6D4]">{instituteName}</span>
             </h1>
             
-            {/* Second Heading */}
+            {/* Second Heading - Dynamic */}
             <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#475569]">
-              Pakistan Premier Safety Training Institute
+              {tagline}
             </h2>
             
-            {/* Description */}
+            {/* Description - Dynamic */}
             <p className="mt-6 text-sm md:text-base text-[#64748b] max-w-2xl mx-auto leading-relaxed">
-              Transforming workplace safety through world-class certification programs and 
-              hands-on training that meets international standards.
+              {description}
             </p>
           </div>
         </div>
@@ -460,9 +588,10 @@ export  const About: React.FC = () => {
           ref={heroImageRef}
           className="absolute inset-0 w-full h-full"
         >
+          {/* Dynamic Cover Image */}
           <img
-            src="/about.jpg"
-            alt="Mansol Institute Training Center"
+            src={coverImage}
+            alt={`${instituteName} Training Center`}
             className="w-full h-full object-cover"
           />
           {/* Gradient Overlay */}
@@ -477,34 +606,34 @@ export  const About: React.FC = () => {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-xl">
-              {/* Headings Inside Image */}
+              {/* Headings Inside Image - Dynamic */}
               <div className="mb-6">
                 <h1 
                   ref={heading1Ref}
                   className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
                 >
-                  Established
-                  <span className="block text-[#06B6D4] mt-1">Since 2008</span>
+                  {heroLines.line1}
+                  <span className="block text-[#06B6D4] mt-1">{heroLines.line2}</span>
                 </h1>
               </div>
 
               {/* Divider */}
               <div className="w-14 h-0.5 bg-gradient-to-r from-white/40 via-[#06B6D4] to-white/40 mb-4 rounded-full"></div>
 
-              {/* Second Heading Inside Image */}
+              {/* Second Heading Inside Image - Dynamic */}
               <div className="mb-6">
                 <h2 
                   ref={heading2Ref}
                   className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight"
                 >
-                  Leading Safety Education
-                  <span className="block">in Pakistan</span>
+                  {heroLines.line3}
+                  <span className="block">{heroLines.line4}</span>
                 </h2>
               </div>
               
+              {/* Description - Dynamic */}
               <p className="text-sm md:text-base text-white/85 mb-8 max-w-lg leading-relaxed">
-                15+ years of excellence in professional safety training, empowering 
-                thousands of professionals to achieve international safety standards.
+                {heroLines.line5}
               </p>
             </div>
           </div>
@@ -516,7 +645,7 @@ export  const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           {/* Left-Right Animation Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20">
-            {/* Left Column - Mission */}
+            {/* Left Column - Mission - Dynamic */}
             <div 
               ref={leftColumnRef}
               className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 md:p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300"
@@ -531,16 +660,12 @@ export  const About: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
-                  To revolutionize workplace safety standards in Pakistan by providing world-class, 
-                  practical safety education that empowers professionals to create safer working 
-                  environments across all industries.
-                </p>
-                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
-                  We aim to bridge the gap between theoretical knowledge and practical application, 
-                  ensuring every graduate is job-ready and capable of implementing international 
-                  safety standards in local contexts.
-                </p>
+                {/* Split mission by paragraphs */}
+                {mission.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="text-sm md:text-base text-[#475569] leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
               </div>
 
               {/* Key Focus Areas */}
@@ -560,7 +685,7 @@ export  const About: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column - Approach */}
+            {/* Right Column - Approach/Vision - Dynamic */}
             <div 
               ref={rightColumnRef}
               className="bg-gradient-to-br from-[#06B6D4]/5 to-white rounded-xl p-6 md:p-8 border border-[#06B6D4]/20 shadow-lg hover:shadow-xl transition-shadow duration-300"
@@ -570,20 +695,17 @@ export  const About: React.FC = () => {
                   <FaHandsHelping className="text-white text-lg" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-[#111827]">
-                  Our Approach
+                  Our Vision
                 </h3>
               </div>
               
               <div className="space-y-4">
-                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
-                  We believe in learning by doing. Our training methodology combines theoretical 
-                  knowledge with extensive hands-on practice, using state-of-the-art equipment 
-                  and real-world scenarios.
-                </p>
-                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
-                  Each program is designed with industry requirements in mind, ensuring graduates 
-                  are equipped with skills that are immediately applicable in their workplaces.
-                </p>
+                {/* Split vision by paragraphs */}
+                {vision.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="text-sm md:text-base text-[#475569] leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
               </div>
 
               {/* Methodology Points */}
@@ -628,7 +750,7 @@ export  const About: React.FC = () => {
                 
                 <div className="space-y-4">
                   <p className="text-sm md:text-base text-[#475569] leading-relaxed">
-                    Founded in 2008, Mansol Institute emerged with a singular vision: to revolutionize 
+                    Founded in {establishedYear}, {instituteName} emerged with a singular vision: to revolutionize 
                     workplace safety standards in Pakistan. What began as a small training center has 
                     grown into the nations most trusted safety education provider.
                   </p>
@@ -640,7 +762,7 @@ export  const About: React.FC = () => {
                 </div>
               </div>
 
-              {/* Highlights */}
+              {/* Highlights - Dynamic */}
               <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <h3 className="text-lg md:text-xl font-bold text-[#111827] mb-4 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 flex items-center justify-center">
@@ -666,7 +788,7 @@ export  const About: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column - Why Choose Us */}
+            {/* Right Column - Why Choose Us - Dynamic */}
             <div ref={whyChooseRef} className="why-choose-section">
               <div className="sticky top-20">
                 <div className="bg-gradient-to-br from-[#111827] to-[#1e293b] rounded-xl p-6 md:p-8 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
@@ -674,16 +796,16 @@ export  const About: React.FC = () => {
                     <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/20 flex items-center justify-center">
                       <FaRocket className="text-[#06B6D4] text-sm" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold">Why Choose Mansol?</h3>
+                    <h3 className="text-lg md:text-xl font-bold">Why Choose {instituteName}?</h3>
                   </div>
                   <p className="text-white/80 mb-6 text-sm">
                     What makes us the preferred choice for safety professionals
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {whyChooseUs.map((item, index) => (
+                    {whyChooseUsWithIcons.map((item, index) => (
                       <div 
-                        key={index}
+                        key={item.id}
                         className="why-choose-card group bg-white/5 backdrop-blur-sm rounded-lg p-3 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-[#06B6D4]/30"
                       >
                         <div className="flex items-start gap-3">
@@ -703,7 +825,7 @@ export  const About: React.FC = () => {
             </div>
           </div>
 
-          {/* About Cards Grid */}
+          {/* About Cards Grid - Dynamic */}
           <div className="cards-container mb-16 md:mb-20">
             <div ref={pillarsHeadingRef} className="text-center mb-12">
               <div className="inline-flex items-center gap-3 mb-4">
@@ -714,7 +836,7 @@ export  const About: React.FC = () => {
                 <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-[#06B6D4]"></div>
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-4">
-                Built on <span className="text-[#06B6D4]">Four Pillars</span>
+                Built on <span className="text-[#06B6D4]">{pillarWithIcons.length} Pillars</span>
               </h2>
               <p className="text-sm text-[#475569] max-w-2xl mx-auto leading-relaxed">
                 Each aspect of our training methodology is designed to deliver unparalleled results
@@ -722,7 +844,7 @@ export  const About: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              {aboutCards.map((card, index) => (
+              {pillarWithIcons.map((card, index) => (
                 <div
                   key={card.id}
                   ref={(el) => { cardsRef.current[index] = el; }}
@@ -762,7 +884,7 @@ export  const About: React.FC = () => {
             </div>
           </div>
 
-          {/* Stats Section */}
+          {/* Stats Section - Dynamic */}
           <div ref={statsContainerRef} className="stats-section mb-16 md:mb-20">
             <div className="bg-gradient-to-br from-gray-900 to-[#111827] rounded-xl md:rounded-2xl p-6 md:p-8 relative overflow-hidden">
               {/* Background pattern */}
@@ -788,14 +910,9 @@ export  const About: React.FC = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                  {[
-                    { value: 15, suffix: "+", label: "Years Experience", icon: FaChartLine },
-                    { value: 5000, suffix: "+", label: "Professionals", icon: FaUsers },
-                    { value: 98, suffix: "%", label: "Success Rate", icon: FaAward },
-                    { value: 50, suffix: "+", label: "Industry Partners", icon: FaGlobe },
-                  ].map((stat, index) => (
+                  {statsWithIcons.map((stat) => (
                     <div
-                      key={index}
+                      key={stat.id}
                       className="group text-center p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-[#06B6D4]/30"
                     >
                       <div className="flex justify-center mb-4">
@@ -826,13 +943,13 @@ export  const About: React.FC = () => {
             </div>
           </div>
 
-          {/* Accreditation & Recognition */}
+          {/* Accreditation & Recognition - Dynamic */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-4 bg-gradient-to-r from-white to-gray-50 rounded-lg px-6 py-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
               <FaShieldAlt className="text-2xl text-[#06B6D4]" />
               <div className="text-left">
                 <div className="font-bold text-[#111827] text-base mb-0.5">Government Recognized</div>
-                <div className="text-xs text-[#475569]">Registered with TEVTA, PSB & International Bodies</div>
+                <div className="text-xs text-[#475569]">{accreditation}</div>
               </div>
             </div>
           </div>
@@ -851,3 +968,4 @@ export  const About: React.FC = () => {
     </section>
   );
 };
+export default About;

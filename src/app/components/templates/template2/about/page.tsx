@@ -10,7 +10,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
- const About: React.FC = () => {
+export  const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -826,29 +826,12 @@ if (typeof window !== "undefined") {
             </div>
           </div>
 
-          {/* Accreditation & Recognition */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-4 bg-gradient-to-r from-white to-gray-50 rounded-lg px-6 py-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-              <FaShieldAlt className="text-2xl text-[#06B6D4]" />
-              <div className="text-left">
-                <div className="font-bold text-[#111827] text-base mb-0.5">Government Recognized</div>
-                <div className="text-xs text-[#475569]">Registered with TEVTA, PSB & International Bodies</div>
-              </div>
-            </div>
-          </div>
+       
         </div>
 
-        {/* Bottom border */}
-        <div className="py-6 border-t border-gray-200 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-xs text-[#475569]">
-              Trusted by 500+ organizations across Pakistan including Fortune 500 companies, 
-              government agencies, and leading industrial groups
-            </p>
-          </div>
-        </div>
+     
       </div>
     </section>
   );
 };
-export default About
+export default About;
