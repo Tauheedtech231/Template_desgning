@@ -256,48 +256,33 @@ export const Footer: React.FC = () => {
 
           {/* Bottom Bar */}
           <div className="mt-12 pt-8 border-t border-[#334155]">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-5 md:space-y-0">
-              {/* Copyright & Info */}
-              <div className="text-center md:text-left space-y-2">
-                <div className="flex items-center gap-2 justify-center md:justify-start">
-                  <FaCalendarAlt className="text-[#064E3B] flex-shrink-0 text-sm" />
-                  <p className="text-[#CBD5E1] text-sm">
-                    &copy; {currentYear} Excel College of Professional Studies. All rights reserved.
-                  </p>
-                </div>
-                <p className="text-[#64748B] text-xs">
-                  Accredited Educational Institution | Est. 2005
-                </p>
-              </div>
+  <div className="flex flex-col items-center justify-center space-y-5">
+    
+    {/* Copyright & Info */}
+    <div className="text-center space-y-2">
+      <div className="flex items-center gap-2 justify-center">
+        <FaCalendarAlt className="text-[#064E3B] text-sm" />
+        <p className="text-[#CBD5E1] text-sm">
+          &copy; {currentYear} Excel College of Professional Studies. All rights reserved.
+        </p>
+      </div>
+      <p className="text-[#64748B] text-xs">
+        Accredited Educational Institution | Est. 2005
+      </p>
+    </div>
 
-              {/* Legal Links */}
-              <div className="flex flex-wrap justify-center gap-4 md:gap-5">
-                {[
-                  { label: "Privacy Policy", href: "/privacy" },
-                  { label: "Terms of Service", href: "/terms" },
-                  { label: "Disclaimer", href: "/disclaimer" },
-                  { label: "Careers", href: "/careers" },
-                ].map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.href}
-                    className="legal-link text-[#CBD5E1] text-xs transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
+    {/* Back to Top Button */}
+    <button
+      onClick={scrollToTop}
+      className="back-to-top w-10 h-10 rounded-lg bg-[#064E3B] flex items-center justify-center text-white transition-all duration-300"
+      aria-label="Back to top"
+    >
+      <FaArrowUp className="text-sm" />
+    </button>
 
-              {/* Back to Top Button */}
-              <button
-                onClick={scrollToTop}
-                className="back-to-top w-10 h-10 rounded-lg bg-[#064E3B] flex items-center justify-center text-white transition-all duration-300"
-                aria-label="Back to top"
-              >
-                <FaArrowUp className="text-sm" />
-              </button>
-            </div>
-          </div>
+  </div>
+</div>
+
         </div>
 
         {/* Footer Bottom */}
