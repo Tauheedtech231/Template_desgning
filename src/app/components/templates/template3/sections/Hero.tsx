@@ -371,16 +371,7 @@ export const HeroSection: React.FC = () => {
           transition={{ delay: 1.5 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
         >
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[#0F172A] text-sm font-medium bg-white/80 px-4 py-1 rounded-full">Discover More</span>
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="relative"
-            >
-              <div className="w-px h-12 bg-gradient-to-b from-[#064E3B] via-[#064E3B]/50 to-transparent" />
-            </motion.div>
-          </div>
+         
         </motion.div>
       </section>
 
