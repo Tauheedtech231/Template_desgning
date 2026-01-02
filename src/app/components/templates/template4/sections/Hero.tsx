@@ -240,28 +240,29 @@ export const HeroSection: React.FC = () => {
                 </motion.p>
 
                 {/* CTAs - single row on mobile with smaller padding */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="flex flex-row gap-2 md:gap-4 items-center justify-center flex-nowrap whitespace-nowrap"
-                >
-                  <Link
-                    href="/components/templates/template4/courses"
-                    className="group inline-flex items-center gap-2 md:gap-3 px-3 md:px-8 py-2.5 md:py-4 bg-[#E86A58] text-white hover:bg-[#D45A48] transition-colors duration-300 rounded-full text-xs md:text-base flex-shrink-0"
-                  >
-                    <span className="font-medium">Explore programs</span>
-                    <FaArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
-                  </Link>
-                  
-                  <Link
-                    href="/components/templates/template4/contact"
-                    className="inline-flex items-center gap-2 md:gap-3 px-3 md:px-8 py-2.5 md:py-4 border border-white/30 text-white hover:bg-white/10 transition-colors duration-300 rounded-full text-xs md:text-base flex-shrink-0"
-                  >
-                    <FaCalendarCheck className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                    <span className="md:inline">Schedule visit</span>
-                  </Link>
-                </motion.div>
+               <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.6 }}
+  className="flex flex-row gap-2 md:gap-4 items-center justify-center flex-nowrap whitespace-nowrap"
+>
+  <Link
+    href="/components/templates/template4/courses"
+    className="group inline-flex items-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-4 bg-[#E86A58] text-white hover:bg-[#D45A48] transition-colors duration-300 rounded-full text-sm md:text-base flex-shrink-0"
+  >
+    <span className="font-medium">Explore programs</span>
+    <FaArrowRight className="h-4 w-4 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+  </Link>
+
+  <Link
+    href="/components/templates/template4/contact"
+    className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-4 border border-white/30 text-white hover:bg-white/10 transition-colors duration-300 rounded-full text-sm md:text-base flex-shrink-0"
+  >
+    <FaCalendarCheck className="h-4 w-4 md:h-4 md:w-4 flex-shrink-0" />
+    <span className="md:inline">Schedule visit</span>
+  </Link>
+</motion.div>
+
               </motion.div>
             </div>
           </div>

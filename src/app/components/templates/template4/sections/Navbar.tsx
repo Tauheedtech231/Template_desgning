@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
       href: "/",
       icon: <Home className="h-4 w-4" />,
       description: "Welcome page",
-      showInMobilePrimary: true
+      showInMobilePrimary: false  // Changed from true to false
     },
     { 
       name: "About", 
@@ -112,7 +112,7 @@ export const Navbar: React.FC = () => {
   ];
 
   // Separate items for mobile primary (Home) and secondary (More)
-  const mobilePrimaryItems = navItems.filter(item => item.showInMobilePrimary);
+  // Since Home is now in the slider menu, we don't need mobilePrimaryItems
   const mobileSecondaryItems = navItems.filter(item => !item.showInMobilePrimary);
 
   const searchData = [
@@ -375,20 +375,10 @@ export const Navbar: React.FC = () => {
   );
 
   // ==================== UPDATED MOBILE NAVIGATION ====================
+  // Removed Home button from mobile navbar and kept it only in slider menu
   const MobileNav = () => (
     <div className="flex items-center gap-1 lg:hidden">
-      {/* Home Button (Always Visible) */}
-      <Link
-        href="/"
-        className="p-2.5 text-[#5A5A5A] hover:text-[#1E1E1E] transition-colors duration-200 flex items-center gap-2 relative group/mobilenavitem"
-        onClick={() => setIsMenuOpen(false)}
-      >
-        <Home className="h-5 w-5" />
-        <span className="text-sm font-medium">Home</span>
-        <span className="absolute bottom-0 left-1/2 w-0 h-[1.5px] bg-[#E86A58] -translate-x-1/2 group-hover/mobilenavitem:w-4/5 transition-all duration-200"></span>
-      </Link>
-
-      {/* More Button */}
+      {/* More Button - Now serves as the main navigation button */}
       <button
         onClick={() => setIsMobileMoreOpen(!isMobileMoreOpen)}
         className="mobile-more-button p-2.5 text-[#5A5A5A] hover:text-[#1E1E1E] transition-colors duration-200 flex items-center gap-1 relative group/morebutton"
@@ -408,12 +398,12 @@ export const Navbar: React.FC = () => {
       </button>
       
       {/* Menu Button */}
-      <button
+      {/* <button
         onClick={() => setIsMenuOpen(true)}
         className="p-2.5 text-[#5A5A5A] hover:text-[#1E1E1E] transition-colors duration-200"
       >
         <Menu className="h-5 w-5" />
-      </button>
+      </button> */}
 
       {/* Animated More Menu */}
       <AnimatePresence>
@@ -498,6 +488,7 @@ export const Navbar: React.FC = () => {
   );
 
   // ==================== MOBILE SLIDER MENU ====================
+  // Home is now included in the slider menu
   const MobileSliderMenu = () => (
     <AnimatePresence>
       {isMenuOpen && isMobile && (

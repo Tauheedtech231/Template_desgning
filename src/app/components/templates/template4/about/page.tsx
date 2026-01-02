@@ -386,7 +386,7 @@ export const About: React.FC = () => {
       {/* Full Width Image Section with Text Overlay */}
       <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden bg-[#F5F5F5]">
         <img
-          src="https://images.unsplash.com/flagged/photo-1554473675-d0904f3cbf38?w=1200&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGNvbGxlZ2V8ZW58MHx8MHx8fDA%3D"
+          src="https://media.istockphoto.com/id/2189800037/photo/university-students-studying-and-discussing-standing-on-the-steps-of-the-campus.jpg?s=1024x1024&w=is&k=20&c=pAd_InfDuWrWS6BSXsLo2ZQSxWG7QGj-F6mPWyUtJjA="
           alt="College Campus"
           className="w-full h-full object-cover opacity-90"
         />
@@ -528,7 +528,7 @@ export const About: React.FC = () => {
                 <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
                   Philosophy
                 </div>
-                <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#1E1E1E] mb-6 leading-tight">
+                <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
                   {philosophy.heading}
                 </h2>
               </div>
@@ -557,7 +557,7 @@ export const About: React.FC = () => {
                 The difference
               </div>
               <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
-                Why choose our approach
+                Why choose 
               </h2>
               <p className="text-[17px] text-[#5A5A5A] max-w-2xl mx-auto leading-[1.7] italic">
                 {whyChooseUs.intro}
@@ -593,12 +593,8 @@ export const About: React.FC = () => {
                       {/* Subtle indicator */}
                       <div className="mt-auto pt-4 border-t border-[#F0F0F0]">
                         <div className="flex items-center justify-between">
-                          <div className="text-[13px] text-[#8A8A8A]">
-                            Learn more
-                          </div>
-                          <div className="text-[12px] text-[#E0E0E0] font-medium">
-                            0{index + 1}
-                          </div>
+                          
+                          
                         </div>
                       </div>
                     </div>
@@ -614,7 +610,7 @@ export const About: React.FC = () => {
               <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
                 Our values
               </div>
-              <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#1E1E1E] mb-6 leading-tight">
+              <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
                 The principles that guide our choices
               </h2>
               <p className="text-[16px] text-[#5A5A5A] max-w-xl mx-auto leading-relaxed">
