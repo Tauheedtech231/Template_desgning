@@ -7,6 +7,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Search, Menu, X, ChevronRight, Mail, MapPin, Clock, Phone, User, Home, Images, Users, BookOpen, ExternalLink, Calendar, Globe } from "lucide-react";
 
+interface NavSubItem {
+  name: string;
+  href: string;
+  icon: string;
+  tag?: string;
+}
+
+interface NavItem {
+  name: string;
+  href?: string;
+  icon: React.ReactNode;
+  description: string;
+  featured?: boolean;
+  showInMobilePrimary: boolean;
+  cta?: boolean;
+  subItems?: NavSubItem[];
+}
+
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,24 +38,27 @@ export const Navbar: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const contactSliderRef = useRef<HTMLDivElement>(null);
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { 
       name: "Home", 
       href: "/",
       icon: <Home className="h-4 w-4" />,
-      description: "Welcome to our platform"
+      description: "Welcome to our platform",
+      showInMobilePrimary: true
     },
     { 
       name: "About Us", 
       href: "/components/templates/template3/about",
       icon: <User className="h-4 w-4" />,
-      description: "Our story and mission"
+      description: "Our story and mission",
+      showInMobilePrimary: false
     },
     {
       name: "Services",
       icon: <BookOpen className="h-4 w-4" />,
       description: "Professional services",
       featured: true,
+      showInMobilePrimary: false,
       subItems: [
         { 
           name: "Service One", 
@@ -69,20 +90,23 @@ export const Navbar: React.FC = () => {
       name: "Gallery", 
       href: "/components/templates/template3/gallery",
       icon: <Images className="h-4 w-4" />,
-      description: "Our work and projects"
+      description: "Our work and projects",
+      showInMobilePrimary: false
     },
     { 
       name: "Team", 
       href: "/components/templates/template3/faculty",
       icon: <Users className="h-4 w-4" />,
-      description: "Expert team members"
+      description: "Expert team members",
+      showInMobilePrimary: false
     },
     { 
       name: "Contact", 
       href: "/components/templates/template3/contact",
       icon: <Phone className="h-4 w-4" />,
       description: "Get in touch with us",
-      cta: true
+      cta: true,
+      showInMobilePrimary: false
     },
   ];
 
@@ -265,7 +289,7 @@ export const Navbar: React.FC = () => {
                 ) : (
                   <Link
                     key={idx}
-                    href={item.href}
+                    href={item.href!}
                     className={`px-4 py-3 font-medium transition-colors ${
                       item.cta 
                         ? 'text-[#064E3B] hover:text-[#04332A] font-semibold' 
@@ -755,7 +779,7 @@ export const Navbar: React.FC = () => {
                         </>
                       ) : (
                         <Link
-                          href={item.href}
+                          href={item.href!}
                           onClick={() => setIsMenuOpen(false)}
                           className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
                         >

@@ -36,6 +36,7 @@ export interface FacultyMember {
   bio: string;
   image: string;
   qualifications: string[];
+  linkedin?: string;
 }
 
 export interface GalleryImage {

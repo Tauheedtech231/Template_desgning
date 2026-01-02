@@ -7,6 +7,24 @@ import Link from "next/link";
 import { Search, Menu, X, ChevronRight, Mail, MapPin, Clock, Phone, User, Home, Images, Users, BookOpen, ExternalLink, Calendar, Globe } from "lucide-react";
 /* eslint-disable */
 
+interface NavSubItem {
+  name: string;
+  href: string;
+  icon: string;
+  tag?: string;
+}
+
+interface NavItem {
+  name: string;
+  href?: string;
+  icon: React.ReactNode;
+  description: string;
+  featured?: boolean;
+  showInMobilePrimary: boolean;
+  cta?: boolean;
+  subItems?: NavSubItem[];
+}
+
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,24 +38,27 @@ export const Navbar: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const contactSliderRef = useRef<HTMLDivElement>(null);
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { 
       name: "Home", 
       href: "/",
       icon: <Home className="h-5 w-5" />,
-      description: "Welcome to Mansol Institute"
+      description: "Welcome to Mansol Institute",
+      showInMobilePrimary: true
     },
     { 
       name: "About Us", 
       href: "/components/templates/template2/about",
       icon: <User className="h-5 w-5" />,
-      description: "Our story and mission"
+      description: "Our story and mission",
+      showInMobilePrimary: false
     },
     {
       name: "Courses",
       icon: <BookOpen className="h-5 w-5" />,
       description: "Professional safety training",
       featured: true,
+      showInMobilePrimary: false,
       subItems: [
         { 
           name: "NEBOSH", 
@@ -93,20 +114,23 @@ export const Navbar: React.FC = () => {
       name: "Gallery", 
       href: "/components/templates/template2/gallery",
       icon: <Images className="h-5 w-5" />,
-      description: "Our campus and events"
+      description: "Our campus and events",
+      showInMobilePrimary: false
     },
     { 
       name: "Team", 
       href: "/components/templates/template2/faculty",
       icon: <Users className="h-5 w-5" />,
-      description: "Expert faculty members"
+      description: "Expert faculty members",
+      showInMobilePrimary: false
     },
     { 
       name: "Contact", 
       href: "/components/templates/template2/contact",
       icon: <Phone className="h-5 w-5" />,
       description: "Get in touch with us",
-      cta: true
+      cta: true,
+      showInMobilePrimary: false
     },
   ];
 
@@ -647,7 +671,7 @@ export const Navbar: React.FC = () => {
                         </div>
                       ) : (
                         <Link
-                          href={item.href}
+                          href={item.href!}
                           onClick={() => setIsMenuOpen(false)}
                           className={`inline-flex items-center gap-2 px-5 py-3 rounded-full font-semibold transition-all duration-300 ${
                             item.cta
@@ -980,7 +1004,7 @@ export const Navbar: React.FC = () => {
                         </>
                       ) : (
                         <Link
-                          href={item.href}
+                          href={item.href!}
                           onClick={() => setIsMenuOpen(false)}
                           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition-colors"
                         >
