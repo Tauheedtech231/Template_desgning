@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { SectionTitle } from '../../../shared/SectionTitle';
 import { Card, CardContent } from '../../../shared/Card';
@@ -13,239 +13,266 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface SectionContent {
-  images: {
-    coverImage: string;
-    logo: string;
-  };
-  text: {
-    longDescription: string;
-    mission: string;
-    name: string;
-    shortDescription: string;
-    vision: string;
-  };
-}
-
-interface AboutSection {
-  id: number;
-  template_id: number;
-  section_name: string;
-  content: SectionContent;
-}
-
 export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [aboutData, setAboutData] = useState<AboutSection | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchAboutData = async () => {
-      try {
-        const res = await fetch('https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=1&section_name=About', {
-          cache: "no-store"
-        });
-        
-        if (!res.ok) {
-          throw new Error(`Failed to fetch data: ${res.status}`);
-        }
-        
-        const data = await res.json();
-        // Assuming API returns an array of sections, take the first one
-        if (Array.isArray(data.sections) && data.sections.length > 0) {
-          setAboutData(data.sections[0]);
-        } else {
-          throw new Error('No section data found');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching about data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAboutData();
-  }, []);
-
-  useEffect(() => {
-    if (!aboutData) return;
-
     const ctx = gsap.context(() => {
-      // Simple fade in animation for cards
+      // Staggered fade in for cards
       gsap.fromTo('.about-element',
         { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power2.out",
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "back.out(1.2)",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 70%",
-            end: "bottom 30%",
-            toggleActions: "play none none reverse"
+            start: "top 75%",
+            end: "bottom 25%",
+            toggleActions: "play none none reverse",
+            markers: false
           }
         }
       );
+
+      // Subtle scale animation for main image
+      if (imageRef.current) {
+        gsap.fromTo(imageRef.current,
+          { scale: 1.05 },
+          {
+            scale: 1,
+            duration: 1.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: imageRef.current,
+              start: "top bottom",
+              end: "top 70%",
+              scrub: 0.5
+            }
+          }
+        );
+      }
+
+      // Floating animation for experience badge
+      gsap.to('.experience-badge', {
+        y: -8,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [aboutData]);
+  }, []);
 
-  // Loading state
-  if (loading) {
-    return (
-      <section id="about" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading content...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section id="about" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-red-500">Error: {error}</p>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Failed to load content. Please try again later.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Default fallback data
-  const defaultContent = {
-    images: {
-      coverImage: "https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-      logo: "https://images.unsplash.com/photo-1562813733-b31f71025d54?ixlib=rb-4.0.3&w=400"
-    },
-    text: {
-      longDescription: "Founded in 1995, the Institute of Advanced Technology has been at the forefront of technical education, providing cutting-edge programs in computer science, engineering, and information technology. Our institution is committed to fostering innovation, research, and industry collaboration.",
-      mission: "To empower students through excellence in technical education, research, and innovation while fostering ethical leadership and social responsibility.",
-      name: "Kips College",
-      shortDescription: "Premier institution for technology and innovation education",
-      vision: "To be a globally recognized center of excellence in technology education that transforms lives and drives innovation."
-    }
+  // Enhanced static content with more personality
+  const collegeInfo = {
+    name: "Kips College",
+    foundingYear: "1995",
+    shortDescription: "Where curious minds become tomorrow's innovators",
+    tagline: "Education that transforms, inspires, and empowers",
+    
+    longDescription: "For nearly three decades, Kips has been more than just a college—it's been a launchpad for dreamers, thinkers, and doers. What started as a small technical institute has grown into a vibrant educational community where hands-on learning meets big-picture thinking. Our classrooms are spaces where questions are celebrated, where failure is just another step toward understanding, and where every student's unique path is honored.",
+    
+    mission: "To create learning experiences that stick—not just in memory, but in practice. We're here to equip students with both the technical skills to excel and the human skills to lead with empathy and integrity.",
+    
+    vision: "A future where education adapts to the learner, not the other way around. We imagine a world where every graduate leaves not just with a degree, but with the confidence to shape industries, communities, and their own journeys.",
+    
+    uniqueFact: "Fun fact: Our first computer lab had just 8 machines—students took turns coding through the night. That spirit of shared discovery still defines us."
   };
 
-  // Use API data if available, otherwise use default data
-  const content = aboutData?.content || defaultContent;
-
-  // Static data for stats and values (not provided in API)
+  // Stats with more contextual meaning
   const stats = [
-    { number: '50+', label: 'Academic Programs', icon: '📚' },
-    { number: '10k+', label: 'Students Enrolled', icon: '🎓' },
-    { number: '500+', label: 'Expert Faculty', icon: '👨‍🏫' },
-    { number: '95%', label: 'Success Rate', icon: '⭐' },
+    { 
+      number: '50+', 
+      label: 'Learning Paths', 
+      icon: '📚',
+      note: 'From AI ethics to sustainable design'
+    },
+    { 
+      number: '10k+', 
+      label: 'Alumni Stories', 
+      icon: '🎓',
+      note: 'Building futures worldwide'
+    },
+    { 
+      number: '500+', 
+      label: 'Mentors & Guides', 
+      icon: '👨‍🏫',
+      note: 'Industry leaders & practitioners'
+    },
+    { 
+      number: '95%', 
+      label: 'Graduate Success', 
+      icon: '⭐',
+      note: 'Within 6 months of graduation'
+    },
   ];
 
+  // Core values with richer descriptions
   const values = [
     { 
-      icon: '🎯', 
-      title: 'Excellence', 
-      description: 'Commitment to the highest standards in teaching, research, and service.',
+      emoji: '🌱', 
+      title: 'Growth Mindset', 
+      description: 'We believe brilliance isn\'t fixed—it\'s cultivated. Every challenge is an opportunity to stretch, learn, and become.',
+      color: 'from-emerald-500 to-teal-600'
     },
     { 
-      icon: '💡', 
-      title: 'Innovation', 
-      description: 'Fostering creativity and cutting-edge research across all disciplines.',
+      emoji: '🤝', 
+      title: 'Community First', 
+      description: 'Learning happens together. We prioritize collaboration over competition, building networks that last beyond graduation.',
+      color: 'from-amber-500 to-orange-600'
     },
     { 
-      icon: '🤝', 
-      title: 'Community', 
-      description: 'Building inclusive environments that support diversity and collaboration.',
+      emoji: '✨', 
+      title: 'Practical Magic', 
+      description: 'The sweet spot where theory meets practice. We love ideas that work in the real world.',
+      color: 'from-violet-500 to-purple-600'
     },
+  ];
+
+  // Campus highlights
+  const highlights = [
+    '24/7 innovation lab access',
+    'Industry mentorship program',
+    'Green campus initiative since 2008',
+    'Student-run tech incubator'
   ];
 
   return (
-    <section id="about" ref={sectionRef} className="py-20 bg-white dark:bg-gray-900">
+    <section 
+      id="about" 
+      ref={sectionRef} 
+      className="py-24 bg-gradient-to-b from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-950/50"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <SectionTitle
-          title={`About ${content.text.name}`}
-          subtitle={content.text.shortDescription}
-          align="center"
-          underline={true}
-          underlineVariant="primary"
-          animation="fade"
-        />
+        {/* Section Header with personality */}
+        <div className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium mb-4 tracking-wide">
+            Our Story • Est. {collegeInfo.foundingYear}
+          </span>
+          
+          <SectionTitle
+            title={`Getting to Know ${collegeInfo.name}`}
+            subtitle={collegeInfo.tagline}
+            align="center"
+            underline={true}
+            underlineVariant="primary"
+            animation="fade"
+          />
+          
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-light leading-relaxed">
+            {collegeInfo.shortDescription}
+          </p>
+        </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Left Column - College Image */}
-          <div className="about-element">
-            <div className="relative rounded-2xl overflow-hidden shadow-lg h-80 lg:h-full">
+        {/* Main Content with improved layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+          {/* Left Column - Visual Story */}
+          <div className="space-y-8">
+            <div 
+              ref={imageRef}
+              className="relative rounded-2xl overflow-hidden shadow-2xl h-96 lg:h-[480px] group"
+            >
               <Image
-                src={content.images.coverImage}
-                alt={`${content.text.name} Campus`}
+                src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                alt="Kips College campus courtyard with students collaborating"
                 fill
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               
-              {/* Experience Badge - Static since not in API */}
-              <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-3">
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+              
+              {/* Experience Badge */}
+              <div className="experience-badge absolute top-6 left-6 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-gray-900 dark:text-white">25+</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Years Excellence</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{collegeInfo.foundingYear}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Rooted in Excellence</div>
+                  <div className="w-12 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-2"></div>
                 </div>
+              </div>
+
+              {/* Image caption */}
+              <div className="absolute bottom-6 left-6 right-6">
+                <p className="text-white/90 text-sm font-light">
+                  Morning study sessions in our main courtyard—where ideas meet sunlight
+                </p>
+              </div>
+            </div>
+
+            {/* Campus Highlights */}
+            <div className="about-element">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6">
+                <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-4 flex items-center gap-2">
+                  <span className="text-lg">🏛️</span> Campus Features
+                </h4>
+                <ul className="space-y-3">
+                  {highlights.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0"></span>
+                      <span className="text-gray-700 dark:text-gray-300 text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
 
-          {/* Right Column - College Info */}
-          <div className="about-element space-y-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Welcome to {content.text.name}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                {content.text.longDescription}
-              </p>
+          {/* Right Column - Narrative */}
+          <div className="space-y-8">
+            {/* Introduction */}
+            <div className="about-element">
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
+                  {collegeInfo.longDescription}
+                </p>
+                
+                <div className="mt-8 p-4 border-l-4 border-amber-500 bg-amber-50/50 dark:bg-amber-900/10 rounded-r-lg">
+                  <p className="text-gray-700 dark:text-gray-300 text-sm italic">
+                    {collegeInfo.uniqueFact}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Mission & Vision Cards */}
-            <div className="grid grid-cols-1 gap-4">
-              <Card className="border-0 shadow-md bg-blue-50 dark:bg-blue-900/20">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">
+            {/* Mission & Vision Cards - Enhanced */}
+            <div className="grid grid-cols-1 gap-6 about-element">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-900 overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-500 to-cyan-400"></div>
+                <CardContent className="p-6 pl-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white text-xl shadow-lg flex-shrink-0">
                       🎯
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Mission</h4>
-                      <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
-                        {content.text.mission}
+                      <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-3">Our Purpose</h4>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                        {collegeInfo.mission}
                       </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-md bg-purple-50 dark:bg-purple-900/20">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm">
-                      🚀
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/10 dark:to-gray-900 overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-500 to-pink-400"></div>
+                <CardContent className="p-6 pl-8">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white text-xl shadow-lg flex-shrink-0">
+                      🔭
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">Our Vision</h4>
-                      <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
-                        {content.text.vision}
+                      <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-3">Looking Ahead</h4>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                        {collegeInfo.vision}
                       </p>
                     </div>
                   </div>
@@ -255,50 +282,102 @@ export const About: React.FC = () => {
           </div>
         </div>
 
-        {/* Statistics - Static since not in API */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {stats.map((stat, index) => (
-            <Card key={index} className="about-element text-center border-0 shadow-md">
-              <CardContent className="p-4">
-                <div className="text-2xl mb-2">{stat.icon}</div>
-                <div className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  {stat.label}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Values Section - Static since not in API */}
-        <div className="about-element">
-          <div className="text-center mb-8">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-              Our Core Values
+        {/* Statistics with context */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              By the Numbers
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm max-w-2xl mx-auto">
-              The principles that guide our institution and shape the future of our students
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              The impact we measure, the lives we touch
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {values.map((value, index) => (
-              <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow duration-200">
-                <CardContent className="p-5 text-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-lg mx-auto mb-3">
-                    {value.icon}
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <Card 
+                key={index} 
+                className="about-element text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+              >
+                <CardContent className="p-6">
+                  <div className={`text-3xl mb-4 ${index === 0 ? 'animate-bounce' : ''}`}>
+                    {stat.icon}
                   </div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">
-                    {value.title}
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
-                    {value.description}
-                  </p>
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {stat.number}
+                  </div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-2">
+                    {stat.label}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {stat.note}
+                  </div>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+
+        {/* Values Section - More Visual */}
+        <div className="about-element">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
+              <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">OUR FOUNDATION</span>
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
+            </div>
+            
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              What Guides Us
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-base">
+              These are not just words on a wall—they are the principles that shape every decision, every class, every conversation
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {values.map((value, index) => (
+              <Card 
+                key={index} 
+                className="border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden group"
+              >
+                <CardContent className="p-8 relative">
+                  {/* Animated background effect */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${value.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                  
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${value.color} flex items-center justify-center text-2xl text-white shadow-lg mb-6 mx-auto`}>
+                    {value.emoji}
+                  </div>
+                  
+                  <h4 className="font-bold text-gray-900 dark:text-white text-xl text-center mb-4">
+                    {value.title}
+                  </h4>
+                  
+                  <p className="text-gray-700 dark:text-gray-300 text-sm text-center leading-relaxed">
+                    {value.description}
+                  </p>
+                  
+                  {/* Bottom accent */}
+                  <div className="w-12 h-1 rounded-full bg-gradient-to-r from-transparent via-current to-transparent opacity-30 mx-auto mt-6"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Closing note */}
+        <div className="mt-20 text-center about-element">
+          <div className="max-w-3xl mx-auto p-8 bg-gradient-to-r from-gray-50 to-blue-50/30 dark:from-gray-800/30 dark:to-blue-900/10 rounded-2xl border border-gray-200/50 dark:border-gray-700/50">
+            <div className="text-4xl mb-4">✨</div>
+            <h4 className="font-bold text-gray-900 dark:text-white text-xl mb-4">
+              Still Curious?
+            </h4>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              The best way to understand Kips is to experience it. Join a campus tour, sit in on a class, or chat with our students.
+            </p>
+            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+              Plan Your Visit
+            </button>
           </div>
         </div>
       </div>

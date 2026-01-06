@@ -3,347 +3,304 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { SectionTitle } from '../../../shared/SectionTitle';
-import { Card } from '../../../shared/Card';
-import { defaultCollegeInfo } from '../data/collegeInfo';
+import { Card, CardContent } from '../../../shared/Card';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-/* eslint-disable */
+import { 
+  FaCalendarAlt, 
+  FaMapMarkerAlt,
+  FaHeart,
+  FaShareAlt,
+  FaExpand,
+  FaChevronRight,
+  FaCamera,
+  FaUsers,
+  FaGraduationCap,
+  FaPaintBrush,
+  FaFlask,
+  FaFutbol
+} from 'react-icons/fa';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Define GalleryImage type if it exists in your default data
 interface GalleryImage {
-  id: string;
-  title: string;
-  description: string;
-  url: string; // Changed from image to url if that's what your default data uses
-  category: string;
-  createdAt: string; // Changed from date to createdAt if that's what your default data uses
-}
-
-interface GalleryItem {
   id: string;
   title: string;
   description: string;
   image: string;
   category: string;
   date: string;
-}
-
-// Type guard to check if an item is GalleryItem
-function isGalleryItem(item: any): item is GalleryItem {
-  return item && typeof item.image === 'string';
-}
-
-// Type guard to check if an item is GalleryImage
-function isGalleryImage(item: any): item is GalleryImage {
-  return item && typeof item.url === 'string';
-}
-
-// Normalize item to GalleryItem format
-function normalizeGalleryItem(item: any): GalleryItem {
-  if (isGalleryItem(item)) {
-    return item;
-  }
-  
-  if (isGalleryImage(item)) {
-    return {
-      id: item.id,
-      title: item.title,
-      description: item.description,
-      image: item.url, // Map url to image
-      category: item.category,
-      date: item.createdAt // Map createdAt to date
-    };
-  }
-  
-  // Fallback for any other structure
-  return {
-    id: item.id || '',
-    title: item.title || '',
-    description: item.description || '',
-    image: item.image || item.url || '',
-    category: item.category || '',
-    date: item.date || item.createdAt || ''
-  };
-}
-
-interface GallerySection {
-  id: number;
-  template_id: number;
-  section_name: string;
-  content: {
-    gallery: GalleryItem[];
-    title?: string;
-    subtitle?: string;
-  };
-  created_at: string;
+  likes?: number;
 }
 
 export const Gallery: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [galleryData, setGalleryData] = useState<GallerySection | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [likedImages, setLikedImages] = useState<Set<string>>(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
-  const galleryRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchGalleryData = async () => {
-      try {
-        const res = await fetch(
-          "https://nes-tick-portfolio-handler.vercel.app/api/sections?template_id=1&section_name=Gallery",
-          {
-            cache: "no-store",
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Failed to fetch data: ${res.status}`);
-        }
-
-        const data = await res.json();
-        console.log("Fetched gallery data:", data);
-        
-        // Assuming API returns an array of sections, take the first one
-        if (Array.isArray(data.sections) && data.sections.length > 0) {
-          setGalleryData(data.sections[0]);
-        } else {
-          throw new Error('No gallery data found');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGalleryData();
-  }, []);
-
-  // Get all unique categories from gallery items
-  const categories = galleryData?.content?.gallery 
-    ? ['all', ...new Set(galleryData.content.gallery.map(item => item.category))]
-    : ['all', ...new Set(defaultCollegeInfo.gallery.map(item => 
-        typeof item === 'object' && 'category' in item ? item.category : ''
-      ).filter(Boolean))];
-
-  // Get filtered images based on selected category
-  const filteredImages: GalleryItem[] = (() => {
-    if (galleryData?.content?.gallery) {
-      const items = selectedCategory === 'all' 
-        ? galleryData.content.gallery 
-        : galleryData.content.gallery.filter((img: GalleryItem) => img.category === selectedCategory);
-      return items.map(normalizeGalleryItem);
-    } else {
-      // Normalize default data
-      const defaultItems = defaultCollegeInfo.gallery.map(normalizeGalleryItem);
-      return selectedCategory === 'all' 
-        ? defaultItems 
-        : defaultItems.filter((img: GalleryItem) => img.category === selectedCategory);
+  // Simplified static gallery data
+  const galleryImages: GalleryImage[] = [
+    {
+      id: '1',
+      title: 'Morning Lectures',
+      description: 'Students engaging in morning discussions',
+      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'academics',
+      date: '2024-03-15',
+      likes: 45
+    },
+    {
+      id: '2',
+      title: 'Science Lab',
+      description: 'Hands-on experiments in progress',
+      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'science',
+      date: '2024-03-14',
+      likes: 32
+    },
+    {
+      id: '3',
+      title: 'Campus Garden',
+      description: 'Student-led garden project',
+      image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'campus',
+      date: '2024-03-10',
+      likes: 28
+    },
+    {
+      id: '4',
+      title: 'Sports Day',
+      description: 'Annual university sports competition',
+      image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'sports',
+      date: '2024-03-08',
+      likes: 56
+    },
+    {
+      id: '5',
+      title: 'Art Exhibition',
+      description: 'Student artwork showcase',
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'arts',
+      date: '2024-03-05',
+      likes: 39
+    },
+    {
+      id: '6',
+      title: 'Study Cafe',
+      description: 'Collaborative study session',
+      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'campus',
+      date: '2024-03-01',
+      likes: 24
     }
-  })();
+  ];
+
+  // Simple categories
+  const categories = [
+    { id: 'all', name: 'All', icon: FaCamera, color: 'from-blue-500 to-cyan-500' },
+    { id: 'academics', name: 'Academics', icon: FaGraduationCap, color: 'from-purple-500 to-pink-500' },
+    { id: 'campus', name: 'Campus', icon: FaMapMarkerAlt, color: 'from-emerald-500 to-teal-500' },
+    { id: 'science', name: 'Science', icon: FaFlask, color: 'from-amber-500 to-orange-500' },
+    { id: 'arts', name: 'Arts', icon: FaPaintBrush, color: 'from-pink-500 to-rose-500' },
+    { id: 'sports', name: 'Sports', icon: FaFutbol, color: 'from-red-500 to-orange-500' }
+  ];
+
+  const filteredImages = selectedCategory === 'all' 
+    ? galleryImages 
+    : galleryImages.filter(img => img.category === selectedCategory);
+
+  const handleLike = (imageId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newLikedImages = new Set(likedImages);
+    if (newLikedImages.has(imageId)) {
+      newLikedImages.delete(imageId);
+    } else {
+      newLikedImages.add(imageId);
+    }
+    setLikedImages(newLikedImages);
+  };
 
   useEffect(() => {
-    if (!galleryData) return;
-
     const ctx = gsap.context(() => {
-      // Stagger animation for gallery items
-      gsap.fromTo('.gallery-item',
-        { opacity: 0, scale: 0.8, y: 30 },
+      // Simple fade-in animation for cards
+      gsap.fromTo('.gallery-card',
+        { 
+          opacity: 0, 
+          y: 30
+        },
         {
           opacity: 1,
-          scale: 1,
           y: 0,
           duration: 0.6,
           stagger: 0.1,
-          ease: "back.out(1.7)",
+          ease: "power2.out",
           scrollTrigger: {
-            trigger: galleryRef.current,
-            start: "top 70%",
-            end: "bottom 30%",
+            trigger: sectionRef.current,
+            start: "top 80%",
             toggleActions: "play none none reverse"
           }
         }
       );
 
-      // Filter animation
-      gsap.to('.gallery-item', {
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.3,
-        onComplete: () => {
-          gsap.to('.gallery-item', {
-            opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            stagger: 0.05
-          });
-        }
-      });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [selectedCategory, galleryData]);
+  }, []);
 
-  // Loading state
-  if (loading) {
-    return (
-      <section id="gallery" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading gallery...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section id="gallery" className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-red-500">Error: {error}</p>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Failed to load gallery. Using default data.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Use API data if available, otherwise use default data
-  const content = galleryData?.content || {
-    gallery: defaultCollegeInfo.gallery,
-    title: "Campus Gallery",
-    subtitle: "Explore our beautiful campus and vibrant student life"
-  };
-
-  // Format date for display
+  // Format date
   const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
-  // Format category for display (capitalize, replace dashes with spaces)
-  const formatCategory = (category: string) => {
-    return category.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   return (
-    <section id="gallery" ref={sectionRef} className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionTitle
-          title={content.title || "Campus Gallery"}
-          subtitle={content.subtitle || "Explore our beautiful campus and vibrant student life"}
-          align="center"
-          underline={true}
-          underlineVariant="primary"
-          animation="fade"
-        />
-
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm ${
-                selectedCategory === category
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md hover:shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 shadow-sm hover:shadow-md'
-              }`}
-            >
-              {formatCategory(category)}
-            </button>
-          ))}
+    <section id="gallery" ref={sectionRef} className="py-20 bg-gray-50/50 dark:bg-gray-900/50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Minimal Header */}
+        <div className="text-center mb-12">
+          <SectionTitle
+            title="Campus Gallery"
+            subtitle="Moments that define our community"
+            align="center"
+            underline={true}
+            underlineVariant="primary"
+          />
+          
+          <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
+            A collection of authentic campus life captured by our community
+          </p>
         </div>
 
-        {/* Gallery Grid */}
-        <div ref={galleryRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredImages.map((item: GalleryItem) => (
-            <Card key={item.id} hover className="gallery-item group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="relative overflow-hidden">
-                {/* Image with Next.js optimization */}
-                <div className="relative w-full h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                  {item.image ? (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        // Show fallback background
-                        target.parentElement!.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">No Image</span>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Image Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-start justify-end p-4">
-                  <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <h4 className="text-lg font-bold mb-1">{item.title}</h4>
-                    <p className="text-blue-100 text-xs font-medium mb-2 line-clamp-2">
-                      {item.description}
-                    </p>
-                    {item.date && (
-                      <p className="text-xs text-gray-300 mt-1">
-                        {formatDate(item.date)}
-                      </p>
-                    )}
-                  </div>
-                </div>
+        {/* Simple Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2.5 rounded-full flex items-center gap-2 transition-all duration-200 ${
+                  selectedCategory === category.id
+                    ? `bg-gradient-to-r ${category.color} text-white shadow-md`
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <Icon className="text-sm" />
+                <span className="text-sm font-medium">{category.name}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Clean Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredImages.map((item) => (
+            <Card 
+              key={item.id}
+              className="gallery-card group border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+            >
+              {/* Image Container */}
+              <div className="relative h-56 overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
                 
                 {/* Category Badge */}
-                <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1">
-                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
-                    {formatCategory(item.category)}
+                <div className="absolute top-3 left-3">
+                  <span className="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 dark:text-gray-200">
+                    {item.category}
                   </span>
                 </div>
+
+                {/* Like Button */}
+                <button 
+                  onClick={(e) => handleLike(item.id, e)}
+                  className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full hover:scale-110 transition-all duration-200"
+                >
+                  <FaHeart 
+                    className={`text-sm ${
+                      likedImages.has(item.id) ? 'text-red-500 fill-red-500' : 'text-gray-500'
+                    }`}
+                  />
+                </button>
               </div>
+
+              {/* Content */}
+              <CardContent className="p-5">
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1 line-clamp-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  {/* Metadata */}
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                        <FaCalendarAlt className="text-blue-500" />
+                        <span>{formatDate(item.date)}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                        <FaHeart className="text-red-400" />
+                        <span>{item.likes}</span>
+                      </div>
+                    </div>
+                    
+                    <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium flex items-center gap-1">
+                      <FaExpand className="text-xs" />
+                      <span>View</span>
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Show message if no images */}
-        {filteredImages.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-300">
-              No images found in the {selectedCategory === 'all' ? 'gallery' : selectedCategory} category.
-            </p>
-          </div>
-        )}
+        {/* Simple CTA */}
+     
 
-        {/* Load More - You can implement pagination here if needed */}
-        <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm">
-            View More Photos
-          </button>
+        {/* Simple Stats */}
+        <div className="mt-12 grid grid-cols-3 gap-4 text-center">
+          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {galleryImages.length}
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              Photos
+            </div>
+          </div>
+          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {categories.length - 1}
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              Categories
+            </div>
+          </div>
+          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              {galleryImages.reduce((acc, img) => acc + (img.likes || 0), 0)}
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              Total Likes
+            </div>
+          </div>
         </div>
       </div>
     </section>
