@@ -2,12 +2,13 @@
 
 import React, { useEffect } from "react";
 
-import  Navbar  from "./sections/Navbar";
-import   HeroSection  from "./sections/Hero";
+import  Navbar  from "./sections/Navbar"; 
+import  { HeroSection } from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
+import ContactSection from "./sections/Contact";
 
-const Template4: React.FC = () => {
+const Template6: React.FC = () => {
   useEffect(() => {
     const storedData = localStorage.getItem("collegeInfo");
     if (!storedData) {
@@ -26,10 +27,10 @@ const Template4: React.FC = () => {
       <Navbar />
       <HeroSection/>
       <About />
-      {/* <CertificatesSection /> */}
+      <ContactSection />
       <Footer />
     </div>
   );
 };
 
-export default Template4; // ✅ default export
+export default Template6; // ✅ default export

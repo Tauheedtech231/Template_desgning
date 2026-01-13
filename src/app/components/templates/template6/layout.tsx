@@ -1,7 +1,7 @@
 import React from "react";
-import  Navbar  from "./sections/Navbar";
-import { Footer } from "./sections/Footer";
 
+import { Footer } from "./sections/Footer";
+import  Navbar  from "./sections/Navbar";
 
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
   description: "Excellence in Education ",
 };
 
-const Template4Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Template6Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <html lang="en">
       <body className="bg-white dark:bg-gray-900 transition-colors duration-200">
@@ -21,4 +21,4 @@ const Template4Layout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   );
 };
 
-export default Template4Layout;
+export default Template6Layout;

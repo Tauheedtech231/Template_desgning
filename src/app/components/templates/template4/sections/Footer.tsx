@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useRef } from "react";
-import { 
-  FaMapMarkerAlt, 
-  FaPhone, 
-  FaEnvelope, 
+import {
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
   FaClock,
   FaArrowUp,
   FaChevronRight,
   FaBookOpen,
   FaUserGraduate,
   FaChalkboardTeacher,
-  FaCalendarAlt
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 export const Footer: React.FC = () => {
@@ -19,33 +19,30 @@ export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const contactInfo = [
     {
       icon: <FaMapMarkerAlt />,
       title: "Campus Location",
-      details: ["123 Education Street", "Academic District", "City, State 12345"]
+      details: ["123 Education Street", "Academic District", "City, State 12345"],
     },
     {
       icon: <FaPhone />,
       title: "Contact Numbers",
-      details: ["+1 (555) 123-4567", "+1 (555) 987-6543", "+1 (555) 456-7890"]
+      details: ["+1 (555) 123-4567", "+1 (555) 987-6543"],
     },
     {
       icon: <FaEnvelope />,
       title: "Email Addresses",
-      details: ["admissions@college.edu", "info@college.edu", "support@college.edu"]
+      details: ["admissions@college.edu", "info@college.edu"],
     },
     {
       icon: <FaClock />,
       title: "Office Hours",
-      details: ["Monday - Friday: 8:00 AM - 6:00 PM", "Saturday: 9:00 AM - 2:00 PM", "Sunday: Closed"]
-    }
+      details: ["Mon – Fri: 8:00 AM – 6:00 PM", "Sat: 9:00 AM – 2:00 PM"],
+    },
   ];
 
   const quickLinks = [
@@ -53,7 +50,7 @@ export const Footer: React.FC = () => {
     { label: "About Us", href: "/components/templates/template4/about" },
     { label: "Programs", href: "/components/templates/template4/courses" },
     { label: "Faculty", href: "/components/templates/template4/faculty" },
-    { label: "Contact", href: "/components/templates/template4/contact" }
+    { label: "Contact", href: "/components/templates/template4/contact" },
   ];
 
   const programs = [
@@ -62,124 +59,105 @@ export const Footer: React.FC = () => {
     "Engineering",
     "Health Sciences",
     "Arts & Humanities",
-    "Social Sciences",
-    "Law Studies",
-    "Research Programs"
+    "Research Programs",
   ];
 
   const accreditation = [
     { name: "Accredited College", icon: <FaBookOpen /> },
     { name: "Government Approved", icon: <FaChalkboardTeacher /> },
-    { name: "Quality Certified", icon: <FaUserGraduate /> }
+    { name: "Quality Certified", icon: <FaUserGraduate /> },
   ];
 
   return (
     <>
       <style jsx global>{`
-        /* Hover effects for links */
         .footer-link-item {
           transition: all 0.3s ease;
         }
         .footer-link-item:hover {
           transform: translateX(4px);
-          color: #E86A58 !important;
-        }
-        .footer-link-item:hover .footer-link-chevron {
-          opacity: 1;
-          transform: translateX(2px);
+          color: #e86a58 !important;
         }
 
-        /* Contact info hover */
         .contact-item:hover .contact-icon-container {
-          background-color: #E86A58;
-          border-color: #E86A58;
+          background-color: #e86a58;
+          border-color: #e86a58;
         }
         .contact-item:hover .contact-icon {
           color: white;
         }
         .contact-item:hover .contact-title {
-          color: #E86A58;
+          color: #e86a58;
         }
 
-        /* Programs hover */
         .program-item:hover {
           transform: translateX(2px);
         }
         .program-item:hover .program-text {
-          color: #E86A58;
-        }
-        .program-item:hover .program-dot {
-          background-color: #E86A58;
+          color: #e86a58;
         }
 
-        /* Back to top button */
         .back-to-top:hover {
-          background-color: #BF4E3A;
+          background-color: #bf4e3a;
           transform: scale(1.05);
-        }
-
-        /* Legal / fine print hover */
-        .legal-link:hover {
-          color: #E86A58 !important;
         }
       `}</style>
 
-      <footer ref={footerRef} className="relative bg-[#1E1E1E] text-[#CCCCCC]">
-        {/* Top Divider */}
-        <div className="h-px bg-[#333333] w-full"></div>
+      <footer ref={footerRef} className="relative bg-[#000821] text-[#D1D5DB]">
+        <div className="h-px bg-[#0B1033] w-full" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-            
-            {/* Column 1: Brand & Description */}
+        <div className="max-w-7xl mx-auto px-4 py-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+            {/* Brand */}
             <div className="space-y-6">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-[#E86A58] rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">E</span>
                 </div>
                 <div>
-                  <h2 className="text-[19px] font-medium text-white font-[Merriweather]">
+                  <h2 className="text-lg font-medium text-white">
                     Excel College
                   </h2>
-                  <p className="text-sm text-[#CCCCCC]">of Professional Studies</p>
+                  <p className="text-sm text-gray-300">
+                    of Professional Studies
+                  </p>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed">
-                A premier educational institution committed to delivering quality education, professional development, and career-focused programs since 2005.
+
+              <p className="text-sm leading-relaxed text-gray-300">
+                A premier educational institution committed to academic
+                excellence and professional growth since 2005.
               </p>
 
-              {/* Accreditation */}
-              <div className="pt-6 border-t border-[#333333]">
-                <p className="text-sm mb-3 font-medium">Accreditation</p>
+              <div className="pt-6 border-t border-[#0B1033]">
+                <p className="text-sm mb-3 font-medium text-white">
+                  Accreditation
+                </p>
                 <div className="space-y-2">
-                  {accreditation.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      <div className="text-[#E86A58]">{item.icon}</div>
-                      <span>{item.name}</span>
+                  {accreditation.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <span className="text-[#E86A58]">{item.icon}</span>
+                      {item.name}
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Human-friendly signature */}
-              <p className="text-xs text-[#B0B0B0] mt-4">
-                Built with care for students and educators.
-              </p>
             </div>
 
-            {/* Column 2: Quick Links */}
+            {/* Quick Links */}
             <div>
-              <h3 className="text-[18px] font-medium text-white mb-6 pb-3 border-b border-[#333333] font-[Merriweather]">
+              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
                 Quick Navigation
               </h3>
               <ul className="space-y-3">
-                {quickLinks.map((link, index) => (
-                  <li key={index}>
+                {quickLinks.map((link, i) => (
+                  <li key={i}>
                     <a
                       href={link.href}
-                      className="footer-link-item flex items-center group relative py-2 text-sm font-medium"
+                      className="footer-link-item flex items-center text-sm"
                     >
-                      <FaChevronRight className="w-3 h-3 text-[#E86A58] opacity-0 group-hover:opacity-100 mr-2 footer-link-chevron transition-all duration-300" />
+                      <FaChevronRight className="mr-2 text-[#E86A58]" />
                       {link.label}
                     </a>
                   </li>
@@ -187,45 +165,42 @@ export const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Column 3: Programs */}
+            {/* Programs */}
             <div>
-              <h3 className="text-[18px] font-medium text-white mb-6 pb-3 border-b border-[#333333] font-[Merriweather]">
+              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
                 Academic Programs
               </h3>
               <ul className="space-y-3">
-                {programs.map((program, index) => (
-                  <li key={index} className="program-item">
-                    <div className="flex items-center py-2">
-                      <div className="program-dot w-1.5 h-1.5 bg-[#333333] rounded-full mr-3 flex-shrink-0 transition-all duration-300"></div>
-                      <span className="program-text">{program}</span>
-                    </div>
+                {programs.map((p, i) => (
+                  <li key={i} className="program-item text-sm text-gray-300">
+                    {p}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Column 4: Contact Info */}
+            {/* Contact */}
             <div>
-              <h3 className="text-[18px] font-medium text-white mb-6 pb-3 border-b border-[#333333] font-[Merriweather]">
+              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
                 Contact Information
               </h3>
               <div className="space-y-5">
-                {contactInfo.map((item, index) => (
-                  <div key={index} className="contact-item">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0">
-                        <div className="contact-icon-container w-9 h-9 rounded-lg bg-[#2C2C2C] border border-[#333333] flex items-center justify-center transition-all duration-300">
-                          <div className="contact-icon text-[#E86A58] text-sm">{item.icon}</div>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="contact-title text-sm font-semibold mb-1.5">{item.title}</h4>
-                        <div className="space-y-1">
-                          {item.details.map((detail, idx) => (
-                            <p key={idx} className="text-xs leading-relaxed">{detail}</p>
-                          ))}
-                        </div>
-                      </div>
+                {contactInfo.map((item, i) => (
+                  <div key={i} className="contact-item flex gap-3">
+                    <div className="contact-icon-container w-9 h-9 rounded-lg bg-[#0B1033] border border-[#121A4D] flex items-center justify-center">
+                      <span className="contact-icon text-[#E86A58] text-sm">
+                        {item.icon}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="contact-title text-sm font-semibold text-white mb-1">
+                        {item.title}
+                      </h4>
+                      {item.details.map((d, idx) => (
+                        <p key={idx} className="text-xs text-gray-300">
+                          {d}
+                        </p>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -234,28 +209,23 @@ export const Footer: React.FC = () => {
 
           </div>
 
-          {/* Bottom Bar */}
-          <div className="mt-12 pt-8 border-t border-[#333333] flex flex-col items-center space-y-5">
-            <div className="text-center space-y-2">
-              <div className="flex items-center gap-2 justify-center">
-                <FaCalendarAlt className="text-[#E86A58] text-sm" />
-                <p className="text-sm">&copy; {currentYear} Excel College of Professional Studies. All rights reserved.</p>
-              </div>
-              <p className="text-xs text-[#B0B0B0]">Accredited Educational Institution | Est. 2005</p>
+          {/* Bottom */}
+          <div className="mt-12 pt-8 border-t border-[#0B1033] flex flex-col items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-300">
+              <FaCalendarAlt className="text-[#E86A58]" />
+              © {currentYear} Excel College. All rights reserved.
             </div>
 
-            {/* Back to Top Button */}
             <button
               onClick={scrollToTop}
-              className="back-to-top w-10 h-10 rounded-lg bg-[#E86A58] flex items-center justify-center text-white transition-all duration-300"
-              aria-label="Back to top"
+              className="back-to-top w-10 h-10 rounded-lg bg-[#E86A58] flex items-center justify-center text-white"
             >
-              <FaArrowUp className="text-sm" />
+              <FaArrowUp />
             </button>
           </div>
         </div>
 
-        <div className="h-px bg-[#333333] w-full"></div>
+        <div className="h-px bg-[#0B1033] w-full" />
       </footer>
     </>
   );

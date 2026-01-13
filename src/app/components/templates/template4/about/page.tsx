@@ -21,12 +21,21 @@ export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const introTextRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
+  const missionRef = useRef<HTMLDivElement>(null);
+  const visionRef = useRef<HTMLDivElement>(null);
   const philosophyRef = useRef<HTMLDivElement>(null);
   const valuesRef = useRef<HTMLDivElement>(null);
   const approachRef = useRef<HTMLDivElement>(null);
   const imageTextRef = useRef<HTMLDivElement>(null);
   const whyChooseUsRef = useRef<HTMLDivElement>(null);
   const whyChooseCardsRef = useRef<HTMLDivElement>(null);
+
+  // Image URLs - Using Unsplash education/college related images
+  const images = {
+    heroImage: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    philosophyImage: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    learningImage: "https://media.istockphoto.com/id/2162068738/photo/class-at-university.jpg?s=2048x2048&w=is&k=20&c=fSck5eYGgQwzKDf0mtb27ArRq_Q3Wme4XkL7Ut1KDZw="
+  };
 
   // Updated data with human, storytelling tone
   const aboutData = {
@@ -154,61 +163,72 @@ export const About: React.FC = () => {
       // Check if we're in a browser environment
       if (typeof window === "undefined") return;
 
-      // Introductory text fade up
+      // Enhanced introductory text animation - slide from bottom
       if (introTextRef.current) {
+        const elements = introTextRef.current.children;
         gsap.fromTo(
-          introTextRef.current,
+          elements,
           { 
             opacity: 0,
-            y: 40 
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: "power3.out",
-            delay: 0.3
-          }
-        );
-      }
-
-      // Story section staggered fade
-      if (storyRef.current) {
-        const paragraphs = storyRef.current.querySelectorAll('.story-paragraph');
-        gsap.fromTo(
-          paragraphs,
-          {
-            opacity: 0,
-            y: 30,
+            y: 60,
           },
           {
             opacity: 1,
             y: 0,
             duration: 1,
-            stagger: 0.3,
+            stagger: 0.2,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: storyRef.current,
-              start: "top 80%",
+              trigger: introTextRef.current,
+              start: "top 90%",
               toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Philosophy section fade in
-      if (philosophyRef.current) {
+      // Story paragraphs - alternating slide animations
+      if (storyRef.current) {
+        const paragraphs = storyRef.current.querySelectorAll('.story-paragraph');
+        paragraphs.forEach((para, index) => {
+          gsap.fromTo(
+            para,
+            {
+              opacity: 0,
+              x: index % 2 === 0 ? -80 : 80, // Alternate left/right
+            },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.8,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: para,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              }
+            }
+          );
+        });
+      }
+
+      // Mission card - slide from left
+      if (missionRef.current) {
         gsap.fromTo(
-          philosophyRef.current,
+          missionRef.current,
           {
             opacity: 0,
+            x: -100,
+            rotateY: -15,
           },
           {
             opacity: 1,
-            duration: 1.2,
+            x: 0,
+            rotateY: 0,
+            duration: 1,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: philosophyRef.current,
+              trigger: missionRef.current,
               start: "top 85%",
               toggleActions: "play none none reverse",
             }
@@ -216,37 +236,85 @@ export const About: React.FC = () => {
         );
       }
 
-      // Values staggered fade
+      // Vision card - slide from right
+      if (visionRef.current) {
+        gsap.fromTo(
+          visionRef.current,
+          {
+            opacity: 0,
+            x: 100,
+            rotateY: 15,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            rotateY: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: visionRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Philosophy points - staggered slide from left
+      if (philosophyRef.current) {
+        const points = philosophyRef.current.querySelectorAll('.philosophy-point');
+        gsap.fromTo(
+          points,
+          {
+            opacity: 0,
+            x: -50,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: philosophyRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Values cards - staggered slide from right
       if (valuesRef.current) {
         const valueItems = valuesRef.current.querySelectorAll('.value-item');
         gsap.fromTo(
           valueItems,
           {
             opacity: 0,
-            x: -20,
+            x: 80,
           },
           {
             opacity: 1,
             x: 0,
             duration: 0.8,
-            stagger: 0.2,
-            ease: "power3.out",
+            stagger: 0.15,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: valuesRef.current,
-              start: "top 85%",
+              start: "top 90%",
               toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Why Choose Us section
+      // Why Choose Us section - slide from bottom
       if (whyChooseUsRef.current) {
         gsap.fromTo(
           whyChooseUsRef.current,
           {
             opacity: 0,
-            y: 30,
+            y: 80,
           },
           {
             opacity: 1,
@@ -255,82 +323,136 @@ export const About: React.FC = () => {
             ease: "power3.out",
             scrollTrigger: {
               trigger: whyChooseUsRef.current,
-              start: "top 85%",
+              start: "top 90%",
               toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Why Choose Us cards staggered animation
+      // Why Choose Us cards - alternating left/right slide
       if (whyChooseCardsRef.current) {
         const cards = whyChooseCardsRef.current.querySelectorAll('.why-choose-card');
-        gsap.fromTo(
-          cards,
-          {
-            opacity: 0,
-            y: 20,
-            scale: 0.98,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: whyChooseCardsRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
+        cards.forEach((card, index) => {
+          gsap.fromTo(
+            card,
+            {
+              opacity: 0,
+              x: index % 2 === 0 ? -100 : 100,
+              scale: 0.9,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              scale: 1,
+              duration: 0.8,
+              delay: index * 0.1,
+              ease: "back.out(1.7)",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 90%",
+                toggleActions: "play none none reverse",
+              }
             }
-          }
-        );
+          );
+        });
       }
 
-      // Approach section fade in
+      // Approach section - slide from left with rotation
       if (approachRef.current) {
         gsap.fromTo(
           approachRef.current,
           {
             opacity: 0,
-            y: 30,
+            x: -120,
+            rotateZ: -2,
           },
           {
             opacity: 1,
-            y: 0,
-            duration: 1,
+            x: 0,
+            rotateZ: 0,
+            duration: 1.2,
             ease: "power3.out",
             scrollTrigger: {
               trigger: approachRef.current,
-              start: "top 85%",
+              start: "top 90%",
               toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Image text animation
+      // Image text - slide from bottom with blur
       if (imageTextRef.current) {
         gsap.fromTo(
           imageTextRef.current,
           {
             opacity: 0,
-            y: 40,
+            y: 100,
+            filter: "blur(10px)",
           },
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
+            filter: "blur(0px)",
+            duration: 1.5,
             ease: "power3.out",
             scrollTrigger: {
               trigger: imageTextRef.current,
-              start: "top 85%",
+              start: "top 90%",
               toggleActions: "play none none reverse",
             }
           }
         );
       }
+
+      // Animate all cards on hover with mouse movement
+      const cards = document.querySelectorAll('.hover-card');
+      cards.forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
+          // Cast to MouseEvent to access clientX and clientY
+          const mouseEvent = e as MouseEvent;
+          const rect = card.getBoundingClientRect();
+          const x = mouseEvent.clientX - rect.left;
+          const y = mouseEvent.clientY - rect.top;
+          
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          const rotateY = ((x - centerX) / centerX) * 5;
+          const rotateX = ((centerY - y) / centerY) * 5;
+          
+          gsap.to(card, {
+            rotateX: rotateX,
+            rotateY: rotateY,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            rotateX: 0,
+            rotateY: 0,
+            duration: 0.5,
+            ease: "elastic.out(1, 0.3)"
+          });
+        });
+      });
+
+      // Parallax effect for background elements
+      gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((element) => {
+        gsap.to(element, {
+          y: 100,
+          ease: "none",
+          scrollTrigger: {
+            trigger: element,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          }
+        });
+      });
 
     }, sectionRef);
 
@@ -343,56 +465,61 @@ export const About: React.FC = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="relative bg-[#FAFAFA] overflow-hidden font-sans"
+      className="relative bg-gradient-to-b from-slate-50 to-white overflow-hidden font-sans"
     >
+      {/* Parallax background elements */}
+      <div className="parallax-bg absolute top-0 left-0 w-1/2 h-96 bg-gradient-to-br from-slate-100/30 to-gray-100/30 rounded-full blur-3xl -translate-x-1/4 -translate-y-1/4 -z-10"></div>
+      <div className="parallax-bg absolute bottom-0 right-0 w-1/2 h-96 bg-gradient-to-tl from-slate-100/30 to-gray-100/30 rounded-full blur-3xl translate-x-1/4 translate-y-1/4 -z-10"></div>
+
       {/* Introduction Section */}
       <div className="relative pt-20 pb-16">
         <div className="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8">
           <div ref={introTextRef} className="text-center">
             {/* Decorative element - subtle and organic */}
             <div className="flex justify-center items-center gap-3 mb-8">
-              <div className="w-10 h-px bg-[#E0E0E0]" />
-              <div className="text-[13px] text-[#8A8A8A] tracking-[0.3em] uppercase">
+              <div className="w-10 h-px bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
+              <div className="text-[13px] text-slate-600 font-medium tracking-[0.3em] uppercase">
                 About us
               </div>
-              <div className="w-10 h-px bg-[#E0E0E0]" />
+              <div className="w-10 h-px bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
             </div>
             
             {/* Main heading with serif font */}
-            <h1 className="text-[36px] md:text-[42px] font-serif font-medium tracking-tight text-[#E86A58] mb-6 leading-[1.1]">
-              Our purpose & perspective
+            <h1 className="text-[36px] md:text-[42px] font-bold tracking-tight text-slate-900 mb-6 leading-[1.1]">
+              Our Purpose & Perspective
             </h1>
             
             {/* Tagline - human, conversational */}
             <div className="mb-10">
-              <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[15px] text-[#5A5A5A] mb-6">
+              <div className="inline-block px-6 py-3 bg-gradient-to-r from-slate-50 to-gray-50 border border-slate-200 rounded-full text-[15px] text-slate-700 font-medium mb-6 shadow-sm">
                 {tagline}
               </div>
-              <p className="text-[17px] text-[#5A5A5A] leading-[1.7] max-w-2xl mx-auto">
+              <p className="text-[17px] text-slate-700 leading-[1.7] max-w-2xl mx-auto">
                 {description}
               </p>
             </div>
 
             {/* Established year - subtle */}
-            <div className="mt-12 pt-8 border-t border-[#F0F0F0]">
-              <div className="text-[13px] text-[#8A8A8A]">
-                Cultivating learning since <span className="text-[#1E1E1E] font-medium">{establishedYear}</span>
+            <div className="mt-12 pt-8 border-t border-slate-200">
+              <div className="text-[13px] text-slate-500">
+                Cultivating learning since <span className="text-slate-700 font-semibold">{establishedYear}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Full Width Image Section with Text Overlay */}
-      <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden bg-[#F5F5F5]">
+      {/* Full Width Hero Image Section */}
+      <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden">
         <img
-          src="https://media.istockphoto.com/id/2189800037/photo/university-students-studying-and-discussing-standing-on-the-steps-of-the-campus.jpg?s=1024x1024&w=is&k=20&c=pAd_InfDuWrWS6BSXsLo2ZQSxWG7QGj-F6mPWyUtJjA="
-          alt="College Campus"
-          className="w-full h-full object-cover opacity-90"
+          src={images.heroImage}
+          alt="College Campus with students studying"
+          className="w-full h-full object-cover"
+          loading="eager"
         />
         
-        {/* Subtle overlay */}
-        <div className="absolute inset-0 bg-[#1E1E1E]/30"></div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/50 to-transparent"></div>
         
         {/* Text Overlay - refined typography */}
         <div 
@@ -402,14 +529,14 @@ export const About: React.FC = () => {
           <div className="text-center max-w-2xl px-6">
             <div className="mb-6">
               <div className="inline-flex items-center gap-2 mb-3">
-                <div className="w-6 h-px bg-white/50"></div>
-                <div className="w-2 h-2 border border-white/50 rounded-full"></div>
-                <div className="w-6 h-px bg-white/50"></div>
+                <div className="w-6 h-px bg-white/80"></div>
+                <div className="w-2 h-2 border border-white/80 rounded-full"></div>
+                <div className="w-6 h-px bg-white/80"></div>
               </div>
-              <h3 className="text-2xl md:text-[32px] font-serif font-medium text-white mb-4 leading-tight tracking-tight">
-                Learning as a human experience
+              <h3 className="text-2xl md:text-[32px] font-bold text-white mb-4 leading-tight">
+                Learning as a Human Experience
               </h3>
-              <p className="text-base text-white/85 max-w-lg mx-auto leading-relaxed">
+              <p className="text-base text-white/95 max-w-lg mx-auto leading-relaxed">
                 Not just acquiring knowledge, but understanding context, developing perspective, and finding ones place in complex systems.
               </p>
             </div>
@@ -422,25 +549,29 @@ export const About: React.FC = () => {
         <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8 py-20">
           <div ref={storyRef} className="mb-24">
             <div className="mb-12">
-              <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
-                Our story
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                  <FaBookOpen className="text-white text-sm" />
+                </div>
+                <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900 leading-tight">
+                  How we arrived here, and why it matters
+                </h2>
               </div>
-              <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-8 leading-tight">
-                How we arrived here, and why it matters
-              </h2>
             </div>
 
             <div className="space-y-8">
               {story.map((paragraph, index) => (
-                <div key={index} className="story-paragraph">
+                <div key={index} className="story-paragraph group">
                   <div className="flex">
                     {/* Paragraph number - subtle */}
                     <div className="flex-shrink-0 w-10 mt-1">
-                      <div className="text-[13px] text-[#8A8A8A] font-medium">
-                        {String(index + 1).padStart(2, '0')}
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center group-hover:from-slate-200 group-hover:to-gray-200 transition-all duration-300">
+                        <div className="text-sm font-semibold text-slate-600">
+                          {String(index + 1).padStart(2, '0')}
+                        </div>
                       </div>
                     </div>
-                    <p className="text-[17px] text-[#5A5A5A] leading-[1.7] flex-1">
+                    <p className="text-[17px] text-slate-700 leading-[1.7] flex-1 ml-4 border-l-2 border-slate-100 pl-6 py-2">
                       {paragraph}
                     </p>
                   </div>
@@ -448,7 +579,7 @@ export const About: React.FC = () => {
                   {/* Decorative element between paragraphs */}
                   {index < story.length - 1 && (
                     <div className="ml-10 mt-6 mb-4">
-                      <div className="w-12 h-px bg-[#F0F0F0]"></div>
+                      <div className="w-12 h-px bg-gradient-to-r from-slate-200 to-transparent"></div>
                     </div>
                   )}
                 </div>
@@ -457,32 +588,32 @@ export const About: React.FC = () => {
           </div>
 
           {/* Mission & Vision - side by side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
             {/* Mission */}
-            <div className="space-y-6">
+            <div ref={missionRef} className="space-y-6 hover-card bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center">
-                  <FaBullseye className="text-[#1E1E1E] text-lg" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center shadow-md">
+                  <FaBullseye className="text-white text-lg" />
                 </div>
-                <h3 className="text-[22px] font-serif font-medium text-[#1E1E1E]">
-                  Our intention
+                <h3 className="text-[22px] font-bold text-slate-900">
+                  Our Intention
                 </h3>
               </div>
               
-              <div className="pl-14">
-                <p className="text-[16px] text-[#5A5A5A] leading-[1.7]">
+              <div className="pl-16">
+                <p className="text-[16px] text-slate-700 leading-[1.7]">
                   {mission}
                 </p>
               </div>
 
               {/* Key focus - minimal list */}
-              <div className="pl-14 pt-4">
-                <div className="text-[14px] text-[#8A8A8A] mb-3">Focus areas:</div>
-                <div className="space-y-2">
+              <div className="pl-16 pt-6">
+                <div className="text-sm font-medium text-slate-600 mb-4">Focus areas:</div>
+                <div className="grid grid-cols-2 gap-3">
                   {["Academic depth", "Practical relevance", "Personal growth", "Community contribution"].map((item, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-[#E86A58] rounded-full"></div>
-                      <span className="text-[15px] text-[#5A5A5A]">{item}</span>
+                    <div key={index} className="flex items-center gap-3 bg-white/80 rounded-lg p-3 border border-slate-200">
+                      <div className="w-2 h-2 bg-gradient-to-r from-slate-600 to-gray-700 rounded-full"></div>
+                      <span className="text-[15px] text-slate-700 font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -490,30 +621,30 @@ export const About: React.FC = () => {
             </div>
 
             {/* Vision */}
-            <div className="space-y-6">
+            <div ref={visionRef} className="space-y-6 hover-card bg-gradient-to-br from-white to-gray-50 rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-sm bg-[#1E1E1E] flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-600 to-slate-700 flex items-center justify-center shadow-md">
                   <FaRocket className="text-white text-lg" />
                 </div>
-                <h3 className="text-[22px] font-serif font-medium text-[#1E1E1E]">
-                  Looking ahead
+                <h3 className="text-[22px] font-bold text-slate-900">
+                  Looking Ahead
                 </h3>
               </div>
               
-              <div className="pl-14">
-                <p className="text-[16px] text-[#5A5A5A] leading-[1.7]">
+              <div className="pl-16">
+                <p className="text-[16px] text-slate-700 leading-[1.7]">
                   {vision}
                 </p>
               </div>
 
               {/* Guiding principles */}
-              <div className="pl-14 pt-4">
-                <div className="text-[14px] text-[#8A8A8A] mb-3">Our direction:</div>
-                <div className="space-y-2">
+              <div className="pl-16 pt-6">
+                <div className="text-sm font-medium text-gray-600 mb-4">Our direction:</div>
+                <div className="grid grid-cols-2 gap-3">
                   {["Adaptive learning", "Real-world impact", "Sustainable growth", "Human-centered design"].map((item, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-[#1E1E1E] rounded-full"></div>
-                      <span className="text-[15px] text-[#5A5A5A]">{item}</span>
+                    <div key={index} className="flex items-center gap-3 bg-white/80 rounded-lg p-3 border border-gray-200">
+                      <div className="w-2 h-2 bg-gradient-to-r from-gray-600 to-slate-700 rounded-full"></div>
+                      <span className="text-[15px] text-slate-700 font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -521,45 +652,70 @@ export const About: React.FC = () => {
             </div>
           </div>
 
-          {/* Philosophy */}
+          {/* Philosophy Section - Image on Right, Content on Left */}
           <div ref={philosophyRef} className="mb-24">
-            <div className="max-w-2xl mx-auto">
-              <div className="text-center mb-12">
-                <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
-                  Philosophy
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+              {/* Left Content */}
+              <div className="space-y-8">
+                <div>
+                  <div className="inline-flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+                      <FaLightbulb className="text-white text-lg" />
+                    </div>
+                    <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900">
+                      {philosophy.heading}
+                    </h2>
+                  </div>
                 </div>
-                <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
-                  {philosophy.heading}
-                </h2>
+
+                <div className="space-y-6">
+                  {philosophy.points.map((point, index) => (
+                    <div 
+                      key={index}
+                      className="philosophy-point flex items-start gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <div className="text-sm font-bold text-slate-700">{index + 1}</div>
+                        </div>
+                      </div>
+                      <p className="text-[16px] text-slate-700 leading-[1.6] flex-1">
+                        {point}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-6">
-                {philosophy.points.map((point, index) => (
-                  <div key={index} className="flex items-start gap-4 p-4 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <div className="w-6 h-6 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-[#1E1E1E] rounded-full"></div>
-                      </div>
-                    </div>
-                    <p className="text-[16px] text-[#5A5A5A] leading-[1.7] flex-1">
-                      {point}
-                    </p>
-                  </div>
-                ))}
+              {/* Right Image */}
+              <div className="relative">
+                <div className="rounded-2xl overflow-hidden shadow-xl">
+                  <img
+                    src={images.philosophyImage}
+                    alt="Educational Philosophy - Students collaborating"
+                    className="w-full h-[400px] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
+                  <FaGraduationCap className="text-white text-2xl" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Why Choose Us - Added Section */}
+          {/* Why Choose Us - Rounded Curve Cards */}
           <div ref={whyChooseUsRef} className="mb-24">
             <div className="text-center mb-12">
-              <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
-                The difference
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                  <FaStar className="text-white text-sm" />
+                </div>
+                <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900">
+                  Why Choose Us
+                </h2>
               </div>
-              <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
-                Why choose 
-              </h2>
-              <p className="text-[17px] text-[#5A5A5A] max-w-2xl mx-auto leading-[1.7] italic">
+              <p className="text-[17px] text-slate-600 max-w-2xl mx-auto leading-[1.7] italic">
                 {whyChooseUs.intro}
               </p>
             </div>
@@ -570,31 +726,45 @@ export const About: React.FC = () => {
                 return (
                   <div 
                     key={index}
-                    className="why-choose-card group bg-white border border-[#EDEDED] rounded-sm p-6 hover:border-[#E86A58]/30 transition-all duration-300"
+                    className="why-choose-card hover-card group"
                   >
-                    <div className="flex flex-col h-full">
-                      {/* Icon with subtle background */}
-                      <div className="mb-5">
-                        <div className="w-12 h-12 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center group-hover:border-[#E86A58]/30 transition-colors duration-300">
-                          <Icon className="text-[#1E1E1E] text-lg" />
-                        </div>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-[18px] font-medium text-[#1E1E1E] mb-3 leading-snug">
-                        {point.title}
-                      </h3>
+                    <div className="relative h-full">
+                      {/* Rounded Curve Design */}
+                      <div className="absolute -inset-2 bg-gradient-to-br from-slate-100/30 to-gray-100/30 rounded-3xl blur-sm group-hover:blur-md transition-all duration-500"></div>
                       
-                      {/* Description */}
-                      <p className="text-[15px] text-[#5A5A5A] leading-[1.6] flex-grow mb-4">
-                        {point.description}
-                      </p>
+                      {/* Main Card with Rounded Curves */}
+                      <div className="relative bg-gradient-to-b from-white to-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-slate-300 hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                        {/* Corner accent */}
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-slate-400/10 to-transparent rounded-tr-2xl"></div>
+                        
+                        <div className="flex flex-col h-full">
+                          {/* Icon with rounded container */}
+                          <div className="mb-5">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-slate-100 group-hover:to-gray-100 transition-all duration-300 shadow-sm">
+                              <Icon className="text-slate-600 text-xl group-hover:text-slate-700 group-hover:scale-110 transition-all duration-300" />
+                            </div>
+                          </div>
 
-                      {/* Subtle indicator */}
-                      <div className="mt-auto pt-4 border-t border-[#F0F0F0]">
-                        <div className="flex items-center justify-between">
+                          {/* Title */}
+                          <h3 className="text-[18px] font-semibold text-slate-900 mb-3 leading-snug">
+                            {point.title}
+                          </h3>
                           
-                          
+                          {/* Description */}
+                          <p className="text-[15px] text-slate-600 leading-[1.6] flex-grow mb-4">
+                            {point.description}
+                          </p>
+
+                          {/* Subtle indicator with curved design */}
+                          <div className="mt-auto pt-4 border-t border-slate-200/50">
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs text-slate-500 font-medium">Feature {index + 1}</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-1 bg-gradient-to-r from-slate-400 to-gray-400 rounded-full group-hover:w-10 transition-all duration-300"></div>
+                                <div className="w-2 h-2 rounded-full bg-slate-400 group-hover:scale-125 transition-transform duration-300"></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -607,40 +777,40 @@ export const About: React.FC = () => {
           {/* Values - minimal presentation */}
           <div ref={valuesRef} className="mb-24">
             <div className="text-center mb-12">
-              <div className="inline-block px-4 py-2 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
-                Our values
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                  <FaShieldAlt className="text-white text-sm" />
+                </div>
+                <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900">
+                  The principles that guide our choices
+                </h2>
               </div>
-              <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
-                The principles that guide our choices
-              </h2>
-              <p className="text-[16px] text-[#5A5A5A] max-w-xl mx-auto leading-relaxed">
-                These are not just words on a wall they are the criteria we use when making decisions, big and small.
+              <p className="text-[16px] text-slate-600 max-w-xl mx-auto leading-relaxed">
+                These are not just words on a wall—they are the criteria we use when making decisions, big and small.
               </p>
             </div>
 
-            <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {values.map((value) => {
                 const Icon = value.icon;
                 return (
-                  <div key={value.id} className="value-item">
-                    <div className="flex flex-col md:flex-row md:items-start gap-6 p-6 bg-white border border-[#F0F0F0] rounded-sm hover:border-[#E0E0E0] transition-colors duration-300">
+                  <div key={value.id} className="value-item hover-card group">
+                    <div className="flex items-start gap-6 p-6 bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xl transition-all duration-300">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center">
-                          <Icon className="text-[#1E1E1E] text-xl" />
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                          <Icon className="text-slate-600 text-xl" />
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-[18px] font-medium text-[#1E1E1E] mb-3">
-                          {value.title}
-                        </h3>
-                        <p className="text-[15px] text-[#5A5A5A] leading-relaxed">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-[18px] font-semibold text-slate-900">
+                            {value.title}
+                          </h3>
+                          <div className="text-sm font-bold text-slate-600 bg-slate-50 px-2 py-1 rounded">0{value.id}</div>
+                        </div>
+                        <p className="text-[15px] text-slate-600 leading-relaxed">
                           {value.description}
                         </p>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <div className="text-[13px] text-[#8A8A8A] font-medium">
-                          0{value.id}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -649,60 +819,89 @@ export const About: React.FC = () => {
             </div>
           </div>
 
-          {/* Approach */}
-          <div ref={approachRef} className="bg-[#FAFAFA] border border-[#EDEDED] rounded-sm p-8 md:p-12">
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <div className="inline-block px-4 py-2 bg-white border border-[#EDEDED] rounded-sm text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase mb-6">
-                  Approach
+          {/* Approach Section with Third Image */}
+          <div className="mb-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+              {/* Left Image */}
+              <div className="relative order-2 lg:order-1">
+                <div className="rounded-2xl overflow-hidden shadow-xl">
+                  <img
+                    src={images.learningImage}
+                    alt="Modern learning environment"
+                    className="w-full h-[400px] object-cover"
+                    loading="lazy"
+                  />
                 </div>
-                <h2 className="text-[28px] md:text-[32px] font-serif font-medium text-[#E86A58] mb-6 leading-tight">
-                  {approach.heading}
-                </h2>
-                <p className="text-[16px] text-[#5A5A5A] max-w-xl mx-auto leading-relaxed">
-                  {approach.description}
-                </p>
+                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
+                  <FaLightbulb className="text-white text-xl" />
+                </div>
               </div>
 
-              <div className="space-y-8">
-                {approach.aspects.map((aspect, index) => (
-                  <div key={index} className="flex flex-col md:flex-row gap-6 pb-8 border-b border-[#F0F0F0] last:border-0 last:pb-0">
-                    <div className="flex-shrink-0 md:w-40">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-px bg-[#E86A58]"></div>
-                        <h3 className="text-[18px] font-medium text-[#1E1E1E]">
+              {/* Right Content */}
+              <div ref={approachRef} className="space-y-8 hover-card bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 order-1 lg:order-2">
+                <div>
+                  <div className="inline-flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                      <FaGraduationCap className="text-white text-lg" />
+                    </div>
+                    <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900">
+                      {approach.heading}
+                    </h2>
+                  </div>
+                  <p className="text-[16px] text-slate-600 leading-relaxed mb-8">
+                    {approach.description}
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  {approach.aspects.map((aspect, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-start gap-4 p-4 bg-white/80 rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center">
+                          <div className="text-sm font-bold text-slate-700">{index + 1}</div>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-[17px] font-semibold text-slate-900 mb-2">
                           {aspect.title}
                         </h3>
+                        <p className="text-[15px] text-slate-600 leading-relaxed">
+                          {aspect.description}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-[15px] text-[#5A5A5A] leading-relaxed">
-                        {aspect.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Closing element */}
+          <div className="py-16 border-t border-slate-200 bg-gradient-to-b from-white to-slate-50">
+            <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 text-center">
+              <div className="inline-flex items-center gap-4 mb-6 hover-card">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                  <FaShieldAlt className="text-white text-lg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Accredited Excellence</h3>
+                  <p className="text-[15px] text-slate-600">
+                    Accredited by the National Education Board • Committed to educational excellence since {establishedYear}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Closing element */}
-        <div className="py-16 border-t border-[#F0F0F0] bg-[#FAFAFA]">
-          <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <div className="w-6 h-px bg-[#E0E0E0]"></div>
-              <FaShieldAlt className="text-[#8A8A8A]" />
-              <div className="w-6 h-px bg-[#E0E0E0]"></div>
-            </div>
-            <p className="text-[15px] text-[#5A5A5A] leading-relaxed">
-              Accredited by the National Education Board • Committed to educational excellence since {establishedYear}
-            </p>
-          </div>
-        </div>
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-slate-50/50 to-transparent -z-10"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-slate-50/50 to-transparent -z-10"></div>
       </div>
     </section>
   );
 };
-
 export default About;
