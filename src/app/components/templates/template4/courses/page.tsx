@@ -1,16 +1,14 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { 
-  FaCalendar,
   FaUsers,
   FaBook,
   FaClock,
- 
+  FaArrowRight
 } from "react-icons/fa";
-
 
 const CoursesSection: React.FC = () => {
   const [activeCourse, setActiveCourse] = useState<number>(0);
@@ -18,7 +16,16 @@ const CoursesSection: React.FC = () => {
   const [startX, setStartX] = useState<number>(0);
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const sliderRef = useRef<HTMLDivElement>(null);
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Scroll-based animations
+  const headingX = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const cardScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   // Human-written course descriptions with natural variation
   const coursesData = {
@@ -31,8 +38,8 @@ const CoursesSection: React.FC = () => {
         duration: "12 weeks",
         instructor: "Dr. Sarah Johnson",
         category: "Technology",
-        description: "Start with the building blocks of programming and software development. We focus on practical problem-solving and hands-on projects that help you understand how things actually work.",
-        features: ["Weekly coding exercises", "Project-based learning", "One-on-one mentor support", "Portfolio development"]
+        description: "Start with the building blocks of programming and software development. We focus on practical problem-solving and hands-on projects.",
+        features: ["Weekly coding exercises", "Project-based learning", "One-on-one mentor support"]
       },
       {
         id: 2,
@@ -42,8 +49,8 @@ const CoursesSection: React.FC = () => {
         duration: "16 weeks",
         instructor: "Prof. Michael Chen",
         category: "Business",
-        description: "Learn to navigate real business situations through case studies and practical exercises. The focus is on developing judgment and decision-making skills that apply across industries.",
-        features: ["Case study analysis", "Leadership workshops", "Industry guest speakers", "Team collaboration projects"]
+        description: "Learn to navigate real business situations through case studies and practical exercises.",
+        features: ["Case study analysis", "Leadership workshops", "Industry guest speakers"]
       },
       {
         id: 3,
@@ -53,8 +60,8 @@ const CoursesSection: React.FC = () => {
         duration: "20 weeks",
         instructor: "Dr. Robert Williams",
         category: "Engineering",
-        description: "An introduction to core engineering concepts that balances theory with hands-on application. You'll work on actual design problems and learn through doing, not just studying.",
-        features: ["Laboratory sessions", "Design challenges", "Industry software training", "Site visits"]
+        description: "An introduction to core engineering concepts that balances theory with hands-on application.",
+        features: ["Laboratory sessions", "Design challenges", "Industry software training"]
       },
       {
         id: 4,
@@ -64,8 +71,8 @@ const CoursesSection: React.FC = () => {
         duration: "10 weeks",
         instructor: "Prof. Lisa Anderson",
         category: "Marketing",
-        description: "Learn how to create campaigns that actually work and understand how to measure their impact. We use current tools and platforms to give you practical, applicable skills.",
-        features: ["Real campaign creation", "Analytics platform practice", "Content strategy development", "Portfolio completion"]
+        description: "Learn how to create campaigns that actually work and understand how to measure their impact.",
+        features: ["Real campaign creation", "Analytics platform practice", "Content strategy development"]
       },
       {
         id: 5,
@@ -75,8 +82,8 @@ const CoursesSection: React.FC = () => {
         duration: "14 weeks",
         instructor: "Dr. David Miller",
         category: "Data Science",
-        description: "Work with actual datasets to learn how to find meaningful insights and tell stories with data. We emphasize practical application over abstract theory.",
-        features: ["Real dataset analysis", "Statistical method application", "Data visualization practice", "Ethical consideration discussion"]
+        description: "Work with actual datasets to learn how to find meaningful insights and tell stories with data.",
+        features: ["Real dataset analysis", "Statistical method application", "Data visualization practice"]
       }
     ]
   };
@@ -87,6 +94,11 @@ const CoursesSection: React.FC = () => {
     if (!slider) return;
 
     const animateSlider = () => {
+      if (isDragging) {
+        requestAnimationFrame(animateSlider);
+        return;
+      }
+
       const totalWidth = slider.scrollWidth;
       const visibleWidth = slider.clientWidth;
       
@@ -106,7 +118,7 @@ const CoursesSection: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isDragging]);
 
   // Handle drag for manual control
   const handleDragStart = (e: React.MouseEvent) => {
@@ -130,76 +142,108 @@ const CoursesSection: React.FC = () => {
     setIsDragging(false);
   };
 
-  const handleCourseSelect = (index: number) => {
-    setActiveCourse(index);
-  };
-
   // Auto-rotate active course
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveCourse(prev => (prev + 1) % coursesData.courses.length);
-    }, 8000);
+    }, 5000);
     
     return () => clearInterval(interval);
   }, [coursesData.courses.length]);
 
+  const handleCourseSelect = (index: number) => {
+    setActiveCourse(index);
+  };
+
   return (
-    <section className="relative bg-[#FAFAFA] overflow-hidden">
-      {/* Hero image section */}
-      <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
+    <section ref={containerRef} className="relative bg-white overflow-hidden">
+      {/* Hero image section with rounded bottom corners */}
+      <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
         <Image
-          src="https://plus.unsplash.com/premium_photo-1683887034491-f58b4c4fca72?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src="https://plus.unsplash.com/premium_photo-1683887034491-f58b4c4fca72?q=80&w=1169&auto=format&fit=crop"
           alt="Learning environment"
           fill
-          className="object-cover"
+          className="object-cover rounded-b-3xl"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
         
-        {/* Overlay content with organic alignment */}
-        <div className="relative z-10 h-full flex items-center">
+        {/* Animated heading that moves on scroll */}
+        <motion.div 
+          className="relative z-10 h-full flex items-center"
+          style={{ x: headingX, opacity: headingOpacity }}
+        >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-3 mb-6">
-                <div className="h-px w-12 bg-white/50" />
-                <span className="text-white/90 text-sm tracking-wide">
-                  Our offerings
-                </span>
+                <motion.div 
+                  className="h-px w-12 bg-white/50"
+                  initial={{ width: 0 }}
+                  animate={{ width: 48 }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                />
+                <motion.span 
+                  className="text-white/90 text-sm tracking-wide"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  Our Programs
+                </motion.span>
               </div>
               
-              <h1 className="font-serif text-4xl md:text-5xl font-medium text-white mb-6 leading-tight">
-                Programs designed<br />
-                <span className="text-[#E86A58]">for real learning</span>
-              </h1>
-              
-              <p className="text-lg text-white/90 leading-relaxed max-w-xl">
-                Each course is built around practical application, helping you develop skills that matter in your work and life.
-              </p>
+              <motion.h1 
+                className="font-serif text-4xl md:text-5xl font-medium text-white mb-6 leading-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Learn Practical<br />
+                <span className="text-teal-400">Skills That Matter</span>
+              </motion.h1>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Courses content */}
-      <div className="py-20 md:py-28">
+      <div className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section header */}
-          <div className="mb-16 md:mb-20">
+          <div className="mb-12 md:mb-16">
             <div className="max-w-3xl">
-              <h2 className="font-serif text-3xl md:text-4xl font-medium text-[#E86A58] mb-8 leading-tight">
-                What we offer
-              </h2>
+              {/* Heading with left-right animation */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="font-serif text-3xl md:text-4xl font-medium text-gray-900 mb-6 leading-tight">
+                  Comprehensive Programs
+                </h2>
+              </motion.div>
               
-              <p className="text-lg text-[#5A5A5A] leading-relaxed tracking-tight max-w-2xl">
-                Our programs focus on building practical understanding through hands-on work. 
-                We believe in teaching skills that apply directly to real-world situations.
-              </p>
+              {/* Subheading with right-left animation */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Hands-on learning experiences designed for real-world application
+                </p>
+              </motion.div>
             </div>
           </div>
 
           {/* Active course display */}
-          <div className="mb-16">
+          <motion.div 
+            className="mb-12 md:mb-16"
+            style={{ scale: cardScale }}
+          >
             <AnimatePresence mode="wait">
               {coursesData.courses.map((course, index) => {
                 if (index !== activeCourse) return null;
@@ -207,119 +251,179 @@ const CoursesSection: React.FC = () => {
                 return (
                   <motion.div
                     key={course.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12"
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 100 }}
+                    transition={{ duration: 0.5, type: "spring", damping: 20 }}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10"
                   >
-                    {/* Course image */}
+                    {/* Course image with rounded corners */}
                     <div className="relative">
-                      <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
+                      <motion.div 
+                        className="relative h-64 md:h-80 lg:h-96 overflow-hidden rounded-2xl"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                      >
                         <Image
                           src={course.image}
                           alt={course.title}
                           fill
-                          className="object-cover"
+                          className="object-cover rounded-2xl"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                         
-                        {/* Category badge */}
-                        <div className="absolute top-6 left-6">
-                          <span className="px-4 py-2 bg-white text-[#5A5A5A] text-sm font-medium tracking-wide">
+                        {/* Category badge with animation */}
+                        <motion.div 
+                          className="absolute top-6 left-6"
+                          initial={{ opacity: 0, y: -20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                        >
+                          <span className="px-4 py-2 bg-white text-gray-800 text-sm font-medium tracking-wide rounded-full shadow-sm">
                             {course.category}
                           </span>
-                        </div>
-                      </div>
+                        </motion.div>
+                      </motion.div>
                     </div>
 
-                    {/* Course details */}
+                    {/* Course details with rounded card */}
                     <div className="flex flex-col justify-center">
-                      <div className="p-6 md:p-8 bg-white shadow-sm">
-                        {/* Course title */}
-                        <h3 className="font-serif text-2xl md:text-3xl font-medium text-[#1E1E1E] mb-4 leading-tight">
+                      <div className="p-6 md:p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
+                        {/* Course title with animation */}
+                        <motion.h3 
+                          className="font-serif text-2xl md:text-3xl font-medium text-gray-900 mb-4 leading-tight"
+                          initial={{ opacity: 0, x: 50 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: 0.3 }}
+                        >
                           {course.title}
-                        </h3>
+                        </motion.h3>
                         
-                        {/* Instructor info */}
-                        <div className="flex items-center gap-3 mb-6">
-                          <div className="w-8 h-8 rounded-full bg-[#E86A58]/10 flex items-center justify-center">
-                            <FaUsers className="h-4 w-4 text-[#E86A58]" />
+                        {/* Instructor info with animation */}
+                        <motion.div 
+                          className="flex items-center gap-3 mb-6"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.4 }}
+                        >
+                          <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                            <FaUsers className="h-5 w-5 text-teal-600" />
                           </div>
                           <div>
-                            <div className="text-sm text-[#5A5A5A]">Instructor</div>
-                            <div className="text-[#1E1E1E] font-medium">{course.instructor}</div>
+                            <div className="text-sm text-gray-500">Instructor</div>
+                            <div className="text-gray-800 font-medium">{course.instructor}</div>
                           </div>
-                        </div>
+                        </motion.div>
                         
-                        {/* Course description */}
-                        <div className="mb-8">
-                          <p className="text-[#5A5A5A] leading-relaxed text-base tracking-tight">
+                        {/* Course description with animation */}
+                        <motion.div 
+                          className="mb-8"
+                          initial={{ opacity: 0, x: -50 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: 0.5 }}
+                        >
+                          <p className="text-gray-600 leading-relaxed">
                             {course.description}
                           </p>
-                        </div>
+                        </motion.div>
                         
-                        {/* Course features */}
+                        {/* Course features with staggered animation */}
                         <div className="space-y-3 mb-8">
                           {course.features.map((feature, idx) => (
-                            <div key={idx} className="flex items-start gap-3">
-                              <div className="w-4 h-4 rounded-full bg-[#E86A58]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <div className="w-1.5 h-1.5 bg-[#E86A58] rounded-full" />
+                            <motion.div 
+                              key={idx} 
+                              className="flex items-center gap-3"
+                              initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ 
+                                duration: 0.4, 
+                                delay: 0.6 + (idx * 0.1),
+                                type: "spring",
+                                stiffness: 100
+                              }}
+                            >
+                              <div className="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-2 h-2 bg-teal-500 rounded-full" />
                               </div>
-                              <span className="text-[#5A5A5A] text-sm leading-relaxed">
+                              <span className="text-gray-700 text-sm">
                                 {feature}
                               </span>
-                            </div>
+                            </motion.div>
                           ))}
                         </div>
                         
-                        {/* Course stats */}
-                        <div className="pt-6 border-t border-[#E5E5E5]">
+                        {/* Course stats with animation */}
+                        <motion.div 
+                          className="pt-6 border-t border-gray-200"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.9 }}
+                        >
                           <div className="flex flex-wrap gap-4">
-                            <div className="flex items-center gap-2 text-[#5A5A5A] text-sm">
-                              <FaClock className="h-3 w-3" />
+                            <div className="flex items-center gap-2 text-gray-600 text-sm">
+                              <FaClock className="h-4 w-4" />
                               <span>{course.duration}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-[#5A5A5A] text-sm">
-                              <FaUsers className="h-3 w-3" />
+                            <div className="flex items-center gap-2 text-gray-600 text-sm">
+                              <FaUsers className="h-4 w-4" />
                               <span>{course.participants} participants</span>
                             </div>
-                            <div className="flex items-center gap-2 text-[#5A5A5A] text-sm">
-                              <FaBook className="h-3 w-3" />
-                              <span>Hands-on learning</span>
+                            <div className="flex items-center gap-2 text-gray-600 text-sm">
+                              <FaBook className="h-4 w-4" />
+                              <span>Practical focus</span>
                             </div>
                           </div>
-                        </div>
+                        </motion.div>
                       </div>
                     </div>
                   </motion.div>
                 );
               })}
             </AnimatePresence>
-          </div>
+          </motion.div>
 
-          {/* Horizontal Slider - Continuous right to left */}
+          {/* Continuous Horizontal Slider - Right to Left */}
           <div className="mt-16">
-            <div className="mb-8">
+            {/* Section heading with left animation */}
+            <motion.div 
+              className="mb-8"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <div className="flex items-center gap-3">
-                <div className="h-px w-8 bg-[#E86A58]/30" />
-                <span className="text-sm text-[#5A5A5A] tracking-wide">
-                  Browse all courses
-                </span>
+                <motion.div 
+                  className="h-px w-8 bg-teal-500"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 32 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                />
+                <motion.span 
+                  className="text-sm text-gray-600 tracking-wide"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                >
+                  Browse all programs
+                </motion.span>
               </div>
-            </div>
+            </motion.div>
             
             {/* Slider container */}
             <div className="relative overflow-hidden">
               {/* Gradient overlays */}
-              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#FAFAFA] to-transparent z-10" />
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAFA] to-transparent z-10" />
+              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10" />
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
               
               {/* Continuous slider */}
               <div
                 ref={sliderRef}
-                className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide"
+                className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing"
                 style={{ scrollBehavior: 'auto' }}
                 onMouseDown={handleDragStart}
                 onMouseMove={handleDragMove}
@@ -329,63 +433,120 @@ const CoursesSection: React.FC = () => {
               >
                 {/* First set of courses */}
                 {coursesData.courses.map((course, index) => (
-                  <div
+                  <motion.div
                     key={`first-${course.id}`}
-                    className={`flex-shrink-0 w-64 md:w-80 cursor-pointer transition-all duration-300 ${
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className={`flex-shrink-0 w-64 md:w-72 cursor-pointer transition-all duration-300 ${
                       activeCourse === index 
-                        ? 'opacity-100 scale-105' 
-                        : 'opacity-80 hover:opacity-100'
+                        ? 'transform -translate-y-2' 
+                        : 'hover:transform hover:-translate-y-1'
                     }`}
                     onClick={() => handleCourseSelect(index)}
                   >
-                    <div className="bg-white p-4 shadow-sm border border-[#E5E5E5]">
-                      <div className="mb-3">
-                        <div className="text-[#E86A58] text-sm font-medium">
+                    <div className={`bg-white p-5 rounded-xl shadow-sm border transition-all duration-300 ${
+                      activeCourse === index 
+                        ? 'border-teal-500 shadow-md' 
+                        : 'border-gray-200 hover:border-teal-300'
+                    }`}>
+                      {/* Category with animation */}
+                      <motion.div 
+                        className="mb-4"
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="text-teal-600 text-sm font-medium mb-2">
                           {course.category}
                         </div>
-                        <h3 className="font-medium text-[#1E1E1E] mt-1">
+                        <h3 className="font-medium text-gray-800">
                           {course.title}
                         </h3>
-                      </div>
-                      <div className="text-xs text-[#5A5A5A]">
-                        {course.instructor}
+                      </motion.div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-500">
+                          {course.instructor}
+                        </div>
+                        <motion.div 
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                            activeCourse === index 
+                              ? 'bg-teal-500 text-white' 
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                          whileHover={{ scale: 1.1, rotate: 90 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <FaArrowRight className="h-3 w-3" />
+                        </motion.div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
                 
                 {/* Duplicate set for seamless loop */}
                 {coursesData.courses.map((course, index) => (
-                  <div
+                  <motion.div
                     key={`second-${course.id}`}
-                    className={`flex-shrink-0 w-64 md:w-80 cursor-pointer transition-all duration-300 ${
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className={`flex-shrink-0 w-64 md:w-72 cursor-pointer transition-all duration-300 ${
                       activeCourse === index 
-                        ? 'opacity-100 scale-105' 
-                        : 'opacity-80 hover:opacity-100'
+                        ? 'transform -translate-y-2' 
+                        : 'hover:transform hover:-translate-y-1'
                     }`}
                     onClick={() => handleCourseSelect(index)}
                   >
-                    <div className="bg-white p-4 shadow-sm border border-[#E5E5E5]">
-                      <div className="mb-3">
-                        <div className="text-[#E86A58] text-sm font-medium">
+                    <div className={`bg-white p-5 rounded-xl shadow-sm border transition-all duration-300 ${
+                      activeCourse === index 
+                        ? 'border-teal-500 shadow-md' 
+                        : 'border-gray-200 hover:border-teal-300'
+                    }`}>
+                      <motion.div 
+                        className="mb-4"
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="text-teal-600 text-sm font-medium mb-2">
                           {course.category}
                         </div>
-                        <h3 className="font-medium text-[#1E1E1E] mt-1">
+                        <h3 className="font-medium text-gray-800">
                           {course.title}
                         </h3>
-                      </div>
-                      <div className="text-xs text-[#5A5A5A]">
-                        {course.instructor}
+                      </motion.div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-500">
+                          {course.instructor}
+                        </div>
+                        <motion.div 
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                            activeCourse === index 
+                              ? 'bg-teal-500 text-white' 
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                          whileHover={{ scale: 1.1, rotate: 90 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <FaArrowRight className="h-3 w-3" />
+                        </motion.div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
 
-            {/* Progress indicator */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <div className="flex gap-2">
+            {/* Progress indicator with animation */}
+            <motion.div 
+              className="flex items-center justify-center gap-6 mt-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="flex gap-1.5">
                 {coursesData.courses.map((_, index) => (
                   <button
                     key={index}
@@ -393,37 +554,32 @@ const CoursesSection: React.FC = () => {
                     className="focus:outline-none"
                     aria-label={`View course ${index + 1}`}
                   >
-                    <div 
-                      className={`h-1 rounded-full transition-all duration-300 ${
+                    <motion.div 
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
                         index === activeCourse 
-                          ? 'w-6 bg-[#E86A58]' 
-                          : 'w-2 bg-[#E5E5E5] hover:bg-[#D0D0D0]'
+                          ? 'w-8 bg-teal-500' 
+                          : 'w-2 bg-gray-300 hover:bg-gray-400'
                       }`}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      layout
                     />
                   </button>
                 ))}
               </div>
               
-              <div className="text-sm text-[#5A5A5A]">
-                <span className="font-medium">{activeCourse + 1}</span>
-                <span className="mx-2">of</span>
+              <motion.div 
+                className="text-sm text-gray-600"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <span className="font-medium text-gray-800">{activeCourse + 1}</span>
+                <span className="mx-1">/</span>
                 <span>{coursesData.courses.length}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom note */}
-          <div className="mt-20 pt-8 border-t border-[#E5E5E5]">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-3 mb-4">
-                <FaCalendar className="h-5 w-5 text-[#E86A58]" />
-                <span className="text-[#1E1E1E] font-medium">Flexible scheduling</span>
-              </div>
-              <p className="text-[#5A5A5A] leading-relaxed">
-                All our programs offer multiple scheduling options to fit different needs and commitments. 
-                We focus on creating learning experiences that work with your life, not against it.
-              </p>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -438,9 +594,6 @@ const CoursesSection: React.FC = () => {
           display: none;
         }
       `}</style>
-
-      {/* Subtle section separator */}
-      <div className="h-px bg-[#E5E5E5] max-w-4xl mx-auto" />
     </section>
   );
 };

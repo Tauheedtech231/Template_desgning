@@ -574,14 +574,14 @@ export const About: React.FC = () => {
             {/* Decorative element - subtle and organic */}
             <div className="flex justify-center items-center gap-3 mb-8">
               <div className="w-10 h-px bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
-              <div className="text-[13px] text-slate-600 font-medium tracking-[0.3em] uppercase">
+              <div className="text-[13px] text-teal-400  font-medium tracking-[0.3em] uppercase">
                 About us
               </div>
               <div className="w-10 h-px bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
             </div>
             
             {/* Main heading with serif font */}
-            <h1 className="text-[36px] md:text-[42px] font-bold tracking-tight text-slate-900 mb-6 leading-[1.1]">
+            <h1 className="text-[36px] md:text-[42px] font-bold tracking-tight text-teal-600  mb-6 leading-[1.1]">
               Our Purpose & Perspective
             </h1>
             
@@ -606,39 +606,43 @@ export const About: React.FC = () => {
       </div>
 
       {/* Full Width Hero Image Section */}
-      <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden">
-        <img
-          src={images.heroImage}
-          alt="College Campus with students studying"
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-        
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/50 to-transparent"></div>
-        
-        {/* Text Overlay - refined typography */}
-        <div 
-          ref={imageTextRef}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          <div className="text-center max-w-2xl px-6">
-            <div className="mb-6">
-              <div className="inline-flex items-center gap-2 mb-3">
-                <div className="w-6 h-px bg-white/80"></div>
-                <div className="w-2 h-2 border border-white/80 rounded-full"></div>
-                <div className="w-6 h-px bg-white/80"></div>
-              </div>
-              <h3 className="text-2xl md:text-[32px] font-bold text-white mb-4 leading-tight">
-                Learning as a Human Experience
-              </h3>
-              <p className="text-base text-white/95 max-w-lg mx-auto leading-relaxed">
-                Not just acquiring knowledge, but understanding context, developing perspective, and finding ones place in complex systems.
-              </p>
-            </div>
-          </div>
+    <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden rounded-2xl">
+  {/* Background Video */}
+  <video
+    src="/data/about2.mp4"
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="w-full h-full object-cover"
+  />
+
+  {/* Gradient overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/50 to-transparent"></div>
+
+  {/* Text Overlay - refined typography */}
+  <div 
+    ref={imageTextRef}
+    className="absolute inset-0 flex items-center justify-center"
+  >
+    <div className="text-center max-w-2xl px-6">
+      <div className="mb-6">
+        <div className="inline-flex items-center gap-2 mb-3">
+          <div className="w-6 h-px bg-white/80"></div>
+          <div className="w-2 h-2 border border-white/80 rounded-full"></div>
+          <div className="w-6 h-px bg-white/80"></div>
         </div>
+        <h3 className="text-2xl md:text-[32px] font-bold text-white mb-4 leading-tight">
+          Learning as a Human Experience
+        </h3>
+        <p className="text-base text-white/95 max-w-lg mx-auto leading-relaxed">
+          Not just acquiring knowledge, but understanding context, developing perspective, and finding ones place in complex systems.
+        </p>
       </div>
+    </div>
+  </div>
+</div>
+
 
       {/* Story Section */}
       <div className="relative bg-white">
@@ -649,7 +653,7 @@ export const About: React.FC = () => {
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center shadow-md">
                   <FaBookOpen className="text-white text-sm" />
                 </div>
-                <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900 leading-tight">
+                <h2 className="text-[28px] md:text-[32px] font-bold text-teal-500  leading-tight">
                   How we arrived here, and why it matters
                 </h2>
               </div>
@@ -794,7 +798,7 @@ export const About: React.FC = () => {
 
 
           {/* Philosophy Section - Image on Right, Content on Left */}
-         <div className="mb-20 sm:mb-24">
+<div className="mb-20 sm:mb-24">
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
 
     {/* Left Content */}
@@ -833,16 +837,16 @@ export const About: React.FC = () => {
       </div>
     </div>
 
-    {/* Right Image */}
-    <div className="relative">
-      <div className="rounded-3xl overflow-hidden shadow-2xl">
-        <img
-          src={images.philosophyImage}
-          alt="Educational Philosophy – Students collaborating"
-          className="w-full h-[260px] sm:h-[320px] lg:h-[420px] object-cover"
-          loading="lazy"
-        />
-      </div>
+    {/* Right Video */}
+    <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+      <video
+        src="/data/about1.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-[260px] sm:h-[320px] lg:h-[420px] object-cover rounded-3xl"
+      />
 
       {/* Floating Accent */}
       <div className="floating-element absolute -bottom-5 -right-5 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-xl">
@@ -852,6 +856,7 @@ export const About: React.FC = () => {
 
   </div>
 </div>
+
 
 
           {/* Why Choose Us - Rounded Curve Cards with Border Animation */}
