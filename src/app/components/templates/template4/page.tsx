@@ -7,7 +7,8 @@ import   HeroSection  from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
 
-import StatsSection from "./sections/Stats";
+
+
 
 const Template4: React.FC = () => {
   useEffect(() => {
@@ -31,6 +32,7 @@ const Template4: React.FC = () => {
       {/* <StatsSection/> */}
      
       <About />
+     
       {/* <CertificatesSection /> */}
       <Footer />
     </div>
