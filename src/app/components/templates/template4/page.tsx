@@ -7,6 +7,8 @@ import   HeroSection  from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
 
+import StatsSection from "./sections/Stats";
+
 const Template4: React.FC = () => {
   useEffect(() => {
     const storedData = localStorage.getItem("collegeInfo");
@@ -24,7 +26,10 @@ const Template4: React.FC = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       <Navbar />
+      
       <HeroSection/>
+      {/* <StatsSection/> */}
+     
       <About />
       {/* <CertificatesSection /> */}
       <Footer />

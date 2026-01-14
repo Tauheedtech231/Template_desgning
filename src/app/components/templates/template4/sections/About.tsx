@@ -21,14 +21,20 @@ export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const introTextRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
+  const storyHeadingRef = useRef<HTMLDivElement>(null);
   const missionRef = useRef<HTMLDivElement>(null);
   const visionRef = useRef<HTMLDivElement>(null);
   const philosophyRef = useRef<HTMLDivElement>(null);
+  const philosophyHeadingRef = useRef<HTMLDivElement>(null);
   const valuesRef = useRef<HTMLDivElement>(null);
+  const valuesHeadingRef = useRef<HTMLDivElement>(null);
   const approachRef = useRef<HTMLDivElement>(null);
+  const approachHeadingRef = useRef<HTMLDivElement>(null);
   const imageTextRef = useRef<HTMLDivElement>(null);
   const whyChooseUsRef = useRef<HTMLDivElement>(null);
+  const whyChooseHeadingRef = useRef<HTMLDivElement>(null);
   const whyChooseCardsRef = useRef<HTMLDivElement>(null);
+  const storyParagraphsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   // Image URLs - Using Unsplash education/college related images
   const images = {
@@ -163,23 +169,53 @@ export const About: React.FC = () => {
       // Check if we're in a browser environment
       if (typeof window === "undefined") return;
 
-      // Enhanced introductory text animation - slide from bottom
+      // Intro text animation - slide from left with cool effect
       if (introTextRef.current) {
         const elements = introTextRef.current.children;
         gsap.fromTo(
           elements,
           { 
             opacity: 0,
-            y: 60,
+            x: -150,
+            filter: "blur(10px)",
+            scale: 0.95,
           },
           {
             opacity: 1,
-            y: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out",
+            x: 0,
+            filter: "blur(0px)",
+            scale: 1,
+            duration: 1.2,
+            stagger: 0.3,
+            ease: "power4.out",
             scrollTrigger: {
               trigger: introTextRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Story heading animation - slide from left with rotation
+      if (storyHeadingRef.current) {
+        gsap.fromTo(
+          storyHeadingRef.current,
+          {
+            opacity: 0,
+            x: -120,
+            rotate: -5,
+            filter: "blur(8px)",
+          },
+          {
+            opacity: 1,
+            x: 0,
+            rotate: 0,
+            filter: "blur(0px)",
+            duration: 1.3,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: storyHeadingRef.current,
               start: "top 90%",
               toggleActions: "play none none reverse",
             }
@@ -187,21 +223,23 @@ export const About: React.FC = () => {
         );
       }
 
-      // Story paragraphs - alternating slide animations
-      if (storyRef.current) {
-        const paragraphs = storyRef.current.querySelectorAll('.story-paragraph');
-        paragraphs.forEach((para, index) => {
+      // Story paragraphs - cool staggered animation from bottom
+      storyParagraphsRef.current.forEach((para, index) => {
+        if (para) {
           gsap.fromTo(
             para,
             {
               opacity: 0,
-              x: index % 2 === 0 ? -80 : 80, // Alternate left/right
+              y: 100,
+              rotation: index % 2 === 0 ? -2 : 2,
             },
             {
               opacity: 1,
-              x: 0,
-              duration: 0.8,
-              ease: "power2.out",
+              y: 0,
+              rotation: 0,
+              duration: 1,
+              delay: index * 0.2,
+              ease: "back.out(1.7)",
               scrollTrigger: {
                 trigger: para,
                 start: "top 85%",
@@ -209,8 +247,8 @@ export const About: React.FC = () => {
               }
             }
           );
-        });
-      }
+        }
+      });
 
       // Mission card - slide from left
       if (missionRef.current) {
@@ -218,18 +256,22 @@ export const About: React.FC = () => {
           missionRef.current,
           {
             opacity: 0,
-            x: -100,
-            rotateY: -15,
+            x: -150,
+            rotationY: -20,
+            scale: 0.9,
+            filter: "blur(5px)",
           },
           {
             opacity: 1,
             x: 0,
-            rotateY: 0,
-            duration: 1,
+            rotationY: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.4,
             ease: "power3.out",
             scrollTrigger: {
               trigger: missionRef.current,
-              start: "top 85%",
+              start: "top 80%",
               toggleActions: "play none none reverse",
             }
           }
@@ -242,17 +284,73 @@ export const About: React.FC = () => {
           visionRef.current,
           {
             opacity: 0,
-            x: 100,
-            rotateY: 15,
+            x: 150,
+            rotationY: 20,
+            scale: 0.9,
+            filter: "blur(5px)",
           },
           {
             opacity: 1,
             x: 0,
-            rotateY: 0,
-            duration: 1,
+            rotationY: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.4,
             ease: "power3.out",
             scrollTrigger: {
               trigger: visionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Philosophy heading - slide from right
+      if (philosophyHeadingRef.current) {
+        gsap.fromTo(
+          philosophyHeadingRef.current,
+          {
+            opacity: 0,
+            x: 120,
+            y: 30,
+            rotation: 3,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotation: 0,
+            duration: 1.2,
+            ease: "elastic.out(1, 0.5)",
+            scrollTrigger: {
+              trigger: philosophyHeadingRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Philosophy points - slide from bottom
+      if (philosophyRef.current) {
+        const points = philosophyRef.current.querySelectorAll('.philosophy-point');
+        gsap.fromTo(
+          points,
+          {
+            opacity: 0,
+            y: 80,
+            scale: 0.8,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: philosophyRef.current,
               start: "top 85%",
               toggleActions: "play none none reverse",
             }
@@ -260,23 +358,23 @@ export const About: React.FC = () => {
         );
       }
 
-      // Philosophy points - staggered slide from left
-      if (philosophyRef.current) {
-        const points = philosophyRef.current.querySelectorAll('.philosophy-point');
+      // Values heading - slide from left
+      if (valuesHeadingRef.current) {
         gsap.fromTo(
-          points,
+          valuesHeadingRef.current,
           {
             opacity: 0,
-            x: -50,
+            x: -100,
+            scale: 0.9,
           },
           {
             opacity: 1,
             x: 0,
-            duration: 0.7,
-            stagger: 0.15,
-            ease: "power2.out",
+            scale: 1,
+            duration: 1.1,
+            ease: "bounce.out",
             scrollTrigger: {
-              trigger: philosophyRef.current,
+              trigger: valuesHeadingRef.current,
               start: "top 90%",
               toggleActions: "play none none reverse",
             }
@@ -284,73 +382,41 @@ export const About: React.FC = () => {
         );
       }
 
-      // Values cards - staggered slide from right
+      // Values cards - mix of left, right, and bottom entrances
       if (valuesRef.current) {
         const valueItems = valuesRef.current.querySelectorAll('.value-item');
-        gsap.fromTo(
-          valueItems,
-          {
-            opacity: 0,
-            x: 80,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: valuesRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
+        valueItems.forEach((item, index) => {
+          let fromProps = {};
+          
+          // Different entrance directions for each card
+          if (index === 0) {
+            fromProps = { opacity: 0, x: -150, rotation: -5 };
+          } else if (index === 1) {
+            fromProps = { opacity: 0, x: 150, rotation: 5 };
+          } else if (index === 2) {
+            fromProps = { opacity: 0, y: 150, rotation: -3 };
+          } else {
+            fromProps = { opacity: 0, y: 150, rotation: 3 };
           }
-        );
-      }
 
-      // Why Choose Us section - slide from bottom
-      if (whyChooseUsRef.current) {
-        gsap.fromTo(
-          whyChooseUsRef.current,
-          {
-            opacity: 0,
-            y: 80,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: whyChooseUsRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Why Choose Us cards - alternating left/right slide
-      if (whyChooseCardsRef.current) {
-        const cards = whyChooseCardsRef.current.querySelectorAll('.why-choose-card');
-        cards.forEach((card, index) => {
           gsap.fromTo(
-            card,
+            item,
             {
-              opacity: 0,
-              x: index % 2 === 0 ? -100 : 100,
-              scale: 0.9,
+              ...fromProps,
+              scale: 0.8,
             },
             {
               opacity: 1,
               x: 0,
+              y: 0,
+              rotation: 0,
               scale: 1,
-              duration: 0.8,
-              delay: index * 0.1,
-              ease: "back.out(1.7)",
+              duration: 1,
+              delay: index * 0.15,
+              ease: "power3.out",
               scrollTrigger: {
-                trigger: card,
-                start: "top 90%",
+                trigger: item,
+                start: "top 85%",
                 toggleActions: "play none none reverse",
               }
             }
@@ -358,47 +424,25 @@ export const About: React.FC = () => {
         });
       }
 
-      // Approach section - slide from left with rotation
-      if (approachRef.current) {
+      // Why Choose Us heading - slide from bottom
+      if (whyChooseHeadingRef.current) {
         gsap.fromTo(
-          approachRef.current,
+          whyChooseHeadingRef.current,
           {
             opacity: 0,
-            x: -120,
-            rotateZ: -2,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            rotateZ: 0,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: approachRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Image text - slide from bottom with blur
-      if (imageTextRef.current) {
-        gsap.fromTo(
-          imageTextRef.current,
-          {
-            opacity: 0,
-            y: 100,
+            y: 80,
+            scale: 0.7,
             filter: "blur(10px)",
           },
           {
             opacity: 1,
             y: 0,
+            scale: 1,
             filter: "blur(0px)",
-            duration: 1.5,
-            ease: "power3.out",
+            duration: 1.3,
+            ease: "elastic.out(1, 0.5)",
             scrollTrigger: {
-              trigger: imageTextRef.current,
+              trigger: whyChooseHeadingRef.current,
               start: "top 90%",
               toggleActions: "play none none reverse",
             }
@@ -406,51 +450,148 @@ export const About: React.FC = () => {
         );
       }
 
-      // Animate all cards on hover with mouse movement
-      const cards = document.querySelectorAll('.hover-card');
-      cards.forEach((card) => {
-        card.addEventListener('mousemove', (e) => {
-          // Cast to MouseEvent to access clientX and clientY
-          const mouseEvent = e as MouseEvent;
-          const rect = card.getBoundingClientRect();
-          const x = mouseEvent.clientX - rect.left;
-          const y = mouseEvent.clientY - rect.top;
+      // Why Choose Us cards - alternating bottom and side entrances
+      if (whyChooseCardsRef.current) {
+        const cards = whyChooseCardsRef.current.querySelectorAll('.why-choose-card');
+        cards.forEach((card, index) => {
+          let fromProps = {};
           
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          
-          const rotateY = ((x - centerX) / centerX) * 5;
-          const rotateX = ((centerY - y) / centerY) * 5;
-          
-          gsap.to(card, {
-            rotateX: rotateX,
-            rotateY: rotateY,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        });
-        
-        card.addEventListener('mouseleave', () => {
-          gsap.to(card, {
-            rotateX: 0,
-            rotateY: 0,
-            duration: 0.5,
-            ease: "elastic.out(1, 0.3)"
-          });
-        });
-      });
+          // Pattern: bottom, left, right, bottom, left, right
+          if (index % 3 === 0) {
+            fromProps = { opacity: 0, y: 150, rotation: -5 };
+          } else if (index % 3 === 1) {
+            fromProps = { opacity: 0, x: -120, rotation: -3 };
+          } else {
+            fromProps = { opacity: 0, x: 120, rotation: 3 };
+          }
 
-      // Parallax effect for background elements
-      gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((element) => {
+          gsap.fromTo(
+            card,
+            {
+              ...fromProps,
+              scale: 0.85,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              rotation: 0,
+              scale: 1,
+              duration: 1,
+              delay: index * 0.1,
+              ease: "back.out(2.5)",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              }
+            }
+          );
+        });
+      }
+
+      // Approach heading - slide from right
+      if (approachHeadingRef.current) {
+        gsap.fromTo(
+          approachHeadingRef.current,
+          {
+            opacity: 0,
+            x: 150,
+            skewX: 15,
+            filter: "blur(8px)",
+          },
+          {
+            opacity: 1,
+            x: 0,
+            skewX: 0,
+            filter: "blur(0px)",
+            duration: 1.4,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: approachHeadingRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Approach section - slide from left
+      if (approachRef.current) {
+        gsap.fromTo(
+          approachRef.current,
+          {
+            opacity: 0,
+            x: -200,
+            rotationY: 30,
+            scale: 0.85,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            rotationY: 0,
+            scale: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: approachRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Image text - slide from bottom
+      if (imageTextRef.current) {
+        gsap.fromTo(
+          imageTextRef.current,
+          {
+            opacity: 0,
+            y: 150,
+            scale: 0.8,
+            filter: "blur(15px)",
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.6,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: imageTextRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Enhanced parallax effect for background elements
+      gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((element, index) => {
         gsap.to(element, {
-          y: 100,
+          y: index % 2 === 0 ? 150 : -150,
+          x: index % 2 === 0 ? -100 : 100,
+          rotation: index % 2 === 0 ? 5 : -5,
           ease: "none",
           scrollTrigger: {
             trigger: element,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1,
+            scrub: 1.5,
           }
+        });
+      });
+
+      // Add floating animation to decorative elements
+      gsap.utils.toArray<HTMLElement>(".floating-element").forEach((element, index) => {
+        gsap.to(element, {
+          y: 20,
+          duration: 2 + index * 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
       });
 
@@ -461,6 +602,22 @@ export const About: React.FC = () => {
     };
   }, []);
 
+  // Function to handle border animation on hover
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Calculate gradient position based on mouse position
+    const percentX = (x / rect.width) * 100;
+    const percentY = (y / rect.height) * 100;
+    
+    // Update CSS variables for gradient position
+    card.style.setProperty('--mouse-x', `${percentX}%`);
+    card.style.setProperty('--mouse-y', `${percentY}%`);
+  };
+
   return (
     <section
       id="about"
@@ -468,8 +625,8 @@ export const About: React.FC = () => {
       className="relative bg-gradient-to-b from-slate-50 to-white overflow-hidden font-sans"
     >
       {/* Parallax background elements */}
-      <div className="parallax-bg absolute top-0 left-0 w-1/2 h-96 bg-gradient-to-br from-slate-100/30 to-gray-100/30 rounded-full blur-3xl -translate-x-1/4 -translate-y-1/4 -z-10"></div>
-      <div className="parallax-bg absolute bottom-0 right-0 w-1/2 h-96 bg-gradient-to-tl from-slate-100/30 to-gray-100/30 rounded-full blur-3xl translate-x-1/4 translate-y-1/4 -z-10"></div>
+      <div className="parallax-bg floating-element absolute top-0 left-0 w-1/2 h-96 bg-gradient-to-br from-slate-100/30 to-gray-100/30 rounded-full blur-3xl -translate-x-1/4 -translate-y-1/4 -z-10"></div>
+      <div className="parallax-bg floating-element absolute bottom-0 right-0 w-1/2 h-96 bg-gradient-to-tl from-slate-100/30 to-gray-100/30 rounded-full blur-3xl translate-x-1/4 translate-y-1/4 -z-10"></div>
 
       {/* Introduction Section */}
       <div className="relative pt-20 pb-16">
@@ -548,9 +705,9 @@ export const About: React.FC = () => {
       <div className="relative bg-white">
         <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8 py-20">
           <div ref={storyRef} className="mb-24">
-            <div className="mb-12">
+            <div className="mb-12" ref={storyHeadingRef}>
               <div className="inline-flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center shadow-md">
                   <FaBookOpen className="text-white text-sm" />
                 </div>
                 <h2 className="text-[28px] md:text-[32px] font-bold text-slate-900 leading-tight">
@@ -563,7 +720,8 @@ export const About: React.FC = () => {
   {story.map((paragraph, index) => (
     <div
       key={index}
-      className="group relative"
+      ref={(el) => { storyParagraphsRef.current[index] = el; }}
+      className="story-paragraph group relative"
     >
       <div className="flex items-start gap-4 sm:gap-6">
         
@@ -602,7 +760,7 @@ export const About: React.FC = () => {
   {/* Mission */}
   <div
     ref={missionRef}
-    className="group bg-gradient-to-br from-white to-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-300"
+    className="hover-card group bg-gradient-to-br from-white to-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-300"
   >
     {/* Header */}
     <div className="flex items-start gap-4">
@@ -649,7 +807,7 @@ export const About: React.FC = () => {
   {/* Vision */}
   <div
     ref={visionRef}
-    className="group bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-300"
+    className="hover-card group bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-300"
   >
     {/* Header */}
     <div className="flex items-start gap-4">
@@ -697,14 +855,14 @@ export const About: React.FC = () => {
 
 
           {/* Philosophy Section - Image on Right, Content on Left */}
-         <div ref={philosophyRef} className="mb-20 sm:mb-24">
+         <div className="mb-20 sm:mb-24">
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
 
     {/* Left Content */}
-    <div className="space-y-8">
+    <div ref={philosophyRef} className="space-y-8">
       
       {/* Heading */}
-      <div className="flex items-center gap-4">
+      <div ref={philosophyHeadingRef} className="flex items-center gap-4">
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-800 to-gray-900 flex items-center justify-center shadow-md">
           <FaLightbulb className="text-white text-lg" />
         </div>
@@ -718,7 +876,7 @@ export const About: React.FC = () => {
         {philosophy.points.map((point, index) => (
           <div
             key={index}
-            className="group flex items-start gap-4 p-5 bg-white border border-slate-200 rounded-2xl transition-all duration-300 hover:border-slate-300 hover:shadow-lg"
+            className="philosophy-point hover-card group flex items-start gap-4 p-5 bg-white border border-slate-200 rounded-2xl transition-all duration-300 hover:border-slate-300 hover:shadow-lg"
           >
             <div className="shrink-0 mt-1">
               <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
@@ -748,7 +906,7 @@ export const About: React.FC = () => {
       </div>
 
       {/* Floating Accent */}
-      <div className="absolute -bottom-5 -right-5 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-xl">
+      <div className="floating-element absolute -bottom-5 -right-5 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-xl">
         <FaGraduationCap className="text-white text-xl sm:text-2xl" />
       </div>
     </div>
@@ -758,10 +916,10 @@ export const About: React.FC = () => {
 
 
           {/* Why Choose Us - Rounded Curve Cards */}
-        <div ref={whyChooseUsRef} className="mb-20 sm:mb-24">
+        <div className="mb-20 sm:mb-24">
 
   {/* Section Heading */}
-  <div className="text-center mb-10 sm:mb-14">
+  <div ref={whyChooseHeadingRef} className="text-center mb-10 sm:mb-14">
     <div className="inline-flex items-center gap-3 mb-5">
       <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-md">
         <FaStar className="text-white text-sm" />
@@ -791,7 +949,7 @@ export const About: React.FC = () => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-200/20 to-gray-200/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Card */}
-          <div className="relative h-full bg-gradient-to-b from-white to-slate-50 rounded-3xl p-6 sm:p-7 border border-slate-200 transition-all duration-300 hover:border-slate-300 hover:shadow-2xl">
+          <div className="why-choose-card hover-card relative h-full bg-gradient-to-b from-white to-slate-50 rounded-3xl p-6 sm:p-7 border border-slate-200 transition-all duration-300 hover:border-slate-300 hover:shadow-2xl">
 
             {/* Icon */}
             <div className="mb-5">
@@ -829,11 +987,11 @@ export const About: React.FC = () => {
 </div>
 
 
-          {/* Values - minimal presentation */}
-        <div ref={valuesRef} className="mb-20 sm:mb-24">
+          {/* Values Section with Cool Hover Border Animation */}
+        <div className="mb-20 sm:mb-24">
 
   {/* Section Heading */}
-  <div className="text-center mb-10 sm:mb-14">
+  <div ref={valuesHeadingRef} className="text-center mb-10 sm:mb-14">
     <div className="inline-flex items-center gap-3 mb-5">
       <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-md">
         <FaShieldAlt className="text-white text-sm" />
@@ -849,40 +1007,75 @@ export const About: React.FC = () => {
   </div>
 
   {/* Values Grid */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+  <div ref={valuesRef} className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
     {values.map((value) => {
       const Icon = value.icon;
 
       return (
         <div key={value.id} className="group relative">
-
-          {/* Soft background glow */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-200/20 to-gray-200/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Card */}
-          <div className="relative flex items-start gap-5 p-6 bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 transition-all duration-300 hover:border-slate-300 hover:shadow-2xl">
-
-            {/* Icon */}
-            <div className="shrink-0">
-              <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <Icon className="text-slate-600 text-xl" />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[17.5px] font-semibold text-slate-900">
-                  {value.title}
-                </h3>
-                <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">
-                  0{value.id}
-                </span>
+          
+          {/* Animated Border Container */}
+          <div 
+            className="relative p-[2px] rounded-3xl bg-gradient-to-r from-transparent via-slate-300 to-transparent"
+            style={{
+              background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 116, 139, 0.15), transparent 70%)`
+            }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={(e) => {
+              const card = e.currentTarget;
+              card.style.setProperty('--mouse-x', '50%');
+              card.style.setProperty('--mouse-y', '50%');
+            }}
+          >
+            {/* Main Card Content */}
+            <div className="value-item relative flex items-start gap-5 p-6 bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 transition-all duration-300 group-hover:border-slate-300 group-hover:shadow-2xl overflow-hidden">
+              
+              {/* Animated Bottom Border Line */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute h-full w-1/2 bg-gradient-to-r from-slate-600 to-gray-700 animate-[slideRight_2s_ease-in-out_infinite]"></div>
               </div>
 
-              <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed">
-                {value.description}
-              </p>
+              {/* Left Border Line Animation */}
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                <div className="absolute w-full h-1/2 bg-gradient-to-b from-slate-600 to-gray-700 animate-[slideDown_2s_ease-in-out_infinite]"></div>
+              </div>
+
+              {/* Right Border Line Animation */}
+              <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-200">
+                <div className="absolute w-full h-1/2 bg-gradient-to-b from-gray-700 to-slate-600 animate-[slideUp_2s_ease-in-out_infinite]"></div>
+              </div>
+
+              {/* Top Border Line Animation */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-300">
+                <div className="absolute h-full w-1/2 bg-gradient-to-r from-gray-700 to-slate-600 animate-[slideLeft_2s_ease-in-out_infinite]"></div>
+              </div>
+
+              {/* Icon */}
+              <div className="shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:bg-gradient-to-br group-hover:from-slate-100 group-hover:to-gray-100">
+                  <Icon className="text-slate-600 text-xl transition-all duration-300 group-hover:text-slate-700 group-hover:scale-110" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-[17.5px] font-semibold text-slate-900 group-hover:text-slate-800 transition-colors">
+                    {value.title}
+                  </h3>
+                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md group-hover:bg-slate-200 group-hover:text-slate-700 transition-colors">
+                    0{value.id}
+                  </span>
+                </div>
+
+                <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
+                  {value.description}
+                </p>
+              </div>
+
+              {/* Corner Accents */}
+              <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-3 left-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
         </div>
@@ -894,7 +1087,7 @@ export const About: React.FC = () => {
 
 
           {/* Approach Section with Third Image */}
-       <section className="w-full bg-slate-50 py-24">
+       <section ref={approachRef} className="w-full bg-slate-50 py-24">
   <div className="max-w-7xl mx-auto px-6">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
@@ -909,7 +1102,7 @@ export const About: React.FC = () => {
 
       {/* Content – flowing, no cards */}
       <div className="space-y-8">
-        <h2 className="text-[34px] font-bold text-slate-900 leading-tight">
+        <h2 ref={approachHeadingRef} className="text-[34px] font-bold text-slate-900 leading-tight">
           How We Approach Education
         </h2>
 
@@ -951,6 +1144,62 @@ export const About: React.FC = () => {
         <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-slate-50/50 to-transparent -z-10"></div>
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-slate-50/50 to-transparent -z-10"></div>
       </div>
+
+      {/* Add CSS animations for border effects */}
+      <style jsx global>{`
+        @keyframes slideRight {
+          0% {
+            transform: translateX(-100%);
+          }
+          50% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        
+        @keyframes slideLeft {
+          0% {
+            transform: translateX(100%);
+          }
+          50% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+        
+        @keyframes slideDown {
+          0% {
+            transform: translateY(-100%);
+          }
+          50% {
+            transform: translateY(100%);
+          }
+          100% {
+            transform: translateY(100%);
+          }
+        }
+        
+        @keyframes slideUp {
+          0% {
+            transform: translateY(100%);
+          }
+          50% {
+            transform: translateY(-100%);
+          }
+          100% {
+            transform: translateY(-100%);
+          }
+        }
+        
+        .value-item {
+          --mouse-x: 50%;
+          --mouse-y: 50%;
+        }
+      `}</style>
     </section>
   );
 };
