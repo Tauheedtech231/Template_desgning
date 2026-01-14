@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { 
@@ -35,6 +35,20 @@ export const About: React.FC = () => {
   const whyChooseHeadingRef = useRef<HTMLDivElement>(null);
   const whyChooseCardsRef = useRef<HTMLDivElement>(null);
   const storyParagraphsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Image URLs - Using Unsplash education/college related images
   const images = {
@@ -163,435 +177,376 @@ export const About: React.FC = () => {
   const approach = aboutData.approach;
   const whyChooseUs = aboutData.whyChooseUs;
 
+  // Handle mouse move for border animation
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return; // Don't run mouse tracking on mobile
+    
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const percentX = (x / rect.width) * 100;
+    const percentY = (y / rect.height) * 100;
+    
+    card.style.setProperty('--mouse-x', `${percentX}%`);
+    card.style.setProperty('--mouse-y', `${percentY}%`);
+  };
+
+  // Handle touch for mobile
+  const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
+    
+    const percentX = (x / rect.width) * 100;
+    const percentY = (y / rect.height) * 100;
+    
+    card.style.setProperty('--mouse-x', `${percentX}%`);
+    card.style.setProperty('--mouse-y', `${percentY}%`);
+    
+    // Add active class for mobile
+    card.classList.add('active');
+  };
+
+  // Handle touch end for mobile
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    setTimeout(() => {
+      card.classList.remove('active');
+    }, 500);
+  };
+
   useEffect(() => {
     // Initialize animations only after component mounts
     const ctx = gsap.context(() => {
       // Check if we're in a browser environment
       if (typeof window === "undefined") return;
 
-      // Intro text animation - slide from left with cool effect
+      // User-friendly scroll animation settings
+      ScrollTrigger.defaults({
+        toggleActions: "play none none reverse",
+        start: "top 85%",
+        end: "bottom 20%",
+        scrub: false,
+        markers: false, // Remove in production
+      });
+
+      // Gentle intro text animation
       if (introTextRef.current) {
         const elements = introTextRef.current.children;
         gsap.fromTo(
           elements,
           { 
             opacity: 0,
-            x: -150,
-            filter: "blur(10px)",
-            scale: 0.95,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            filter: "blur(0px)",
-            scale: 1,
-            duration: 1.2,
-            stagger: 0.3,
-            ease: "power4.out",
-            scrollTrigger: {
-              trigger: introTextRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Story heading animation - slide from left with rotation
-      if (storyHeadingRef.current) {
-        gsap.fromTo(
-          storyHeadingRef.current,
-          {
-            opacity: 0,
-            x: -120,
-            rotate: -5,
+            x: -80,
             filter: "blur(8px)",
           },
           {
             opacity: 1,
             x: 0,
-            rotate: 0,
             filter: "blur(0px)",
-            duration: 1.3,
-            ease: "power3.out",
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: storyHeadingRef.current,
+              trigger: introTextRef.current,
               start: "top 90%",
-              toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Story paragraphs - cool staggered animation from bottom
+      // Story heading
+      if (storyHeadingRef.current) {
+        gsap.fromTo(
+          storyHeadingRef.current,
+          {
+            opacity: 0,
+            x: -60,
+            y: 20,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.9,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: storyHeadingRef.current,
+            }
+          }
+        );
+      }
+
+      // Story paragraphs - gentle stagger
       storyParagraphsRef.current.forEach((para, index) => {
         if (para) {
           gsap.fromTo(
             para,
             {
               opacity: 0,
-              y: 100,
-              rotation: index % 2 === 0 ? -2 : 2,
+              y: 40,
             },
             {
               opacity: 1,
               y: 0,
-              rotation: 0,
-              duration: 1,
-              delay: index * 0.2,
-              ease: "back.out(1.7)",
+              duration: 0.7,
+              delay: index * 0.15,
+              ease: "power2.out",
               scrollTrigger: {
                 trigger: para,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
+                start: "top 90%",
               }
             }
           );
         }
       });
 
-      // Mission card - slide from left
+      // Mission and Vision cards - gentle slide
       if (missionRef.current) {
         gsap.fromTo(
           missionRef.current,
           {
             opacity: 0,
-            x: -150,
-            rotationY: -20,
-            scale: 0.9,
-            filter: "blur(5px)",
-          },
-          {
-            opacity: 1,
-            x: 0,
-            rotationY: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.4,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: missionRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Vision card - slide from right
-      if (visionRef.current) {
-        gsap.fromTo(
-          visionRef.current,
-          {
-            opacity: 0,
-            x: 150,
-            rotationY: 20,
-            scale: 0.9,
-            filter: "blur(5px)",
-          },
-          {
-            opacity: 1,
-            x: 0,
-            rotationY: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.4,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: visionRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Philosophy heading - slide from right
-      if (philosophyHeadingRef.current) {
-        gsap.fromTo(
-          philosophyHeadingRef.current,
-          {
-            opacity: 0,
-            x: 120,
+            x: -50,
             y: 30,
-            rotation: 3,
           },
           {
             opacity: 1,
             x: 0,
             y: 0,
-            rotation: 0,
-            duration: 1.2,
-            ease: "elastic.out(1, 0.5)",
+            duration: 0.9,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: philosophyHeadingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
+              trigger: missionRef.current,
             }
           }
         );
       }
 
-      // Philosophy points - slide from bottom
+      if (visionRef.current) {
+        gsap.fromTo(
+          visionRef.current,
+          {
+            opacity: 0,
+            x: 50,
+            y: 30,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.9,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: visionRef.current,
+            }
+          }
+        );
+      }
+
+      // Philosophy section
+      if (philosophyHeadingRef.current) {
+        gsap.fromTo(
+          philosophyHeadingRef.current,
+          {
+            opacity: 0,
+            y: 40,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: philosophyHeadingRef.current,
+            }
+          }
+        );
+      }
+
       if (philosophyRef.current) {
         const points = philosophyRef.current.querySelectorAll('.philosophy-point');
         gsap.fromTo(
           points,
           {
             opacity: 0,
-            y: 80,
-            scale: 0.8,
+            y: 30,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: philosophyRef.current,
+            }
+          }
+        );
+      }
+
+      // Why Choose Us section
+      if (whyChooseHeadingRef.current) {
+        gsap.fromTo(
+          whyChooseHeadingRef.current,
+          {
+            opacity: 0,
+            y: 40,
+            scale: 0.95,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.9,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: whyChooseHeadingRef.current,
+            }
+          }
+        );
+      }
+
+      // Why Choose Us cards - gentle staggered animation
+      if (whyChooseCardsRef.current) {
+        const cards = whyChooseCardsRef.current.querySelectorAll('.why-choose-card');
+        gsap.fromTo(
+          cards,
+          {
+            opacity: 0,
+            y: 60,
+            scale: 0.95,
           },
           {
             opacity: 1,
             y: 0,
             scale: 1,
             duration: 0.8,
-            stagger: 0.2,
-            ease: "back.out(1.7)",
+            stagger: 0.1,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: philosophyRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
+              trigger: whyChooseCardsRef.current,
+              start: "top 90%",
             }
           }
         );
       }
 
-      // Values heading - slide from left
+      // Values section
       if (valuesHeadingRef.current) {
         gsap.fromTo(
           valuesHeadingRef.current,
           {
             opacity: 0,
-            x: -100,
-            scale: 0.9,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            duration: 1.1,
-            ease: "bounce.out",
-            scrollTrigger: {
-              trigger: valuesHeadingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Values cards - mix of left, right, and bottom entrances
-      if (valuesRef.current) {
-        const valueItems = valuesRef.current.querySelectorAll('.value-item');
-        valueItems.forEach((item, index) => {
-          let fromProps = {};
-          
-          // Different entrance directions for each card
-          if (index === 0) {
-            fromProps = { opacity: 0, x: -150, rotation: -5 };
-          } else if (index === 1) {
-            fromProps = { opacity: 0, x: 150, rotation: 5 };
-          } else if (index === 2) {
-            fromProps = { opacity: 0, y: 150, rotation: -3 };
-          } else {
-            fromProps = { opacity: 0, y: 150, rotation: 3 };
-          }
-
-          gsap.fromTo(
-            item,
-            {
-              ...fromProps,
-              scale: 0.8,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              duration: 1,
-              delay: index * 0.15,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: item,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              }
-            }
-          );
-        });
-      }
-
-      // Why Choose Us heading - slide from bottom
-      if (whyChooseHeadingRef.current) {
-        gsap.fromTo(
-          whyChooseHeadingRef.current,
-          {
-            opacity: 0,
-            y: 80,
-            scale: 0.7,
-            filter: "blur(10px)",
+            y: 40,
           },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.3,
-            ease: "elastic.out(1, 0.5)",
+            duration: 0.8,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: whyChooseHeadingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
+              trigger: valuesHeadingRef.current,
             }
           }
         );
       }
 
-      // Why Choose Us cards - alternating bottom and side entrances
-      if (whyChooseCardsRef.current) {
-        const cards = whyChooseCardsRef.current.querySelectorAll('.why-choose-card');
-        cards.forEach((card, index) => {
-          let fromProps = {};
-          
-          // Pattern: bottom, left, right, bottom, left, right
-          if (index % 3 === 0) {
-            fromProps = { opacity: 0, y: 150, rotation: -5 };
-          } else if (index % 3 === 1) {
-            fromProps = { opacity: 0, x: -120, rotation: -3 };
-          } else {
-            fromProps = { opacity: 0, x: 120, rotation: 3 };
-          }
-
-          gsap.fromTo(
-            card,
-            {
-              ...fromProps,
-              scale: 0.85,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              duration: 1,
-              delay: index * 0.1,
-              ease: "back.out(2.5)",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              }
+      if (valuesRef.current) {
+        const valueItems = valuesRef.current.querySelectorAll('.value-item');
+        gsap.fromTo(
+          valueItems,
+          {
+            opacity: 0,
+            y: 50,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: valuesRef.current,
             }
-          );
-        });
+          }
+        );
       }
 
-      // Approach heading - slide from right
+      // Approach section
       if (approachHeadingRef.current) {
         gsap.fromTo(
           approachHeadingRef.current,
           {
             opacity: 0,
-            x: 150,
-            skewX: 15,
-            filter: "blur(8px)",
+            y: 40,
           },
           {
             opacity: 1,
-            x: 0,
-            skewX: 0,
-            filter: "blur(0px)",
-            duration: 1.4,
-            ease: "power4.out",
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: approachHeadingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Approach section - slide from left
       if (approachRef.current) {
         gsap.fromTo(
           approachRef.current,
           {
             opacity: 0,
-            x: -200,
-            rotationY: 30,
-            scale: 0.85,
+            y: 60,
           },
           {
             opacity: 1,
-            x: 0,
-            rotationY: 0,
-            scale: 1,
-            duration: 1.5,
-            ease: "power3.out",
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: approachRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
             }
           }
         );
       }
 
-      // Image text - slide from bottom
+      // Image text
       if (imageTextRef.current) {
         gsap.fromTo(
           imageTextRef.current,
           {
             opacity: 0,
-            y: 150,
-            scale: 0.8,
-            filter: "blur(15px)",
+            y: 80,
           },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.6,
-            ease: "power4.out",
+            duration: 1.2,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: imageTextRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
+              start: "top 85%",
             }
           }
         );
       }
 
-      // Enhanced parallax effect for background elements
+      // Gentle parallax for background
       gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((element, index) => {
         gsap.to(element, {
-          y: index % 2 === 0 ? 150 : -150,
-          x: index % 2 === 0 ? -100 : 100,
-          rotation: index % 2 === 0 ? 5 : -5,
+          y: index % 2 === 0 ? 80 : -80,
           ease: "none",
           scrollTrigger: {
             trigger: element,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5,
+            scrub: true,
           }
-        });
-      });
-
-      // Add floating animation to decorative elements
-      gsap.utils.toArray<HTMLElement>(".floating-element").forEach((element, index) => {
-        gsap.to(element, {
-          y: 20,
-          duration: 2 + index * 0.5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
         });
       });
 
@@ -601,22 +556,6 @@ export const About: React.FC = () => {
       ctx.revert();
     };
   }, []);
-
-  // Function to handle border animation on hover
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Calculate gradient position based on mouse position
-    const percentX = (x / rect.width) * 100;
-    const percentY = (y / rect.height) * 100;
-    
-    // Update CSS variables for gradient position
-    card.style.setProperty('--mouse-x', `${percentX}%`);
-    card.style.setProperty('--mouse-y', `${percentY}%`);
-  };
 
   return (
     <section
@@ -915,7 +854,7 @@ export const About: React.FC = () => {
 </div>
 
 
-          {/* Why Choose Us - Rounded Curve Cards */}
+          {/* Why Choose Us - Rounded Curve Cards with Border Animation */}
         <div className="mb-20 sm:mb-24">
 
   {/* Section Heading */}
@@ -934,7 +873,7 @@ export const About: React.FC = () => {
     </p>
   </div>
 
-  {/* Cards */}
+  {/* Cards with Border Animation */}
   <div
     ref={whyChooseCardsRef}
     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
@@ -944,39 +883,75 @@ export const About: React.FC = () => {
 
       return (
         <div key={index} className="group relative">
+          
+          {/* Border Animation Container */}
+          <div 
+            className="border-animation-container relative p-[2px] rounded-3xl"
+            style={{
+              background: isMobile 
+                ? 'linear-gradient(45deg, rgba(100, 116, 139, 0.1), rgba(71, 85, 105, 0.1))'
+                : `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 116, 139, 0.15), transparent 70%)`
+            }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={(e) => {
+              const card = e.currentTarget;
+              card.style.setProperty('--mouse-x', '50%');
+              card.style.setProperty('--mouse-y', '50%');
+            }}
+            onTouchStart={handleTouch}
+            onTouchMove={handleTouch}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Main Card */}
+            <div className="why-choose-card relative h-full bg-gradient-to-b from-white to-slate-50 rounded-3xl p-6 sm:p-7 border border-slate-200 transition-all duration-300 group-hover:border-slate-300 group-hover:shadow-2xl overflow-hidden">
 
-          {/* Soft Glow */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-200/20 to-gray-200/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Card */}
-          <div className="why-choose-card hover-card relative h-full bg-gradient-to-b from-white to-slate-50 rounded-3xl p-6 sm:p-7 border border-slate-200 transition-all duration-300 hover:border-slate-300 hover:shadow-2xl">
-
-            {/* Icon */}
-            <div className="mb-5">
-              <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-all duration-300 group-hover:bg-slate-100">
-                <Icon className="text-slate-600 text-xl transition-transform duration-300 group-hover:scale-110" />
+              {/* Animated Bottom Border */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300">
+                <div className="animated-line absolute h-full w-1/2 bg-gradient-to-r from-slate-600 to-gray-700"></div>
               </div>
-            </div>
 
-            {/* Title */}
-            <h3 className="text-[17.5px] font-semibold text-slate-900 mb-3">
-              {point.title}
-            </h3>
+              {/* Animated Left Border */}
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-100">
+                <div className="animated-line absolute w-full h-1/2 bg-gradient-to-b from-slate-600 to-gray-700"></div>
+              </div>
 
-            {/* Description */}
-            <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed mb-6">
-              {point.description}
-            </p>
+              {/* Animated Right Border */}
+              <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-200">
+                <div className="animated-line absolute w-full h-1/2 bg-gradient-to-b from-gray-700 to-slate-600"></div>
+              </div>
 
-            {/* Footer */}
-            <div className="mt-auto pt-4 border-t border-slate-200/60 flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">
-                Feature {index + 1}
-              </span>
+              {/* Animated Top Border */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-300">
+                <div className="animated-line absolute h-full w-1/2 bg-gradient-to-r from-gray-700 to-slate-600"></div>
+              </div>
 
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-[3px] rounded-full bg-gradient-to-r from-slate-400 to-gray-400 transition-all duration-300 group-hover:w-10" />
-                <span className="w-2 h-2 rounded-full bg-slate-400 transition-transform duration-300 group-hover:scale-125" />
+              {/* Icon */}
+              <div className="mb-5">
+                <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-all duration-300 group-hover:bg-slate-100 active:bg-slate-100">
+                  <Icon className="text-slate-600 text-xl transition-transform duration-300 group-hover:scale-110 active:scale-110" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-[17.5px] font-semibold text-slate-900 mb-3 group-hover:text-slate-800 active:text-slate-800 transition-colors">
+                {point.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed mb-6 group-hover:text-slate-700 active:text-slate-700 transition-colors">
+                {point.description}
+              </p>
+
+              {/* Footer */}
+              <div className="mt-auto pt-4 border-t border-slate-200/60 flex items-center justify-between">
+                <span className="text-xs text-slate-500 font-medium group-hover:text-slate-600 active:text-slate-600 transition-colors">
+                  Feature {index + 1}
+                </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-[3px] rounded-full bg-gradient-to-r from-slate-400 to-gray-400 transition-all duration-300 group-hover:w-10 active:w-10" />
+                  <span className="w-2 h-2 rounded-full bg-slate-400 transition-transform duration-300 group-hover:scale-125 active:scale-125" />
+                </div>
               </div>
             </div>
           </div>
@@ -1006,7 +981,7 @@ export const About: React.FC = () => {
     </p>
   </div>
 
-  {/* Values Grid */}
+  {/* Values Grid with Border Animation */}
   <div ref={valuesRef} className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
     {values.map((value) => {
       const Icon = value.icon;
@@ -1014,11 +989,13 @@ export const About: React.FC = () => {
       return (
         <div key={value.id} className="group relative">
           
-          {/* Animated Border Container */}
+          {/* Border Animation Container */}
           <div 
-            className="relative p-[2px] rounded-3xl bg-gradient-to-r from-transparent via-slate-300 to-transparent"
+            className="border-animation-container relative p-[2px] rounded-3xl"
             style={{
-              background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 116, 139, 0.15), transparent 70%)`
+              background: isMobile 
+                ? 'linear-gradient(45deg, rgba(100, 116, 139, 0.1), rgba(71, 85, 105, 0.1))'
+                : `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 116, 139, 0.15), transparent 70%)`
             }}
             onMouseMove={handleMouseMove}
             onMouseLeave={(e) => {
@@ -1026,56 +1003,59 @@ export const About: React.FC = () => {
               card.style.setProperty('--mouse-x', '50%');
               card.style.setProperty('--mouse-y', '50%');
             }}
+            onTouchStart={handleTouch}
+            onTouchMove={handleTouch}
+            onTouchEnd={handleTouchEnd}
           >
-            {/* Main Card Content */}
-            <div className="value-item relative flex items-start gap-5 p-6 bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 transition-all duration-300 group-hover:border-slate-300 group-hover:shadow-2xl overflow-hidden">
-              
-              {/* Animated Bottom Border Line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute h-full w-1/2 bg-gradient-to-r from-slate-600 to-gray-700 animate-[slideRight_2s_ease-in-out_infinite]"></div>
+            {/* Main Card */}
+            <div className="value-item relative flex items-start gap-5 p-6 bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 transition-all duration-300 group-hover:border-slate-300 group-hover:shadow-2xl active:border-slate-300 active:shadow-2xl overflow-hidden">
+
+              {/* Animated Bottom Border */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300">
+                <div className="animated-line absolute h-full w-1/2 bg-gradient-to-r from-slate-600 to-gray-700"></div>
               </div>
 
-              {/* Left Border Line Animation */}
-              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                <div className="absolute w-full h-1/2 bg-gradient-to-b from-slate-600 to-gray-700 animate-[slideDown_2s_ease-in-out_infinite]"></div>
+              {/* Animated Left Border */}
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-100">
+                <div className="animated-line absolute w-full h-1/2 bg-gradient-to-b from-slate-600 to-gray-700"></div>
               </div>
 
-              {/* Right Border Line Animation */}
-              <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-200">
-                <div className="absolute w-full h-1/2 bg-gradient-to-b from-gray-700 to-slate-600 animate-[slideUp_2s_ease-in-out_infinite]"></div>
+              {/* Animated Right Border */}
+              <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-200">
+                <div className="animated-line absolute w-full h-1/2 bg-gradient-to-b from-gray-700 to-slate-600"></div>
               </div>
 
-              {/* Top Border Line Animation */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-300">
-                <div className="absolute h-full w-1/2 bg-gradient-to-r from-gray-700 to-slate-600 animate-[slideLeft_2s_ease-in-out_infinite]"></div>
+              {/* Animated Top Border */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-slate-400 to-transparent opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300 delay-300">
+                <div className="animated-line absolute h-full w-1/2 bg-gradient-to-r from-gray-700 to-slate-600"></div>
               </div>
 
               {/* Icon */}
               <div className="shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:bg-gradient-to-br group-hover:from-slate-100 group-hover:to-gray-100">
-                  <Icon className="text-slate-600 text-xl transition-all duration-300 group-hover:text-slate-700 group-hover:scale-110" />
+                <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 active:scale-105 group-hover:bg-gradient-to-br group-hover:from-slate-100 group-hover:to-gray-100 active:bg-gradient-to-br active:from-slate-100 active:to-gray-100">
+                  <Icon className="text-slate-600 text-xl transition-all duration-300 group-hover:text-slate-700 group-hover:scale-110 active:text-slate-700 active:scale-110" />
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[17.5px] font-semibold text-slate-900 group-hover:text-slate-800 transition-colors">
+                  <h3 className="text-[17.5px] font-semibold text-slate-900 group-hover:text-slate-800 active:text-slate-800 transition-colors">
                     {value.title}
                   </h3>
-                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md group-hover:bg-slate-200 group-hover:text-slate-700 transition-colors">
+                  <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md group-hover:bg-slate-200 group-hover:text-slate-700 active:bg-slate-200 active:text-slate-700 transition-colors">
                     0{value.id}
                   </span>
                 </div>
 
-                <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
+                <p className="text-[14.5px] sm:text-[15px] text-slate-600 leading-relaxed group-hover:text-slate-700 active:text-slate-700 transition-colors">
                   {value.description}
                 </p>
               </div>
 
               {/* Corner Accents */}
-              <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-3 left-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-3 left-3 w-2 h-2 rounded-full bg-slate-300 opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
         </div>
@@ -1195,9 +1175,101 @@ export const About: React.FC = () => {
           }
         }
         
-        .value-item {
+        /* Desktop hover animations */
+        @media (hover: hover) {
+          .border-animation-container:hover .animated-line {
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+          }
+          
+          .border-animation-container:hover .animated-line:nth-child(1) {
+            animation-name: slideRight;
+          }
+          
+          .border-animation-container:hover .animated-line:nth-child(2) {
+            animation-name: slideDown;
+          }
+          
+          .border-animation-container:hover .animated-line:nth-child(3) {
+            animation-name: slideUp;
+          }
+          
+          .border-animation-container:hover .animated-line:nth-child(4) {
+            animation-name: slideLeft;
+          }
+        }
+        
+        /* Mobile touch animations */
+        @media (hover: none) {
+          .border-animation-container.active .animated-line {
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+          }
+          
+          .border-animation-container.active .animated-line:nth-child(1) {
+            animation-name: slideRight;
+          }
+          
+          .border-animation-container.active .animated-line:nth-child(2) {
+            animation-name: slideDown;
+          }
+          
+          .border-animation-container.active .animated-line:nth-child(3) {
+            animation-name: slideUp;
+          }
+          
+          .border-animation-container.active .animated-line:nth-child(4) {
+            animation-name: slideLeft;
+          }
+          
+          /* Better touch feedback */
+          .value-item:active,
+          .why-choose-card:active {
+            transform: scale(0.98);
+            transition: transform 0.2s;
+          }
+        }
+        
+        /* Common styles */
+        .value-item,
+        .why-choose-card {
           --mouse-x: 50%;
           --mouse-y: 50%;
+        }
+        
+        .border-animation-container {
+          transition: all 0.3s ease;
+        }
+        
+        .border-animation-container:hover,
+        .border-animation-container.active {
+          background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+            rgba(100, 116, 139, 0.2), 
+            transparent 70%) !important;
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        /* Better focus styles for accessibility */
+        .value-item:focus-visible,
+        .why-choose-card:focus-visible {
+          outline: 2px solid #4f46e5;
+          outline-offset: 2px;
+        }
+        
+        /* Reduce motion preference */
+        @media (prefers-reduced-motion: reduce) {
+          .animated-line,
+          .floating-element,
+          .parallax-bg {
+            animation: none !important;
+            transition: none !important;
+          }
         }
       `}</style>
     </section>
