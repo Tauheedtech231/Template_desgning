@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserFriends } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserFriends, FaChevronRight, FaArrowRight } from "react-icons/fa";
 
 interface Event {
   id: number;
@@ -100,11 +100,9 @@ const EventsSection: React.FC = () => {
       const visibleWidth = slider.clientWidth;
       
       if (slider.scrollLeft >= totalWidth - visibleWidth) {
-        // Reset to beginning without animation for seamless loop
         slider.scrollLeft = 0;
       } else {
-        // Smooth continuous scroll
-        slider.scrollLeft += 0.5; // Adjust speed here
+        slider.scrollLeft += 0.5;
       }
       
       requestAnimationFrame(animateSlider);
@@ -131,7 +129,7 @@ const EventsSection: React.FC = () => {
     
     e.preventDefault();
     const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Adjust sensitivity
+    const walk = (x - startX) * 2;
     sliderRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -154,7 +152,7 @@ const EventsSection: React.FC = () => {
 
   return (
     <>
-      {/* Hero Section with background image */}
+      {/* Hero Section with improved design */}
       <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"
@@ -164,24 +162,32 @@ const EventsSection: React.FC = () => {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/40 via-teal-800/30 to-transparent" />
         
-        {/* Overlay content */}
+        {/* Overlay content with improved design */}
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-3 mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-3 mb-6"
+              >
                 <div className="h-px w-12 bg-white/50" />
                 <span className="text-white/90 text-sm tracking-wide">
-                  Community gatherings
+                  Upcoming Events
                 </span>
-              </div>
+              </motion.div>
               
-              <h1 className="font-serif text-4xl md:text-5xl font-medium text-[#E86A58] mb-6 leading-tight">
-                Upcoming events
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                <span className="text-teal-600">Campus</span>
+                <span className="text-white ml-3">Events</span>
               </h1>
               
-              <p className="text-lg text-white/90 leading-relaxed max-w-xl">
+              <div className="h-1 w-20 bg-teal-500/50 mb-6"></div>
+              
+              <p className="text-lg text-white/90 leading-relaxed max-w-xl font-light">
                 Join us for conversations, workshops, and gatherings that bring our community together.
               </p>
             </div>
@@ -189,9 +195,9 @@ const EventsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Events content section */}
-      <section className="relative bg-[#FAFAFA] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+      {/* Events content section with improved design */}
+      <section className="relative bg-gradient-to-b from-white via-gray-50/30 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           {/* Active event details */}
           <div className="mb-16 md:mb-20">
             <AnimatePresence mode="wait">
@@ -207,9 +213,9 @@ const EventsSection: React.FC = () => {
                     transition={{ duration: 0.4 }}
                     className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12"
                   >
-                    {/* Event image with date badge */}
+                    {/* Event image with date badge - improved rounded design */}
                     <div className="relative">
-                      <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
+                      <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden rounded-2xl">
                         <Image
                           src={event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"}
                           alt={event.title}
@@ -219,13 +225,13 @@ const EventsSection: React.FC = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
                         
-                        {/* Date badge */}
+                        {/* Date badge - improved design */}
                         <div className="absolute top-6 left-6">
-                          <div className="bg-white px-4 py-3 text-center shadow-sm">
-                            <div className="text-[#E86A58] text-lg font-medium tracking-wide leading-none">
+                          <div className="bg-white/95 backdrop-blur-sm px-5 py-3 text-center rounded-xl shadow-lg border border-white/20">
+                            <div className="text-teal-600 text-xl font-semibold tracking-wide leading-none">
                               {event.date.split(' ')[0]}
                             </div>
-                            <div className="text-[#1E1E1E] text-sm font-medium">
+                            <div className="text-gray-800 text-sm font-medium mt-1">
                               {event.date.split(' ')[1]}
                             </div>
                           </div>
@@ -233,71 +239,74 @@ const EventsSection: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Event details */}
+                    {/* Event details - improved design */}
                     <div className="flex flex-col justify-center">
-                      <div className="p-6 md:p-8 bg-white shadow-sm">
+                      <div className="p-6 md:p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
                         {/* Event title and category */}
-                        <div className="mb-6">
-                          <div className="flex items-center justify-between mb-4">
+                        <div className="mb-8">
+                          <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[#E86A58]/10 flex items-center justify-center">
-                                <FaCalendarAlt className="h-4 w-4 text-[#E86A58]" />
+                              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center border border-teal-200">
+                                <FaCalendarAlt className="h-5 w-5 text-teal-600" />
                               </div>
-                              <span className="text-sm text-[#5A5A5A] uppercase tracking-wide">
+                              <span className="text-sm text-teal-700 uppercase tracking-wide font-medium">
                                 {event.category}
                               </span>
                             </div>
-                            <div className="px-3 py-1 border border-[#E5E5E5] rounded-full">
-                              <span className="text-xs text-[#5A5A5A] font-medium">
+                            <div className="px-4 py-2 bg-teal-50 border border-teal-200 rounded-full">
+                              <span className="text-sm text-teal-700 font-medium flex items-center gap-2">
+                                <FaUserFriends className="h-3 w-3" />
                                 {event.capacity} spots
                               </span>
                             </div>
                           </div>
                           
-                          <h2 className="font-serif text-2xl md:text-3xl font-medium text-[#1E1E1E] leading-tight mb-4">
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-6">
                             {event.title}
                           </h2>
                         </div>
                         
                         {/* Event description */}
                         <div className="mb-8">
-                          <p className="text-[#5A5A5A] leading-relaxed tracking-tight text-base">
+                          <p className="text-gray-600 leading-relaxed text-base">
                             {event.description}
                           </p>
                         </div>
                         
-                        {/* Event details */}
+                        {/* Event details - improved design */}
                         <div className="space-y-4 mb-8">
-                          <div className="flex items-center gap-3 text-[#5A5A5A]">
-                            <div className="w-10 h-10 rounded-full bg-[#E5E5E5] flex items-center justify-center flex-shrink-0">
-                              <FaClock className="h-4 w-4" />
+                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
+                              <FaClock className="h-5 w-5 text-teal-600" />
                             </div>
                             <div>
-                              <div className="text-sm text-[#5A5A5A]">Time</div>
-                              <div className="text-[#1E1E1E] font-medium">{event.time}</div>
+                              <div className="text-sm text-gray-500 mb-1">Time</div>
+                              <div className="text-gray-900 font-semibold">{event.time}</div>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 text-[#5A5A5A]">
-                            <div className="w-10 h-10 rounded-full bg-[#E5E5E5] flex items-center justify-center flex-shrink-0">
-                              <FaMapMarkerAlt className="h-4 w-4" />
+                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
+                              <FaMapMarkerAlt className="h-5 w-5 text-teal-600" />
                             </div>
                             <div>
-                              <div className="text-sm text-[#5A5A5A]">Location</div>
-                              <div className="text-[#1E1E1E] font-medium">{event.location}</div>
+                              <div className="text-sm text-gray-500 mb-1">Location</div>
+                              <div className="text-gray-900 font-semibold">{event.location}</div>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-3 text-[#5A5A5A]">
-                            <div className="w-10 h-10 rounded-full bg-[#E5E5E5] flex items-center justify-center flex-shrink-0">
-                              <FaUserFriends className="h-4 w-4" />
+                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
+                              <FaUserFriends className="h-5 w-5 text-teal-600" />
                             </div>
                             <div>
-                              <div className="text-sm text-[#5A5A5A]">Day</div>
-                              <div className="text-[#1E1E1E] font-medium">{event.day}</div>
+                              <div className="text-sm text-gray-500 mb-1">Day</div>
+                              <div className="text-gray-900 font-semibold">{event.day}</div>
                             </div>
                           </div>
                         </div>
+
+                      
                       </div>
                     </div>
                   </motion.div>
@@ -306,27 +315,37 @@ const EventsSection: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          {/* Horizontal Slider - Continuous right to left */}
-          <div className="mt-16">
-            <div className="mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-px w-8 bg-[#E86A58]/30" />
-                <span className="text-sm text-[#5A5A5A] tracking-wide">
-                  Browse all events
-                </span>
+          {/* Horizontal Slider Section - Improved Design */}
+          <div className="mt-20">
+            <div className="mb-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-px w-8 bg-teal-400" />
+                    <span className="text-sm text-teal-700 tracking-wide font-medium">
+                      Browse All Events
+                    </span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    More Upcoming Events
+                  </h3>
+                </div>
+                
+                {/* View all button */}
+                
               </div>
             </div>
             
-            {/* Slider container */}
+            {/* Slider container with improved design */}
             <div className="relative overflow-hidden">
-              {/* Gradient overlays for smooth edges */}
-              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#FAFAFA] to-transparent z-10" />
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#FAFAFA] to-transparent z-10" />
+              {/* Gradient overlays */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white via-white to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white to-transparent z-10 pointer-events-none" />
               
               {/* Continuous slider */}
               <div
                 ref={sliderRef}
-                className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide"
+                className="flex gap-5 md:gap-6 overflow-x-auto scrollbar-hide py-4"
                 style={{ scrollBehavior: 'auto' }}
                 onMouseDown={handleDragStart}
                 onMouseMove={handleDragMove}
@@ -338,24 +357,42 @@ const EventsSection: React.FC = () => {
                 {eventsData.map((event, index) => (
                   <div
                     key={`first-${event.id}`}
-                    className={`flex-shrink-0 w-64 md:w-80 cursor-pointer transition-all duration-300 ${
+                    className={`flex-shrink-0 w-72 md:w-80 cursor-pointer transition-all duration-300 ${
                       activeEvent === index 
-                        ? 'opacity-100 scale-105' 
-                        : 'opacity-80 hover:opacity-100'
+                        ? 'opacity-100' 
+                        : 'opacity-90 hover:opacity-100'
                     }`}
                     onClick={() => handleEventSelect(index)}
                   >
-                    <div className="bg-white p-4 shadow-sm border border-[#E5E5E5]">
-                      <div className="mb-3">
-                        <div className="text-[#E86A58] text-sm font-medium">
-                          {event.date}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-300 h-full">
+                      {/* Date badge */}
+                      <div className="mb-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 rounded-lg border border-teal-100">
+                          <FaCalendarAlt className="h-3.5 w-3.5 text-teal-600" />
+                          <span className="text-teal-700 text-sm font-medium">
+                            {event.date} • {event.day}
+                          </span>
                         </div>
-                        <h3 className="font-medium text-[#1E1E1E] mt-1">
-                          {event.title}
-                        </h3>
                       </div>
-                      <div className="text-xs text-[#5A5A5A]">
-                        {event.location}
+                      
+                      <h3 className="font-semibold text-gray-900 mb-3 text-lg leading-tight">
+                        {event.title}
+                      </h3>
+                      
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                        <FaMapMarkerAlt className="h-3.5 w-3.5" />
+                        <span>{event.location}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <FaClock className="h-3.5 w-3.5 text-gray-400" />
+                          <span className="text-sm text-gray-600">{event.time}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-teal-600">
+                          <span className="text-sm font-medium">Details</span>
+                          <FaChevronRight className="h-3 w-3" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -365,24 +402,42 @@ const EventsSection: React.FC = () => {
                 {eventsData.map((event, index) => (
                   <div
                     key={`second-${event.id}`}
-                    className={`flex-shrink-0 w-64 md:w-80 cursor-pointer transition-all duration-300 ${
+                    className={`flex-shrink-0 w-72 md:w-80 cursor-pointer transition-all duration-300 ${
                       activeEvent === index 
-                        ? 'opacity-100 scale-105' 
-                        : 'opacity-80 hover:opacity-100'
+                        ? 'opacity-100' 
+                        : 'opacity-90 hover:opacity-100'
                     }`}
                     onClick={() => handleEventSelect(index)}
                   >
-                    <div className="bg-white p-4 shadow-sm border border-[#E5E5E5]">
-                      <div className="mb-3">
-                        <div className="text-[#E86A58] text-sm font-medium">
-                          {event.date}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-300 h-full">
+                      {/* Date badge */}
+                      <div className="mb-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 rounded-lg border border-teal-100">
+                          <FaCalendarAlt className="h-3.5 w-3.5 text-teal-600" />
+                          <span className="text-teal-700 text-sm font-medium">
+                            {event.date} • {event.day}
+                          </span>
                         </div>
-                        <h3 className="font-medium text-[#1E1E1E] mt-1">
-                          {event.title}
-                        </h3>
                       </div>
-                      <div className="text-xs text-[#5A5A5A]">
-                        {event.location}
+                      
+                      <h3 className="font-semibold text-gray-900 mb-3 text-lg leading-tight">
+                        {event.title}
+                      </h3>
+                      
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                        <FaMapMarkerAlt className="h-3.5 w-3.5" />
+                        <span>{event.location}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <FaClock className="h-3.5 w-3.5 text-gray-400" />
+                          <span className="text-sm text-gray-600">{event.time}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-teal-600">
+                          <span className="text-sm font-medium">Details</span>
+                          <FaChevronRight className="h-3 w-3" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -390,32 +445,36 @@ const EventsSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Progress indicator */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <div className="flex gap-2">
-                {eventsData.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleEventSelect(index)}
-                    className="focus:outline-none"
-                    aria-label={`View event ${index + 1}`}
-                  >
-                    <div 
-                      className={`h-1 rounded-full transition-all duration-300 ${
-                        index === activeEvent 
-                          ? 'w-6 bg-[#E86A58]' 
-                          : 'w-2 bg-[#E5E5E5] hover:bg-[#D0D0D0]'
-                      }`}
-                    />
-                  </button>
-                ))}
+            {/* Progress indicator - improved design */}
+            <div className="flex items-center justify-between mt-10">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-2">
+                  {eventsData.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleEventSelect(index)}
+                      className="focus:outline-none group"
+                      aria-label={`View event ${index + 1}`}
+                    >
+                      <div 
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          index === activeEvent 
+                            ? 'w-8 bg-teal-600' 
+                            : 'w-3 bg-gray-300 group-hover:bg-gray-400'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="text-sm text-gray-600 ml-4">
+                  <span className="font-semibold text-teal-700">{activeEvent + 1}</span>
+                  <span className="mx-2 text-gray-400">of</span>
+                  <span className="font-medium text-gray-800">{eventsData.length}</span>
+                </div>
               </div>
               
-              <div className="text-sm text-[#5A5A5A]">
-                <span className="font-medium">{activeEvent + 1}</span>
-                <span className="mx-2">of</span>
-                <span>{eventsData.length}</span>
-              </div>
+             
             </div>
           </div>
 
@@ -432,8 +491,8 @@ const EventsSection: React.FC = () => {
           }
         `}</style>
 
-        {/* Subtle section separator */}
-        <div className="h-px bg-[#E5E5E5] max-w-4xl mx-auto" />
+        {/* Decorative elements */}
+        <div className="h-px bg-gradient-to-r from-transparent via-teal-200/50 to-transparent max-w-7xl mx-auto" />
       </section>
     </>
   );

@@ -6,6 +6,7 @@ import  Navbar  from "./sections/Navbar";
 import   HeroSection  from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
+// import ContactSection from "./contact/page";
 
 
 
@@ -32,6 +33,7 @@ const Template4: React.FC = () => {
       {/* <StatsSection/> */}
      
       <About />
+      {/* <ContactSection/> */}
      
       {/* <CertificatesSection /> */}
       <Footer />

@@ -1,17 +1,13 @@
 "use client";
 
 import React, { useRef } from "react";
+import { motion, Variants } from "framer-motion";
 import {
   FaMapMarkerAlt,
   FaPhone,
   FaEnvelope,
-  FaClock,
   FaArrowUp,
   FaChevronRight,
-  FaBookOpen,
-  FaUserGraduate,
-  FaChalkboardTeacher,
-  FaCalendarAlt,
 } from "react-icons/fa";
 
 export const Footer: React.FC = () => {
@@ -22,211 +18,169 @@ export const Footer: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const contactInfo = [
-    {
-      icon: <FaMapMarkerAlt />,
-      title: "Campus Location",
-      details: ["123 Education Street", "Academic District", "City, State 12345"],
-    },
-    {
-      icon: <FaPhone />,
-      title: "Contact Numbers",
-      details: ["+1 (555) 123-4567", "+1 (555) 987-6543"],
-    },
-    {
-      icon: <FaEnvelope />,
-      title: "Email Addresses",
-      details: ["admissions@college.edu", "info@college.edu"],
-    },
-    {
-      icon: <FaClock />,
-      title: "Office Hours",
-      details: ["Mon – Fri: 8:00 AM – 6:00 PM", "Sat: 9:00 AM – 2:00 PM"],
-    },
-  ];
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  };
 
   const quickLinks = [
     { label: "Home", href: "/" },
-    { label: "About Us", href: "/components/templates/template4/about" },
-    { label: "Programs", href: "/components/templates/template4/courses" },
+    { label: "About", href: "/components/templates/template4/about" },
+    { label: "Courses", href: "/components/templates/template4/courses" },
     { label: "Faculty", href: "/components/templates/template4/faculty" },
     { label: "Contact", href: "/components/templates/template4/contact" },
   ];
 
-  const programs = [
-    "Computer Science",
-    "Business Administration",
-    "Engineering",
-    "Health Sciences",
-    "Arts & Humanities",
-    "Research Programs",
-  ];
-
-  const accreditation = [
-    { name: "Accredited College", icon: <FaBookOpen /> },
-    { name: "Government Approved", icon: <FaChalkboardTeacher /> },
-    { name: "Quality Certified", icon: <FaUserGraduate /> },
+  const contactInfo = [
+    {
+      icon: <FaMapMarkerAlt />,
+      title: "Location",
+      details: ["123 Education Street", "Academic District"],
+    },
+    {
+      icon: <FaPhone />,
+      title: "Phone",
+      details: ["+1 (555) 123-4567"],
+    },
+    {
+      icon: <FaEnvelope />,
+      title: "Email",
+      details: ["contact@college.edu"],
+    },
   ];
 
   return (
-    <>
-      <style jsx global>{`
-        .footer-link-item {
-          transition: all 0.3s ease;
-        }
-        .footer-link-item:hover {
-          transform: translateX(4px);
-          color: #e86a58 !important;
-        }
-
-        .contact-item:hover .contact-icon-container {
-          background-color: #e86a58;
-          border-color: #e86a58;
-        }
-        .contact-item:hover .contact-icon {
-          color: white;
-        }
-        .contact-item:hover .contact-title {
-          color: #e86a58;
-        }
-
-        .program-item:hover {
-          transform: translateX(2px);
-        }
-        .program-item:hover .program-text {
-          color: #e86a58;
-        }
-
-        .back-to-top:hover {
-          background-color: #bf4e3a;
-          transform: scale(1.05);
-        }
-      `}</style>
-
-      <footer ref={footerRef} className="relative bg-[#000821] text-[#D1D5DB]">
-        <div className="h-px bg-[#0B1033] w-full" />
-
-        <div className="max-w-7xl mx-auto px-4 py-14">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-            {/* Brand */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#E86A58] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">E</span>
-                </div>
-                <div>
-                  <h2 className="text-lg font-medium text-white">
-                    Excel College
-                  </h2>
-                  <p className="text-sm text-gray-300">
-                    of Professional Studies
-                  </p>
-                </div>
+    <footer ref={footerRef} className="bg-gray-900 text-gray-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {/* Brand Column */}
+          <motion.div 
+            className="space-y-6"
+            variants={itemVariants}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">C</span>
               </div>
-
-              <p className="text-sm leading-relaxed text-gray-300">
-                A premier educational institution committed to academic
-                excellence and professional growth since 2005.
-              </p>
-
-              <div className="pt-6 border-t border-[#0B1033]">
-                <p className="text-sm mb-3 font-medium text-white">
-                  Accreditation
-                </p>
-                <div className="space-y-2">
-                  {accreditation.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <span className="text-[#E86A58]">{item.icon}</span>
-                      {item.name}
-                    </div>
-                  ))}
-                </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">College</h2>
+                <p className="text-sm text-gray-400">Educational Excellence</p>
               </div>
             </div>
+            
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Committed to quality education and student success since 2005.
+            </p>
+          </motion.div>
 
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
-                Quick Navigation
-              </h3>
-              <ul className="space-y-3">
-                {quickLinks.map((link, i) => (
-                  <li key={i}>
-                    <a
-                      href={link.href}
-                      className="footer-link-item flex items-center text-sm"
-                    >
-                      <FaChevronRight className="mr-2 text-[#E86A58]" />
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Quick Links Column */}
+          <motion.div 
+            variants={itemVariants}
+          >
+            <h3 className="text-lg font-bold text-white mb-6">Quick Links</h3>
+            <ul className="space-y-3">
+              {quickLinks.map((link, index) => (
+                <motion.li
+                  key={index}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <a
+                    href={link.href}
+                    className="flex items-center text-sm text-gray-400 hover:text-teal-400 transition-colors duration-200"
+                  >
+                    <FaChevronRight className="mr-2 text-teal-400 text-xs" />
+                    {link.label}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
 
-            {/* Programs */}
-            <div>
-              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
-                Academic Programs
-              </h3>
-              <ul className="space-y-3">
-                {programs.map((p, i) => (
-                  <li key={i} className="program-item text-sm text-gray-300">
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h3 className="text-lg font-medium text-white mb-6 border-b border-[#0B1033] pb-3">
-                Contact Information
-              </h3>
-              <div className="space-y-5">
-                {contactInfo.map((item, i) => (
-                  <div key={i} className="contact-item flex gap-3">
-                    <div className="contact-icon-container w-9 h-9 rounded-lg bg-[#0B1033] border border-[#121A4D] flex items-center justify-center">
-                      <span className="contact-icon text-[#E86A58] text-sm">
-                        {item.icon}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="contact-title text-sm font-semibold text-white mb-1">
-                        {item.title}
-                      </h4>
-                      {item.details.map((d, idx) => (
-                        <p key={idx} className="text-xs text-gray-300">
-                          {d}
-                        </p>
-                      ))}
-                    </div>
+          {/* Contact Column */}
+          <motion.div 
+            variants={itemVariants}
+          >
+            <h3 className="text-lg font-bold text-white mb-6">Contact Us</h3>
+            <div className="space-y-4">
+              {contactInfo.map((item, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex items-start gap-3"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center flex-shrink-0">
+                    <span className="text-teal-400 text-sm">
+                      {item.icon}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-white mb-1">
+                      {item.title}
+                    </h4>
+                    {item.details.map((detail, idx) => (
+                      <p key={idx} className="text-xs text-gray-400">
+                        {detail}
+                      </p>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
             </div>
+          </motion.div>
+        </motion.div>
 
+        {/* Bottom Section */}
+        <motion.div 
+          className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Copyright */}
+          <div className="text-sm text-gray-400 text-center md:text-left">
+            © {currentYear} College. All rights reserved.
           </div>
 
-          {/* Bottom */}
-          <div className="mt-12 pt-8 border-t border-[#0B1033] flex flex-col items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-gray-300">
-              <FaCalendarAlt className="text-[#E86A58]" />
-              © {currentYear} Excel College. All rights reserved.
-            </div>
-
-            <button
-              onClick={scrollToTop}
-              className="back-to-top w-10 h-10 rounded-lg bg-[#E86A58] flex items-center justify-center text-white"
-            >
-              <FaArrowUp />
-            </button>
-          </div>
-        </div>
-
-        <div className="h-px bg-[#0B1033] w-full" />
-      </footer>
-    </>
+          {/* Back to Top Button */}
+          <motion.button
+            onClick={scrollToTop}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-10 h-10 rounded-full bg-gray-800 hover:bg-teal-500 text-white flex items-center justify-center transition-colors duration-300"
+            aria-label="Scroll to top"
+          >
+            <FaArrowUp />
+          </motion.button>
+        </motion.div>
+      </div>
+    </footer>
   );
 };

@@ -651,7 +651,7 @@ export const About: React.FC = () => {
             <div className="mb-12" ref={storyHeadingRef}>
               <div className="inline-flex items-center gap-3 mb-6">
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center shadow-md">
-                  <FaBookOpen className="text-white text-sm" />
+                  <FaBookOpen className="text-teal-400 text-sm" />
                 </div>
                 <h2 className="text-[28px] md:text-[32px] font-bold text-teal-500  leading-tight">
                   How we arrived here, and why it matters
@@ -708,9 +708,9 @@ export const About: React.FC = () => {
     {/* Header */}
     <div className="flex items-start gap-4">
       <div className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center shadow-md">
-        <FaBullseye className="text-white text-lg" />
+        <FaBullseye className="text-teal-400 text-lg" />
       </div>
-      <h3 className="text-xl sm:text-[22px] font-bold text-slate-900">
+      <h3 className="text-xl sm:text-[22px] font-bold text-teal-600">
         Our Intention
       </h3>
     </div>
@@ -755,9 +755,9 @@ export const About: React.FC = () => {
     {/* Header */}
     <div className="flex items-start gap-4">
       <div className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-600 to-slate-700 flex items-center justify-center shadow-md">
-        <FaRocket className="text-white text-lg" />
+        <FaRocket className="text-teal-400 text-lg" />
       </div>
-      <h3 className="text-xl sm:text-[22px] font-bold text-slate-900">
+      <h3 className="text-xl sm:text-[22px] font-bold text-teal-600">
         Looking Ahead
       </h3>
     </div>
@@ -807,9 +807,9 @@ export const About: React.FC = () => {
       {/* Heading */}
       <div ref={philosophyHeadingRef} className="flex items-center gap-4">
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-800 to-gray-900 flex items-center justify-center shadow-md">
-          <FaLightbulb className="text-white text-lg" />
+          <FaLightbulb className="text-teal-300 text-lg" />
         </div>
-        <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-slate-900 leading-tight">
+        <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-teal-600 leading-tight">
           {philosophy.heading}
         </h2>
       </div>
@@ -866,9 +866,9 @@ export const About: React.FC = () => {
   <div ref={whyChooseHeadingRef} className="text-center mb-10 sm:mb-14">
     <div className="inline-flex items-center gap-3 mb-5">
       <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-md">
-        <FaStar className="text-white text-sm" />
+        <FaStar className="text-teal-400 text-sm" />
       </div>
-      <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-slate-900">
+      <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-teal-600">
         Why Choose Us
       </h2>
     </div>
@@ -974,9 +974,9 @@ export const About: React.FC = () => {
   <div ref={valuesHeadingRef} className="text-center mb-10 sm:mb-14">
     <div className="inline-flex items-center gap-3 mb-5">
       <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-slate-700 to-gray-800 flex items-center justify-center shadow-md">
-        <FaShieldAlt className="text-white text-sm" />
+        <FaShieldAlt className="text-teal-400 text-sm" />
       </div>
-      <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-slate-900">
+      <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold text-teal-600">
         The principles that guide our choices
       </h2>
     </div>
@@ -1071,43 +1071,55 @@ export const About: React.FC = () => {
 </div>
 
 
-          {/* Approach Section with Third Image */}
-       <section ref={approachRef} className="w-full bg-slate-50 py-24">
-  <div className="max-w-7xl mx-auto px-6">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+<section
+  ref={approachRef}
+  className="w-full bg-slate-50 py-16 sm:py-20 lg:py-24"
+>
+  <div className="max-w-7xl mx-auto px-5 sm:px-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-      {/* Image – clean, no card */}
+      {/* Image – soft & responsive */}
       <div className="relative">
         <img
           src={images.learningImage}
           alt="Learning Environment"
-          className="w-full h-[420px] object-cover rounded-2xl"
+          className="w-full h-[260px] sm:h-[340px] lg:h-[420px] object-cover rounded-2xl"
         />
       </div>
 
-      {/* Content – flowing, no cards */}
-      <div className="space-y-8">
-        <h2 ref={approachHeadingRef} className="text-[34px] font-bold text-slate-900 leading-tight">
+      {/* Content – flowing */}
+      <div className="space-y-6 sm:space-y-8">
+
+        <h2
+          ref={approachHeadingRef}
+          className="text-[26px] sm:text-[30px] lg:text-[34px] font-bold text-teal-600 leading-snug"
+        >
           How We Approach Education
         </h2>
 
-        <p className="text-[16.5px] text-slate-600 leading-relaxed">
+        <p className="text-[15.5px] sm:text-[16.5px] text-slate-600 leading-relaxed max-w-xl">
           Our educational philosophy focuses on nurturing critical thinking,
           practical skills, and academic excellence. We prepare students to
           thrive in a rapidly evolving digital and professional landscape.
         </p>
 
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
           {approach.aspects.map((aspect, index) => (
-            <div key={index} className="flex gap-4">
-              <div className="text-slate-400 font-semibold">
+            <div
+              key={index}
+              className="flex gap-4"
+            >
+              {/* Number */}
+              <div className="text-slate-400 font-semibold text-sm pt-0.5">
                 {String(index + 1).padStart(2, "0")}
               </div>
+
+              {/* Text */}
               <div>
-                <h3 className="text-[17px] font-semibold text-slate-900 mb-1">
+                <h3 className="text-[16px] sm:text-[17px] font-semibold text-slate-900 mb-1">
                   {aspect.title}
                 </h3>
-                <p className="text-[15.5px] text-slate-600 leading-relaxed">
+                <p className="text-[14.5px] sm:text-[15.5px] text-slate-600 leading-relaxed max-w-lg">
                   {aspect.description}
                 </p>
               </div>
@@ -1119,6 +1131,7 @@ export const About: React.FC = () => {
     </div>
   </div>
 </section>
+
 
 
           {/* Closing element */}

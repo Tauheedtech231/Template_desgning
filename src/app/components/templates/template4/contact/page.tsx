@@ -84,9 +84,12 @@ const ContactSection = () => {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative bg-white py-16"
+      className="relative bg-[#0B1220] py-16"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1220] via-[#0B1220]/90 to-[#0B1220]"></div>
+      
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div 
           className="text-center mb-16"
@@ -95,10 +98,10 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold text-teal-600 mb-4">
+          <h1 className="text-4xl font-bold text-teal-400 mb-4">
             Get in Touch
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             We are here to help with any questions you may have
           </p>
         </motion.div>
@@ -112,10 +115,10 @@ const ContactSection = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Contact Options
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-300">
                 Choose the department that best fits your inquiry
               </p>
             </div>
@@ -131,10 +134,10 @@ const ContactSection = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ y: -2 }}
-                    className={`relative bg-white border rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden ${
+                    className={`relative bg-[#1A202C] border rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden ${
                       selectedContact === index 
-                        ? 'border-gray-900 shadow-lg' 
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                        ? 'border-teal-500 shadow-lg shadow-teal-500/20' 
+                        : 'border-gray-800 hover:border-gray-700 hover:shadow-lg hover:shadow-teal-500/10'
                     }`}
                     onClick={() => setSelectedContact(index)}
                   >
@@ -146,7 +149,7 @@ const ContactSection = () => {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 200 }}
                       >
-                        <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center">
                           <FaCheck className="text-white text-sm" />
                         </div>
                       </motion.div>
@@ -156,18 +159,20 @@ const ContactSection = () => {
                       <div className="flex-shrink-0">
                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
                           selectedContact === index 
-                            ? 'bg-gray-900 text-white' 
-                            : 'bg-gray-100 text-gray-700'
+                            ? 'bg-teal-500 text-white' 
+                            : 'bg-gray-800 text-gray-300'
                         }`}>
                           <Icon className="text-lg" />
                         </div>
                       </div>
                       
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        <h3 className={`text-lg font-bold mb-2 ${
+                          selectedContact === index ? 'text-white' : 'text-gray-200'
+                        }`}>
                           {contact.title}
                         </h3>
-                        <p className="text-gray-600 text-sm mb-4">
+                        <p className="text-gray-400 text-sm mb-4">
                           {contact.description}
                         </p>
 
@@ -178,14 +183,14 @@ const ContactSection = () => {
                               animate={{ opacity: 1, height: "auto" }}
                               exit={{ opacity: 0, height: 0 }}
                               transition={{ duration: 0.3 }}
-                              className="pt-4 border-t border-gray-100"
+                              className="pt-4 border-t border-gray-800"
                             >
                               <div className="space-y-3">
                                 <a 
                                   href={`mailto:${contact.email}`}
-                                  className="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors group"
+                                  className="flex items-center gap-3 text-gray-300 hover:text-teal-400 transition-colors group"
                                 >
-                                  <FaEnvelope className="text-gray-500 flex-shrink-0" />
+                                  <FaEnvelope className="text-gray-500 flex-shrink-0 group-hover:text-teal-400" />
                                   <span className="text-sm truncate">{contact.email}</span>
                                   <motion.div
                                     className="ml-auto"
@@ -193,15 +198,15 @@ const ContactSection = () => {
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.2 }}
                                   >
-                                    <FaArrowRight className="text-xs text-gray-500 group-hover:text-gray-900" />
+                                    <FaArrowRight className="text-xs text-gray-500 group-hover:text-teal-400" />
                                   </motion.div>
                                 </a>
                                 
                                 <a 
                                   href={`tel:${contact.phone.replace(/\D/g, '')}`}
-                                  className="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors group"
+                                  className="flex items-center gap-3 text-gray-300 hover:text-teal-400 transition-colors group"
                                 >
-                                  <FaPhone className="text-gray-500 flex-shrink-0" />
+                                  <FaPhone className="text-gray-500 flex-shrink-0 group-hover:text-teal-400" />
                                   <span className="text-sm">{contact.phone}</span>
                                   <motion.div
                                     className="ml-auto"
@@ -209,7 +214,7 @@ const ContactSection = () => {
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.3 }}
                                   >
-                                    <FaArrowRight className="text-xs text-gray-500 group-hover:text-gray-900" />
+                                    <FaArrowRight className="text-xs text-gray-500 group-hover:text-teal-400" />
                                   </motion.div>
                                 </a>
                               </div>
@@ -229,20 +234,20 @@ const ContactSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              className="mt-8 bg-gray-50 rounded-2xl p-6 border border-gray-200"
+              className="mt-8 bg-[#1A202C] rounded-2xl p-6 border border-gray-800"
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center">
-                  <FaClock className="text-gray-700" />
+                <div className="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center">
+                  <FaClock className="text-teal-400" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Response Time</h4>
-                  <p className="text-gray-600 text-sm">
+                  <h4 className="font-bold text-white mb-2">Response Time</h4>
+                  <p className="text-gray-300 text-sm">
                     We respond to all inquiries within 24 hours
                   </p>
                   <div className="flex items-center gap-2 mt-3">
-                    <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-500">Currently online</span>
+                    <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-gray-400">Currently online</span>
                   </div>
                 </div>
               </div>
@@ -257,7 +262,7 @@ const ContactSection = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300"
+              className="bg-[#1A202C] border border-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300"
               whileHover={{ y: -5 }}
             >
               <div className="mb-8">
@@ -266,15 +271,15 @@ const ContactSection = () => {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 200 }}
-                    className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center"
+                    className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center"
                   >
-                    <FaEnvelope className="text-gray-700" />
+                    <FaEnvelope className="text-teal-400" />
                   </motion.div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-2xl font-bold text-white">
                       Send a Message
                     </h3>
-                    <p className="text-gray-600 mt-1">
+                    <p className="text-gray-300 mt-1">
                       We will get back to you as soon as possible
                     </p>
                   </div>
@@ -294,14 +299,14 @@ const ContactSection = () => {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                      className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6"
+                      className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6"
                     >
-                      <FaCheck className="text-2xl text-gray-900" />
+                      <FaCheck className="text-2xl text-teal-400" />
                     </motion.div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-3">
+                    <h4 className="text-xl font-bold text-white mb-3">
                       Message Sent!
                     </h4>
-                    <p className="text-gray-600">
+                    <p className="text-gray-300">
                       Thank you for reaching out. We will respond shortly.
                     </p>
                   </motion.div>
@@ -320,12 +325,12 @@ const ContactSection = () => {
                       transition={{ delay: 0.1 }}
                       className="group"
                     >
-                      <label className="block text-sm font-medium text-gray-900 mb-2" htmlFor="name">
+                      <label className="block text-sm font-medium text-gray-200 mb-2" htmlFor="name">
                         Your Name
                       </label>
                       <div className="relative">
                         <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                          <FaUser className="text-gray-400 group-focus-within:text-gray-900 transition-colors" />
+                          <FaUser className="text-gray-500 group-focus-within:text-teal-400 transition-colors" />
                         </div>
                         <input
                           type="text"
@@ -334,7 +339,7 @@ const ContactSection = () => {
                           value={formData.name}
                           onChange={handleInputChange}
                           required
-                          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 focus:outline-none transition-all duration-300 bg-white text-gray-900"
+                          className="w-full pl-12 pr-4 py-3 border border-gray-700 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all duration-300 bg-gray-900 text-white placeholder-gray-500"
                           placeholder="Enter your name"
                         />
                       </div>
@@ -347,12 +352,12 @@ const ContactSection = () => {
                       transition={{ delay: 0.2 }}
                       className="group"
                     >
-                      <label className="block text-sm font-medium text-gray-900 mb-2" htmlFor="email">
+                      <label className="block text-sm font-medium text-gray-200 mb-2" htmlFor="email">
                         Email Address
                       </label>
                       <div className="relative">
                         <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                          <FaEnvelope className="text-gray-400 group-focus-within:text-gray-900 transition-colors" />
+                          <FaEnvelope className="text-gray-500 group-focus-within:text-teal-400 transition-colors" />
                         </div>
                         <input
                           type="email"
@@ -361,7 +366,7 @@ const ContactSection = () => {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
-                          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 focus:outline-none transition-all duration-300 bg-white text-gray-900"
+                          className="w-full pl-12 pr-4 py-3 border border-gray-700 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all duration-300 bg-gray-900 text-white placeholder-gray-500"
                           placeholder="Enter your email"
                         />
                       </div>
@@ -374,7 +379,7 @@ const ContactSection = () => {
                       transition={{ delay: 0.3 }}
                       className="group"
                     >
-                      <label className="block text-sm font-medium text-gray-900 mb-2" htmlFor="subject">
+                      <label className="block text-sm font-medium text-gray-200 mb-2" htmlFor="subject">
                         Subject
                       </label>
                       <input
@@ -384,7 +389,7 @@ const ContactSection = () => {
                         value={formData.subject}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 focus:outline-none transition-all duration-300 bg-white text-gray-900"
+                        className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all duration-300 bg-gray-900 text-white placeholder-gray-500"
                         placeholder="What is this regarding?"
                       />
                     </motion.div>
@@ -396,7 +401,7 @@ const ContactSection = () => {
                       transition={{ delay: 0.4 }}
                       className="group"
                     >
-                      <label className="block text-sm font-medium text-gray-900 mb-2" htmlFor="message">
+                      <label className="block text-sm font-medium text-gray-200 mb-2" htmlFor="message">
                         Message
                       </label>
                       <textarea
@@ -406,14 +411,16 @@ const ContactSection = () => {
                         onChange={handleInputChange}
                         required
                         rows={5}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 focus:outline-none transition-all duration-300 bg-white text-gray-900 resize-none"
+                        className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all duration-300 bg-gray-900 text-white placeholder-gray-500 resize-none"
                         placeholder="Type your message here..."
                       />
                       <div className="mt-2 flex justify-between items-center">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-400">
                           Please provide as much detail as possible
                         </p>
-                        <span className="text-xs text-gray-500">
+                        <span className={`text-xs ${
+                          formData.message.length > 1000 ? 'text-red-400' : 'text-gray-400'
+                        }`}>
                           {formData.message.length}/1000
                         </span>
                       </div>
@@ -430,7 +437,7 @@ const ContactSection = () => {
                         type="submit"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-3 px-6 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm hover:shadow-lg"
+                        className="w-full py-3 px-6 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:shadow-teal-500/20"
                       >
                         <span className="flex items-center">
                           <FaPaperPlane className="mr-3 text-sm" />
@@ -451,17 +458,12 @@ const ContactSection = () => {
               </AnimatePresence>
 
               <motion.div 
-                className="mt-8 pt-6 border-t border-gray-100"
+                className="mt-8 pt-6 border-t border-gray-800"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="flex items-start gap-3">
-                  <FaCheck className="text-gray-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600">
-                    Your information is secure and will only be used to respond to your inquiry.
-                  </p>
-                </div>
+               
               </motion.div>
             </motion.div>
           </motion.div>
@@ -476,10 +478,10 @@ const ContactSection = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-white mb-4">
               Other Ways to Reach Us
             </h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 max-w-2xl mx-auto">
               Sometimes a direct approach works best
             </p>
           </div>
@@ -492,13 +494,13 @@ const ContactSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
               whileHover={{ y: -5 }}
-              className="bg-white border border-gray-200 rounded-2xl p-6"
+              className="bg-[#1A202C] border border-gray-800 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
-                  <FaMapMarkerAlt className="text-gray-700" />
+                <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center">
+                  <FaMapMarkerAlt className="text-teal-400" />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900">
+                <h4 className="text-lg font-bold text-white">
                   Visit Our Campus
                 </h4>
               </div>
@@ -506,11 +508,11 @@ const ContactSection = () => {
                 {contacts.map((contact, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
-                      <div className={`w-2 h-2 rounded-full ${index === selectedContact ? 'bg-gray-900' : 'bg-gray-300'}`} />
+                      <div className={`w-2 h-2 rounded-full ${index === selectedContact ? 'bg-teal-500' : 'bg-gray-700'}`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{contact.title}</p>
-                      <p className="text-xs text-gray-500 mt-1">{contact.location}</p>
+                      <p className="text-sm font-medium text-white">{contact.title}</p>
+                      <p className="text-xs text-gray-400 mt-1">{contact.location}</p>
                     </div>
                   </div>
                 ))}
@@ -524,13 +526,13 @@ const ContactSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
               whileHover={{ y: -5 }}
-              className="bg-white border border-gray-200 rounded-2xl p-6"
+              className="bg-[#1A202C] border border-gray-800 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
-                  <FaClock className="text-gray-700" />
+                <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center">
+                  <FaClock className="text-teal-400" />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900">
+                <h4 className="text-lg font-bold text-white">
                   Office Hours
                 </h4>
               </div>
@@ -549,8 +551,8 @@ const ContactSection = () => {
                     transition={{ delay: index * 0.1 }}
                     className="flex justify-between items-center"
                   >
-                    <span className="text-sm text-gray-700">{schedule.day}</span>
-                    <span className={`text-sm font-medium ${index === 3 ? 'text-gray-900' : 'text-gray-600'}`}>
+                    <span className="text-sm text-gray-300">{schedule.day}</span>
+                    <span className={`text-sm font-medium ${index === 3 ? 'text-teal-400' : 'text-gray-400'}`}>
                       {schedule.time}
                     </span>
                   </motion.div>

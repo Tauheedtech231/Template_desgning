@@ -220,7 +220,7 @@ const CoursesSection: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="font-serif text-3xl md:text-4xl font-medium text-gray-900 mb-6 leading-tight">
+                <h2 className="font-serif text-3xl md:text-4xl font-medium text-teal-400 mb-6 leading-tight">
                   Comprehensive Programs
                 </h2>
               </motion.div>
