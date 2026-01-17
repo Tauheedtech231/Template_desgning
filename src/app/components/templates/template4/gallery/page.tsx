@@ -417,13 +417,7 @@ const GallerySection: React.FC = () => {
             </div>
           )}
           
-          {/* Image count */}
-          <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-            <p className="text-gray-600">
-              Showing <span className="font-semibold text-teal-600">{filteredImages.length}</span> images
-              {activeCategory !== "All" && ` in ${activeCategory}`}
-            </p>
-          </div>
+      
         </div>
 
         {/* Modal */}
