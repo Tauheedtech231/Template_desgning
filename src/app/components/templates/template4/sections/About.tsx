@@ -92,7 +92,7 @@ export const About: React.FC = () => {
         });
       }
 
-      // Hero video parallax effect
+      // Hero video parallax effect - ONLY scale the video, not the text
       if (heroVideoContainerRef.current) {
         gsap.to(heroVideoContainerRef.current, {
           scale: 1.1,
@@ -105,17 +105,11 @@ export const About: React.FC = () => {
         });
       }
 
-      // Video overlay parallax
+      // Video overlay - REMOVED parallax from text container
+      // Text will now stay fixed in position
       if (parallaxVideoRef.current) {
-        gsap.to(parallaxVideoRef.current, {
-          y: -100,
-          scrollTrigger: {
-            trigger: parallaxVideoRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1,
-          }
-        });
+        // Keep the element visible but don't apply parallax to it
+        gsap.set(parallaxVideoRef.current, { willChange: "transform" });
       }
 
       // Heading animations with staggered directions
@@ -697,13 +691,12 @@ export const About: React.FC = () => {
 
             {/* Main Heading - RIGHT */}
             <h1
-  ref={(el) => { if (el) animatedHeadingsRef.current[1] = el; }}
-  className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] font-bold tracking-tight leading-snug mb-6"
->
-  <span className="text-slate-900">Our Purpose &</span>{" "}
-  <span className="text-teal-600">Perspective</span>
-</h1>
-
+              ref={(el) => { if (el) animatedHeadingsRef.current[1] = el; }}
+              className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] font-bold tracking-tight leading-snug mb-6"
+            >
+              <span className="text-slate-900">Our Purpose &</span>{" "}
+              <span className="text-teal-600">Perspective</span>
+            </h1>
 
             {/* Tagline - BOTTOM */}
             <div 
@@ -730,7 +723,7 @@ export const About: React.FC = () => {
       </div>
 
       {/* Full Width Hero Video Section with Parallax */}
-      <div className="relative w-full h-[300px] md:h-[350px] overflow-hidden rounded-2xl">
+      <div className="relative w-full h-[300px] md:h-[350px] lg:h-[400px] overflow-hidden rounded-2xl">
         <div 
           ref={heroVideoContainerRef}
           className="absolute inset-0 w-full h-full"
@@ -748,10 +741,8 @@ export const About: React.FC = () => {
 
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-800/50 to-transparent"></div>
 
-        <div 
-          ref={parallaxVideoRef}
-          className="absolute inset-0 flex items-center justify-center"
-        >
+        {/* Fixed Text Overlay - No parallax applied */}
+        <div className="absolute inset-0 flex items-center justify-center z-20">
           <div 
             ref={imageTextRef}
             className="text-center max-w-2xl px-6"
@@ -762,15 +753,21 @@ export const About: React.FC = () => {
                 <div className="w-2 h-2 border border-white/80 rounded-full"></div>
                 <div className="w-6 h-px bg-white/80"></div>
               </div>
-              <h3 className="text-2xl md:text-[32px] font-bold text-white mb-4 leading-tight">
+              <h3 className="text-2xl md:text-[32px] lg:text-[36px] font-bold text-white mb-4 leading-tight">
                 Learning as a Human Experience
               </h3>
-              <p className="text-base text-white/95 max-w-lg mx-auto leading-relaxed">
+              <p className="text-base md:text-lg text-white/95 max-w-lg mx-auto leading-relaxed">
                 Not just acquiring knowledge, but understanding context, developing perspective, and finding ones place in complex systems.
               </p>
             </div>
           </div>
         </div>
+
+        {/* Parallax overlay for visual effect only */}
+        <div 
+          ref={parallaxVideoRef}
+          className="absolute inset-0 z-10"
+        ></div>
       </div>
 
       {/* Story Section */}
@@ -897,51 +894,51 @@ export const About: React.FC = () => {
               </div>
             </div>
           </div>
-        <div className="mb-20 sm:mb-24">
-  {/* Centered Section Heading */}
-  <div className="text-center mb-12">
-    <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold">
-  <span className="text-slate-900">Our Educational</span>{" "}
-  <span className="text-teal-600">Philosophy</span>
-</h2>
 
-  </div>
+          <div className="mb-20 sm:mb-24">
+            {/* Centered Section Heading */}
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-[28px] lg:text-[32px] font-bold">
+                <span className="text-slate-900">Our Educational</span>{" "}
+                <span className="text-teal-600">Philosophy</span>
+              </h2>
+            </div>
 
-  {/* Content Container */}
-  <div className="rounded-3xl border border-slate-200 bg-white shadow-xl overflow-hidden">
-    <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch">
-      {/* Left Column – Philosophy Points */}
-      <div ref={philosophyRef} className="p-8 sm:p-10 lg:p-12 space-y-8">
-        <ul className="space-y-5">
-          {philosophy.points.map((point, index) => (
-            <li key={index} className="flex items-start gap-4">
-              <span className="mt-1 h-2.5 w-2.5 rounded-full bg-teal-500 shrink-0" />
-              <p className="text-[15.5px] sm:text-[16px] text-slate-700 leading-relaxed">
-                {point}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
+            {/* Content Container */}
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-xl overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch">
+                {/* Left Column – Philosophy Points */}
+                <div ref={philosophyRef} className="p-8 sm:p-10 lg:p-12 space-y-8">
+                  <ul className="space-y-5">
+                    {philosophy.points.map((point, index) => (
+                      <li key={index} className="flex items-start gap-4">
+                        <span className="mt-1 h-2.5 w-2.5 rounded-full bg-teal-500 shrink-0" />
+                        <p className="text-[15.5px] sm:text-[16px] text-slate-700 leading-relaxed">
+                          {point}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-      {/* Right Column – Video */}
-      <div className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-full">
-        <video
-          src="/data/about1.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-        <div className="absolute bottom-6 right-6 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-800 flex items-center justify-center shadow-lg">
-          <FaGraduationCap className="text-white text-lg sm:text-xl" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                {/* Right Column – Video */}
+                <div className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-full">
+                  <video
+                    src="/data/about1.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                  <div className="absolute bottom-6 right-6 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-800 flex items-center justify-center shadow-lg">
+                    <FaGraduationCap className="text-white text-lg sm:text-xl" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Why Choose Us - Full Width Section with Continuous Slider */}
           <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-[#0B1220] py-20 sm:py-24 mb-20 sm:mb-24" ref={whyChooseUsRef}>
@@ -1078,12 +1075,10 @@ export const About: React.FC = () => {
                 ref={(el) => { if (el) animatedHeadings2Ref.current[2] = el; }}
                 className="text-center mb-12 sm:mb-16"
               >
- <h2 className="text-[26px] sm:text-[30px] lg:text-[34px] font-bold italic tracking-tight font-serif">
-  <span className="text-slate-900 [font-feature-settings:'calt']">How We Approach</span>{" "}
-  <span className="text-teal-600 [font-feature-settings:'calt'] rounded-sm">Education</span>
-</h2>
-
-
+                <h2 className="text-[26px] sm:text-[30px] lg:text-[34px] font-bold italic tracking-tight font-serif">
+                  <span className="text-slate-900 [font-feature-settings:'calt']">How We Approach</span>{" "}
+                  <span className="text-teal-600 [font-feature-settings:'calt'] rounded-sm">Education</span>
+                </h2>
               </div>
 
               {/* Content Grid */}
@@ -1117,8 +1112,8 @@ export const About: React.FC = () => {
                       >
                         {/* Number Circle */}
                         <div className="shrink-0">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center border border-slate-200">
-                            <span className="text-xs font-semibold text-slate-700">
+                          <div className="w-8 h-8 rounded-full bg-teal-400 flex items-center justify-center border border-slate-200">
+                            <span className="text-xs font-semibold text-white">
                               {index + 1}
                             </span>
                           </div>
