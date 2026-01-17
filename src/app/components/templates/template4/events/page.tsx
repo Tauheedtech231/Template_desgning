@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserFriends, FaChevronRight, FaArrowRight } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserFriends, FaSearch } from "react-icons/fa";
 
 interface Event {
   id: number;
@@ -15,486 +14,480 @@ interface Event {
   description: string;
   capacity: number;
   category: string;
-  featuredImage?: string;
+  featuredImage: string;
 }
 
 const EventsSection: React.FC = () => {
-  const [activeEvent, setActiveEvent] = useState<number>(0);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [startX, setStartX] = useState<number>(0);
-  const [scrollLeft, setScrollLeft] = useState<number>(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isHeadingVisible, setIsHeadingVisible] = useState(false);
+  const [isSubtitleVisible, setIsSubtitleVisible] = useState(false);
 
-  // Events data with featured images
-  const eventsData: Event[] = [
-    {
-      id: 1,
-      title: "Campus Open House",
-      date: "Dec 15",
-      day: "Friday",
-      time: "10:00 AM - 3:00 PM",
-      location: "Main Campus Hall",
-      description: "Come visit our campus and see what we're all about. You'll have a chance to tour the facilities, meet current students, and chat with faculty members about our programs.",
-      capacity: 120,
-      category: "Campus",
-      featuredImage: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=80"
-    },
-    {
-      id: 2,
-      title: "Career Fair & Networking",
-      date: "Jan 22",
-      day: "Monday",
-      time: "1:00 PM - 5:00 PM",
-      location: "Student Union Building",
-      description: "Meet with companies looking for interns and new graduates. Bring your resume and be ready to chat about opportunities in various industries. It's a good chance to make connections.",
-      capacity: 200,
-      category: "Career",
-      featuredImage: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1200&auto=format&fit=crop&q=80"
-    },
-    {
-      id: 3,
-      title: "Guest Lecture Series",
-      date: "Feb 08",
-      day: "Thursday",
-      time: "6:30 PM - 8:00 PM",
-      location: "Lecture Hall B",
-      description: "Industry leaders share insights about current trends and future directions. Each talk includes time for questions and discussion. Coffee and refreshments will be provided.",
-      capacity: 80,
-      category: "Academic",
-      featuredImage: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1200&auto=format&fit=crop&q=80"
-    },
-    {
-      id: 4,
-      title: "Workshop: Practical Skills",
-      date: "Mar 05",
-      day: "Wednesday",
-      time: "2:00 PM - 4:30 PM",
-      location: "Learning Commons",
-      description: "Hands-on session focused on developing practical skills that apply directly to workplace situations. You'll work through real scenarios and leave with actionable takeaways.",
-      capacity: 40,
-      category: "Workshop",
-      featuredImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80"
-    },
-    {
-      id: 5,
-      title: "Student Research Symposium",
-      date: "Apr 12",
-      day: "Saturday",
-      time: "9:00 AM - 1:00 PM",
-      location: "Research Center",
-      description: "Students present their research projects and findings. It's a chance to see the innovative work happening across disciplines and support fellow students in their academic pursuits.",
-      capacity: 150,
-      category: "Academic",
-      featuredImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&auto=format&fit=crop&q=80"
-    }
-  ];
-
-  // Continuous right-to-left slider effect
+  // Animation triggers
   useEffect(() => {
-    const slider = sliderRef.current;
-    if (!slider) return;
+    // Heading animation
+    const headingTimer = setTimeout(() => {
+      setIsHeadingVisible(true);
+    }, 300);
 
-    const animateSlider = () => {
-      const totalWidth = slider.scrollWidth;
-      const visibleWidth = slider.clientWidth;
-      
-      if (slider.scrollLeft >= totalWidth - visibleWidth) {
-        slider.scrollLeft = 0;
-      } else {
-        slider.scrollLeft += 0.5;
-      }
-      
-      requestAnimationFrame(animateSlider);
-    };
+    // Subtitle animation
+    const subtitleTimer = setTimeout(() => {
+      setIsSubtitleVisible(true);
+    }, 800);
 
-    const animationId = requestAnimationFrame(animateSlider);
-    
     return () => {
-      cancelAnimationFrame(animationId);
+      clearTimeout(headingTimer);
+      clearTimeout(subtitleTimer);
     };
   }, []);
 
-  // Handle drag for manual control
-  const handleDragStart = (e: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-    
-    setIsDragging(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-  };
+  const eventsData: Event[] = [
+    {
+      id: 1,
+      title: "Campus Open House 2024",
+      date: "December 15",
+      day: "Friday",
+      time: "9:00 AM - 4:00 PM",
+      location: "Main Campus Auditorium",
+      description: "Explore our campus facilities and academic programs. Meet faculty and current students during guided tours.",
+      capacity: 200,
+      category: "Admission",
+      featuredImage: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2064&auto=format&fit=crop"
+    },
+    {
+      id: 2,
+      title: "Tech Career Development Workshop",
+      date: "January 22",
+      day: "Monday",
+      time: "2:00 PM - 5:00 PM",
+      location: "Engineering Building, Room 302",
+      description: "Learn about career opportunities in technology. Industry experts will share insights and opportunities.",
+      capacity: 80,
+      category: "Career",
+      featuredImage: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      id: 3,
+      title: "Annual Research Symposium",
+      date: "February 8",
+      day: "Thursday",
+      time: "10:00 AM - 4:00 PM",
+      location: "Science Research Center",
+      description: "Annual showcase of student research projects across all disciplines. Open to public and industry partners.",
+      capacity: 150,
+      category: "Academic",
+      featuredImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      id: 4,
+      title: "Alumni Networking Night",
+      date: "March 5",
+      day: "Wednesday",
+      time: "6:00 PM - 9:00 PM",
+      location: "University Club Lounge",
+      description: "Connect with successful alumni from various industries. Networking opportunities for current students.",
+      capacity: 120,
+      category: "Networking",
+      featuredImage: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      id: 5,
+      title: "Sports Tournament Finals",
+      date: "April 12",
+      day: "Saturday",
+      time: "11:00 AM - 6:00 PM",
+      location: "University Sports Ground",
+      description: "Annual inter-department sports tournament finals. Cricket, Football, and Basketball championship matches.",
+      capacity: 500,
+      category: "Sports",
+      featuredImage: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+      id: 6,
+      title: "Cultural Fest 2024",
+      date: "May 18",
+      day: "Saturday",
+      time: "4:00 PM - 10:00 PM",
+      location: "Central Campus Lawn",
+      description: "Annual cultural festival featuring music, dance, food stalls, and performances from different states.",
+      capacity: 1000,
+      category: "Cultural",
+      featuredImage: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop"
+    }
+  ];
 
-  const handleDragMove = (e: React.MouseEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-  };
-
-  const handleEventSelect = (index: number) => {
-    setActiveEvent(index);
-  };
-
-  // Auto-rotate active event
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveEvent(prev => (prev + 1) % eventsData.length);
-    }, 8000);
+    let results = eventsData;
     
-    return () => clearInterval(interval);
-  }, [eventsData.length]);
+    if (searchTerm.trim() !== "") {
+      const searchLower = searchTerm.toLowerCase();
+      results = results.filter(event => 
+        event.title.toLowerCase().includes(searchLower) ||
+        event.description.toLowerCase().includes(searchLower) ||
+        event.location.toLowerCase().includes(searchLower) ||
+        event.category.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    setFilteredEvents(results);
+    
+    // Generate suggestions
+    if (searchTerm.trim() !== "") {
+      const allSuggestions = eventsData.flatMap(event => [
+        event.title,
+        event.category,
+        event.location.split(',')[0]
+      ]);
+      const uniqueSuggestions = [...new Set(allSuggestions)];
+      const filteredSuggestions = uniqueSuggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions.slice(0, 5));
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchTerm]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+  };
 
   return (
-    <>
-      {/* Hero Section with improved design */}
-      <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"
-          alt="Community events"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/40 via-teal-800/30 to-transparent" />
-        
-        {/* Overlay content with improved design */}
-        <div className="relative z-10 h-full flex items-center">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-2xl">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-3 mb-6"
+    <div className="min-h-screen bg-[#0B1220] text-white">
+      {/* Hero Section with Center Alignment */}
+      <div className="relative min-h-[45vh] flex flex-col items-center justify-center px-4 py-12 md:py-16 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-teal-600/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-teal-600/3 rounded-full blur-3xl" />
+        </div>
+
+        {/* Centered Content */}
+        <div className="relative z-10 w-full max-w-3xl mx-auto text-center">
+          {/* Animated Heading */}
+          <div className="overflow-hidden mb-6 md:mb-8">
+            <div className="relative">
+              {/* "Discover" with left-to-right animation */}
+              <div 
+                className={`
+                  transform transition-all duration-1000 ease-out
+                  ${isHeadingVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
+                `}
               >
-                <div className="h-px w-12 bg-white/50" />
-                <span className="text-white/90 text-sm tracking-wide">
-                  Upcoming Events
-                </span>
-              </motion.div>
+                <h1 className="text-4xl md:text-6xl font-bold">
+                  <span className="block text-teal-600 mb-2">
+                    Discover
+                  </span>
+                </h1>
+              </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                <span className="text-teal-600">Campus</span>
-                <span className="text-white ml-3">Events</span>
-              </h1>
-              
-              <div className="h-1 w-20 bg-teal-500/50 mb-6"></div>
-              
-              <p className="text-lg text-white/90 leading-relaxed max-w-xl font-light">
-                Join us for conversations, workshops, and gatherings that bring our community together.
-              </p>
+              {/* "Campus Events" with right-to-left animation */}
+              <div 
+                className={`
+                  transform transition-all duration-1000 ease-out delay-300
+                  ${isHeadingVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
+                `}
+              >
+                <h1 className="text-4xl md:text-6xl font-bold">
+                  <span className="block text-white">
+                    Campus Events
+                  </span>
+                </h1>
+              </div>
             </div>
+          </div>
+
+          {/* Subtitle with enter/exit animation */}
+          <div 
+            className={`
+              transition-all duration-1000 ease-out delay-700
+              ${isSubtitleVisible ? 
+                'translate-y-0 opacity-100 blur-0' : 
+                'translate-y-8 opacity-0 blur-sm'
+              }
+            `}
+          >
+            <p className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10 max-w-2xl mx-auto">
+              Explore and join events happening across our university campus
+            </p>
+          </div>
+
+          {/* Search Bar with Suggestions */}
+          <div 
+            className={`
+              max-w-2xl mx-auto transition-all duration-1000 ease-out delay-1000
+              ${isSubtitleVisible ? 
+                'translate-y-0 opacity-100 blur-0' : 
+                'translate-y-8 opacity-0 blur-sm'
+              }
+            `}
+          >
+            <div className="relative">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <FaSearch className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search events by title, location, or category..."
+                className="w-full pl-12 pr-6 py-4 md:py-3 bg-gray-900/80 backdrop-blur-sm rounded-full border border-gray-700 shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-400 text-base md:text-lg transition-all duration-300"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+              />
+
+              {/* Search Suggestions */}
+              {suggestions.length > 0 && searchTerm && (
+                <div className="absolute w-full mt-2 bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-lg overflow-hidden animate-fadeIn z-50">
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="px-6 py-3 hover:bg-gray-800/50 cursor-pointer transition-colors duration-200 border-b border-gray-800 last:border-b-0"
+                      onMouseDown={() => handleSuggestionClick(suggestion)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <FaSearch className="h-4 w-4 text-teal-400 flex-shrink-0" />
+                        <span className="text-gray-200">{suggestion}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Search Hint */}
+            <p className="text-sm text-gray-400 mt-3 md:mt-4">
+              {searchTerm ? `Found ${filteredEvents.length} events` : "Try searching for 'Campus', 'Workshop', or 'Symposium'"}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Events content section with improved design */}
-      <section className="relative bg-gradient-to-b from-white via-gray-50/30 to-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          {/* Active event details */}
-          <div className="mb-16 md:mb-20">
-            <AnimatePresence mode="wait">
-              {eventsData.map((event, index) => {
-                if (index !== activeEvent) return null;
-                
-                return (
-                  <motion.div
-                    key={event.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12"
-                  >
-                    {/* Event image with date badge - improved rounded design */}
-                    <div className="relative">
-                      <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden rounded-2xl">
-                        <Image
-                          src={event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"}
-                          alt={event.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                        
-                        {/* Date badge - improved design */}
-                        <div className="absolute top-6 left-6">
-                          <div className="bg-white/95 backdrop-blur-sm px-5 py-3 text-center rounded-xl shadow-lg border border-white/20">
-                            <div className="text-teal-600 text-xl font-semibold tracking-wide leading-none">
-                              {event.date.split(' ')[0]}
-                            </div>
-                            <div className="text-gray-800 text-sm font-medium mt-1">
-                              {event.date.split(' ')[1]}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Event details - improved design */}
-                    <div className="flex flex-col justify-center">
-                      <div className="p-6 md:p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
-                        {/* Event title and category */}
-                        <div className="mb-8">
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center border border-teal-200">
-                                <FaCalendarAlt className="h-5 w-5 text-teal-600" />
-                              </div>
-                              <span className="text-sm text-teal-700 uppercase tracking-wide font-medium">
-                                {event.category}
-                              </span>
-                            </div>
-                            <div className="px-4 py-2 bg-teal-50 border border-teal-200 rounded-full">
-                              <span className="text-sm text-teal-700 font-medium flex items-center gap-2">
-                                <FaUserFriends className="h-3 w-3" />
-                                {event.capacity} spots
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-6">
-                            {event.title}
-                          </h2>
-                        </div>
-                        
-                        {/* Event description */}
-                        <div className="mb-8">
-                          <p className="text-gray-600 leading-relaxed text-base">
-                            {event.description}
-                          </p>
-                        </div>
-                        
-                        {/* Event details - improved design */}
-                        <div className="space-y-4 mb-8">
-                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
-                              <FaClock className="h-5 w-5 text-teal-600" />
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-500 mb-1">Time</div>
-                              <div className="text-gray-900 font-semibold">{event.time}</div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
-                              <FaMapMarkerAlt className="h-5 w-5 text-teal-600" />
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-500 mb-1">Location</div>
-                              <div className="text-gray-900 font-semibold">{event.location}</div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0 border border-teal-200">
-                              <FaUserFriends className="h-5 w-5 text-teal-600" />
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-500 mb-1">Day</div>
-                              <div className="text-gray-900 font-semibold">{event.day}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                      
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+      {/* Events Grid */}
+      <div className="max-w-7xl mx-auto px-4 pb-16">
+        {/* Events Counter */}
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-gray-900/50 rounded-full border border-gray-800">
+            <span className="text-gray-300">Showing</span>
+            <span className="text-2xl font-bold text-teal-400">{filteredEvents.length}</span>
+            <span className="text-gray-300">{filteredEvents.length === 1 ? 'event' : 'events'}</span>
           </div>
-
-          {/* Horizontal Slider Section - Improved Design */}
-          <div className="mt-20">
-            <div className="mb-10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="h-px w-8 bg-teal-400" />
-                    <span className="text-sm text-teal-700 tracking-wide font-medium">
-                      Browse All Events
-                    </span>
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
-                    More Upcoming Events
-                  </h3>
-                </div>
-                
-                {/* View all button */}
-                
-              </div>
-            </div>
-            
-            {/* Slider container with improved design */}
-            <div className="relative overflow-hidden">
-              {/* Gradient overlays */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white via-white to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white to-transparent z-10 pointer-events-none" />
-              
-              {/* Continuous slider */}
-              <div
-                ref={sliderRef}
-                className="flex gap-5 md:gap-6 overflow-x-auto scrollbar-hide py-4"
-                style={{ scrollBehavior: 'auto' }}
-                onMouseDown={handleDragStart}
-                onMouseMove={handleDragMove}
-                onMouseUp={handleDragEnd}
-                onMouseLeave={handleDragEnd}
-                onDragStart={(e) => e.preventDefault()}
-              >
-                {/* First set of events */}
-                {eventsData.map((event, index) => (
-                  <div
-                    key={`first-${event.id}`}
-                    className={`flex-shrink-0 w-72 md:w-80 cursor-pointer transition-all duration-300 ${
-                      activeEvent === index 
-                        ? 'opacity-100' 
-                        : 'opacity-90 hover:opacity-100'
-                    }`}
-                    onClick={() => handleEventSelect(index)}
-                  >
-                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-300 h-full">
-                      {/* Date badge */}
-                      <div className="mb-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 rounded-lg border border-teal-100">
-                          <FaCalendarAlt className="h-3.5 w-3.5 text-teal-600" />
-                          <span className="text-teal-700 text-sm font-medium">
-                            {event.date} • {event.day}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <h3 className="font-semibold text-gray-900 mb-3 text-lg leading-tight">
-                        {event.title}
-                      </h3>
-                      
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                        <FaMapMarkerAlt className="h-3.5 w-3.5" />
-                        <span>{event.location}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2">
-                          <FaClock className="h-3.5 w-3.5 text-gray-400" />
-                          <span className="text-sm text-gray-600">{event.time}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-teal-600">
-                          <span className="text-sm font-medium">Details</span>
-                          <FaChevronRight className="h-3 w-3" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Duplicate set for seamless loop */}
-                {eventsData.map((event, index) => (
-                  <div
-                    key={`second-${event.id}`}
-                    className={`flex-shrink-0 w-72 md:w-80 cursor-pointer transition-all duration-300 ${
-                      activeEvent === index 
-                        ? 'opacity-100' 
-                        : 'opacity-90 hover:opacity-100'
-                    }`}
-                    onClick={() => handleEventSelect(index)}
-                  >
-                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-300 h-full">
-                      {/* Date badge */}
-                      <div className="mb-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 rounded-lg border border-teal-100">
-                          <FaCalendarAlt className="h-3.5 w-3.5 text-teal-600" />
-                          <span className="text-teal-700 text-sm font-medium">
-                            {event.date} • {event.day}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <h3 className="font-semibold text-gray-900 mb-3 text-lg leading-tight">
-                        {event.title}
-                      </h3>
-                      
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                        <FaMapMarkerAlt className="h-3.5 w-3.5" />
-                        <span>{event.location}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2">
-                          <FaClock className="h-3.5 w-3.5 text-gray-400" />
-                          <span className="text-sm text-gray-600">{event.time}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-teal-600">
-                          <span className="text-sm font-medium">Details</span>
-                          <FaChevronRight className="h-3 w-3" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Progress indicator - improved design */}
-            <div className="flex items-center justify-between mt-10">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-2">
-                  {eventsData.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleEventSelect(index)}
-                      className="focus:outline-none group"
-                      aria-label={`View event ${index + 1}`}
-                    >
-                      <div 
-                        className={`h-1.5 rounded-full transition-all duration-300 ${
-                          index === activeEvent 
-                            ? 'w-8 bg-teal-600' 
-                            : 'w-3 bg-gray-300 group-hover:bg-gray-400'
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-                
-                <div className="text-sm text-gray-600 ml-4">
-                  <span className="font-semibold text-teal-700">{activeEvent + 1}</span>
-                  <span className="mx-2 text-gray-400">of</span>
-                  <span className="font-medium text-gray-800">{eventsData.length}</span>
-                </div>
-              </div>
-              
-             
-            </div>
-          </div>
-
         </div>
 
-        {/* Add CSS for hiding scrollbar */}
-        <style jsx>{`
-          .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
+        {/* Events Grid */}
+        {filteredEvents.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredEvents.map((event, index) => (
+              <div
+                key={event.id}
+                className="group bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden hover:border-teal-600/50 transition-all duration-500 hover:shadow-2xl hover:shadow-teal-900/10 flex flex-col h-full animate-slideUp"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {/* Event Image */}
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={event.featuredImage}
+                    alt={event.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-4 right-4">
+                    <div className="px-4 py-2 bg-teal-600/90 backdrop-blur-sm text-white rounded-full text-sm font-medium">
+                      {event.category}
+                    </div>
+                  </div>
+                </div>
 
-        {/* Decorative elements */}
-        <div className="h-px bg-gradient-to-r from-transparent via-teal-200/50 to-transparent max-w-7xl mx-auto" />
-      </section>
-    </>
+                {/* Event Details */}
+                <div className="p-6 flex flex-col flex-1">
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-teal-400 transition-colors duration-300">
+                    {event.title}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm mb-6 line-clamp-2">
+                    {event.description}
+                  </p>
+
+                  {/* Event Details List */}
+                  <div className="space-y-3 mb-6 flex-1">
+                    {/* Date & Time */}
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-teal-600/20 transition-colors duration-300 flex-shrink-0">
+                        <FaCalendarAlt className="h-4 w-4 text-teal-400" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Date & Time</div>
+                        <div className="text-sm text-white">
+                          {event.day}, {event.date} • {event.time}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-teal-600/20 transition-colors duration-300 flex-shrink-0">
+                        <FaMapMarkerAlt className="h-4 w-4 text-teal-400" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Location</div>
+                        <div className="text-sm text-white">{event.location}</div>
+                      </div>
+                    </div>
+
+                    {/* Capacity */}
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-teal-600/20 transition-colors duration-300 flex-shrink-0">
+                        <FaUserFriends className="h-4 w-4 text-teal-400" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Available Seats</div>
+                        <div className="text-sm text-white">{event.capacity} seats available</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <button
+                    onClick={() => window.location.href = "/components/templates/template4/contact"}
+                    className="w-full py-3 bg-gray-800 hover:bg-teal-600 text-white font-medium rounded-full transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
+                  >
+                    Register Now
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="mb-6">
+              <FaSearch className="h-16 w-16 text-gray-700 mx-auto" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">No events found</h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              No events match your search for {searchTerm}. Try different keywords.
+            </p>
+            <button
+              onClick={() => setSearchTerm("")}
+              className="px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all duration-300 transform hover:scale-105"
+            >
+              Show All Events
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideInFromLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideInFromRight {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            filter: blur(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+        }
+
+        @keyframes fadeOutDown {
+          from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            filter: blur(4px);
+          }
+        }
+
+        .animate-slideUp {
+          opacity: 0;
+          animation: slideUp 0.6s ease-out forwards;
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .animate-slide-left {
+          animation: slideInFromLeft 1s ease-out forwards;
+        }
+
+        .animate-slide-right {
+          animation: slideInFromRight 1s ease-out forwards 0.3s;
+        }
+
+        .animate-fade-up {
+          animation: fadeInUp 1.2s ease-out forwards;
+        }
+
+        .animate-fade-down {
+          animation: fadeOutDown 0.8s ease-in forwards;
+        }
+
+        .line-clamp-2 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+        }
+      `}</style>
+    </div>
   );
 };
 

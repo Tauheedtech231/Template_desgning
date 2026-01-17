@@ -6,17 +6,33 @@ import Link from "next/link";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
-  const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeNav, setActiveNav] = useState("Home");
   const [scrolled, setScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [mobileContactSlide, setMobileContactSlide] = useState(0);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const coursesMenuRef = useRef<HTMLDivElement>(null);
-  const aboutMenuRef = useRef<HTMLDivElement>(null);
-  const navbarRef = useRef<HTMLDivElement>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const contactSliderRef = useRef<HTMLDivElement>(null);
+
+  // Contact info for slider
+  const contactSlides = [
+    { 
+      icon: FaMapMarkerAlt, 
+      text: "Q Kamboh Plaza, Lahore, Pakistan",
+      color: "text-teal-400"
+    },
+    { 
+      icon: FaEnvelope, 
+      text: "college@starlysoft.com",
+      color: "text-teal-400"
+    },
+    { 
+      icon: FaPhone, 
+      text: "+92 333 754144",
+      color: "text-teal-400"
+    }
+  ];
 
   // Courses submenu items
   const coursesItems = [
@@ -67,20 +83,23 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Auto-rotate contact slider on mobile
+  useEffect(() => {
+    if (window.innerWidth < 640) {
+      const interval = setInterval(() => {
+        setMobileContactSlide(prev => (prev + 1) % contactSlides.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, []);
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
-      if (coursesMenuRef.current && !coursesMenuRef.current.contains(event.target as Node)) {
-        setIsCoursesOpen(false);
-      }
-      if (aboutMenuRef.current && !aboutMenuRef.current.contains(event.target as Node)) {
-        setIsAboutOpen(false);
-      }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -89,361 +108,291 @@ const Navbar = () => {
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
-      document.documentElement.style.overflow = "unset";
     }
     return () => {
       document.body.style.overflow = "unset";
-      document.documentElement.style.overflow = "unset";
     };
   }, [isMenuOpen]);
 
-  // Handle menu close with smooth animation
-  const handleCloseMenu = () => {
-    setIsMenuOpen(false);
+  // Smooth dropdown handling with delay
+  const handleDropdownEnter = (dropdown: string) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setActiveDropdown(dropdown);
   };
 
-  // Handle About click
-  const handleAboutClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsAboutOpen(!isAboutOpen);
-    setIsCoursesOpen(false); // Close courses if open
-    setActiveNav("About");
+  const handleDropdownLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
   };
 
-  // Handle Courses click
-  const handleCoursesClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsCoursesOpen(!isCoursesOpen);
-    setIsAboutOpen(false); // Close about if open
-    setActiveNav("Courses");
+  const handleDropdownClick = (dropdown: string) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
-  // Handle Courses link click (for main Courses link)
-  const handleCoursesLinkClick = () => {
-    setActiveNav("Courses");
-    setIsCoursesOpen(false);
-    setIsMobileCoursesOpen(false);
-    setIsMenuOpen(false);
-    window.location.href = "/components/templates/template4/courses";
-  };
-
-  // Handle About link click (for main About link)
-  const handleAboutLinkClick = () => {
-    setActiveNav("About");
-    setIsAboutOpen(false);
-    setIsMobileAboutOpen(false);
-    setIsMenuOpen(false);
-    window.location.href = "/components/templates/template4/about";
-  };
-
-  // Handle About submenu item click
-  const handleAboutItemClick = (itemName: string) => {
-    setActiveNav("About");
-    setIsAboutOpen(false);
-    setIsMobileAboutOpen(false);
-    setIsMenuOpen(false);
-    // Navigate to specific section based on item
-    if (itemName === "Vision") {
-      window.location.href = "/components/templates/template4/about#vision";
-    } else {
-      window.location.href = `/components/templates/template4/${itemName.toLowerCase()}`;
+  // Handle mobile contact slider navigation
+  const handleContactSlide = (index: number) => {
+    setMobileContactSlide(index);
+    if (contactSliderRef.current) {
+      contactSliderRef.current.style.transform = `translateX(-${index * 100}%)`;
     }
   };
 
-  // Handle Courses submenu item click
-  const handleCourseItemClick = (courseName: string) => {
-    setActiveNav("Courses");
-    setIsCoursesOpen(false);
-    setIsMobileCoursesOpen(false);
+  // Handle menu close
+  const handleCloseMenu = () => {
     setIsMenuOpen(false);
-    window.location.href = "/components/templates/template4/courses";
+    setActiveDropdown(null);
   };
 
-  // Handle mobile courses toggle
-  const handleMobileCoursesToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsMobileCoursesOpen(!isMobileCoursesOpen);
-    setIsMobileAboutOpen(false); // Close about if open
-    setActiveNav("Courses");
-  };
-
-  // Handle mobile about toggle
-  const handleMobileAboutToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsMobileAboutOpen(!isMobileAboutOpen);
-    setIsMobileCoursesOpen(false); // Close courses if open
-    setActiveNav("About");
+  // Handle navigation clicks
+  const handleNavClick = (navItem: string) => {
+    setActiveNav(navItem);
+    setActiveDropdown(null);
+    setIsMenuOpen(false);
   };
 
   return (
     <>
-      {/* Top Bar - Professional Design */}
-      <div className="bg-gray-900 text-white py-2 relative">
+      {/* Top Bar - Professional Design with Responsive Contact Slider */}
+      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-1 sm:py-2 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            {/* Left section - Contact info */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-8 mb-2 sm:mb-0 text-sm">
-              <div className="flex items-center space-x-2 mb-1 sm:mb-0 group">
-                <FaMapMarkerAlt className="text-teal-400 text-xs" />
-                <span className="text-gray-300 group-hover:text-white transition-colors duration-200">
-                  Q Kamboh plaza Lahore, Pakistan
-                </span>
-              </div>
-              <div className="hidden sm:block text-gray-600">|</div>
-              <div className="flex items-center space-x-2 mb-1 sm:mb-0 group">
-                <FaEnvelope className="text-teal-400 text-xs" />
-                <span className="text-gray-300 group-hover:text-white transition-colors duration-200">
-                  college@starlysoft.com
-                </span>
-              </div>
-              <div className="hidden sm:block text-gray-600">|</div>
-              <div className="flex items-center space-x-2 group">
-                <FaPhone className="text-teal-400 text-xs" />
-                <span className="text-gray-300 group-hover:text-white transition-colors duration-200">
-                  +92 333 754144
-                </span>
-              </div>
-            </div>
+          {/* Desktop Contact Info - Horizontal Layout */}
+          <div className="hidden sm:flex justify-center items-center space-x-8">
+            {contactSlides.map((slide, index) => {
+              const Icon = slide.icon;
+              return (
+                <div key={index} className="flex items-center space-x-3 group">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-teal-500/20 rounded-full blur-sm group-hover:blur-md transition-all duration-300"></div>
+                    <Icon className={`relative ${slide.color} text-sm transition-transform duration-300 group-hover:scale-110`} />
+                  </div>
+                  <span className="text-gray-300 text-sm font-medium tracking-wide group-hover:text-white transition-colors duration-300">
+                    {slide.text}
+                  </span>
+                  {index < contactSlides.length - 1 && (
+                    <div className="w-[1px] h-4 bg-gray-600/50 rotate-[15deg]"></div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-            {/* Right section - Social icons */}
-            <div className="flex items-center space-x-4">
-              {[
-                { icon: FaFacebook, color: "hover:text-blue-400" },
-                { icon: FaTwitter, color: "hover:text-sky-400" },
-                { icon: FaInstagram, color: "hover:text-pink-400" }
-              ].map((social, index) => (
-                <a 
-                  key={index} 
-                  href="#" 
-                  className={`text-gray-400 transition-colors duration-200 ${social.color}`}
-                >
-                  <social.icon size={14} />
-                </a>
-              ))}
+          {/* Mobile Contact Slider - Continuous */}
+          <div className="sm:hidden relative overflow-hidden py-2">
+            <div 
+              ref={contactSliderRef}
+              className="flex animate-scroll"
+              style={{ 
+                animation: 'scroll 25s linear infinite',
+                width: 'fit-content'
+              }}
+            >
+              {[...contactSlides, ...contactSlides, ...contactSlides].map((slide, index) => {
+                const Icon = slide.icon;
+                return (
+                  <div 
+                    key={index} 
+                    className="flex-shrink-0 flex items-center justify-center space-x-3 px-6 h-6 whitespace-nowrap"
+                  >
+                    <Icon className={slide.color} />
+                    <span className="text-xs font-medium text-gray-300">
+                      {slide.text}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Navigation Bar - Professional Design */}
-      <nav 
-        ref={navbarRef}
-        className={`bg-white transition-all duration-300 sticky top-0 z-50 border-b ${
-          scrolled 
-            ? 'border-gray-200 shadow-sm' 
-            : 'border-gray-100'
-        }`}
-      >
+      {/* Main Navigation Bar */}
+      <nav className={`bg-white transition-all duration-500 sticky top-0 z-50 ${
+        scrolled ? 'border-b border-gray-100' : ''
+      }`}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-10 sm:h-12">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <FaGraduationCap className="text-teal-600 text-2xl" />
-              <div className="text-2xl font-bold">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-teal-500/10 rounded-full blur-sm"></div>
+                <FaGraduationCap className="relative text-teal-600 text-2xl" />
+              </div>
+              <div className="text-2xl font-bold tracking-tight">
                 <span className="text-gray-900">Coll</span>
                 <span className="text-teal-500">e</span>
                 <span className="text-gray-900">ge</span>
               </div>
             </div>
 
-            {/* Desktop Navigation Items */}
+            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-8">
               {navItems.map((item) => (
-                <div key={item.name} className="relative" ref={item.name === 'Courses' ? coursesMenuRef : item.name === 'About' ? aboutMenuRef : null}>
-                  {item.name === 'Courses' ? (
+                <div 
+                  key={item.name} 
+                  className="relative"
+                  onMouseEnter={() => setHoveredItem(item.name)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  {item.name === 'Courses' || item.name === 'About' ? (
                     <div className="relative">
                       <button
-                        onClick={handleCoursesClick}
-                        onMouseEnter={() => {
-                          setIsCoursesOpen(true);
-                          setHoveredItem(item.name);
-                        }}
-                        onMouseLeave={() => setHoveredItem(null)}
-                        className="group flex items-center text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-all duration-200 relative"
+                        onMouseEnter={() => handleDropdownEnter(item.name)}
+                        onMouseLeave={handleDropdownLeave}
+                        onClick={() => handleDropdownClick(item.name)}
+                        className="group flex items-center space-x-1 text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-all duration-300 relative pb-1"
                       >
-                        <span className="relative py-2">
+                        <span className="relative">
                           {item.name}
-                          {/* Main navigation underline */}
-                          <span className={`absolute -bottom-1 left-0 h-0.5 bg-teal-500 transition-all duration-300 ${
-                            isCoursesOpen || hoveredItem === item.name ? 'w-full' : 'w-0 group-hover:w-full'
+                          <span className={`absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 transition-all duration-300 ease-out shadow-[0_2px_8px_rgba(20,184,166,0.3)] ${
+                            activeDropdown === item.name || hoveredItem === item.name ? 'w-full' : ''
                           }`}></span>
                         </span>
-                        <FaChevronDown className={`ml-1.5 transition-transform duration-300 ${isCoursesOpen ? 'rotate-180 text-teal-600' : ''}`} size={12} />
-                      </button>
-                      
-                      {/* Courses Dropdown - Rounded corners with smooth border */}
-                      {isCoursesOpen && (
-                        <div 
-                          className="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-100 z-50 rounded-2xl"
-                          onMouseLeave={() => setIsCoursesOpen(false)}
-                        >
-                          {/* Dropdown rounded top corners effect */}
-                          <div className="absolute -top-1 left-4 right-4 h-2 bg-white"></div>
-                          
-                          {coursesItems.map((course, index) => (
-                            <button
-                              key={course.name}
-                              onClick={() => handleCourseItemClick(course.name)}
-                              className="block w-full text-left px-5 py-3 text-sm text-gray-700 hover:text-teal-600 transition-all duration-200 relative group/submenu"
-                            >
-                              <div className="flex items-center">
-                                <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 transition-all duration-300 group-hover/submenu:bg-teal-500"></div>
-                                {course.name}
-                              </div>
-                              
-                              {/* Smooth bottom border on hover */}
-                              <div className="absolute bottom-0 left-5 right-5 h-[1px] bg-gradient-to-r from-transparent via-teal-400/30 to-transparent opacity-0 group-hover/submenu:opacity-100 transition-all duration-500 transform scale-x-0 group-hover/submenu:scale-x-100 origin-center"></div>
-                            </button>
-                          ))}
-                          
-                          {/* View All Courses Link with border */}
-                          <div className="border-t border-gray-100/50 mt-2 pt-3 mx-5">
-                            <button
-                              onClick={handleCoursesLinkClick}
-                              className="w-full text-center px-3 py-2 text-sm text-teal-600 hover:text-teal-700 font-medium transition-colors duration-200 rounded-lg hover:bg-teal-50/50"
-                            >
-                              View All Courses →
-                            </button>
-                          </div>
+                        <div className="relative">
+                          <FaChevronDown className={`transition-transform duration-300 ${
+                            activeDropdown === item.name ? 'rotate-180' : ''
+                          }`} size={10} />
                         </div>
-                      )}
-                    </div>
-                  ) : item.name === 'About' ? (
-                    <div className="relative">
-                      <button
-                        onClick={handleAboutClick}
-                        onMouseEnter={() => {
-                          setIsAboutOpen(true);
-                          setHoveredItem(item.name);
-                        }}
-                        onMouseLeave={() => setHoveredItem(null)}
-                        className="group flex items-center text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-all duration-200 relative"
+                      </button>
+
+                      {/* Smooth Dropdown */}
+                      <div
+                        onMouseEnter={() => handleDropdownEnter(item.name)}
+                        onMouseLeave={handleDropdownLeave}
+                        className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-4 w-64 bg-white rounded-xl overflow-hidden transition-all duration-300 ${
+                          activeDropdown === item.name
+                            ? 'opacity-100 visible translate-y-0'
+                            : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                        }`}
                       >
-                        <span className="relative py-2">
-                          {item.name}
-                          {/* Main navigation underline */}
-                          <span className={`absolute -bottom-1 left-0 h-0.5 bg-teal-500 transition-all duration-300 ${
-                            isAboutOpen || hoveredItem === item.name ? 'w-full' : 'w-0 group-hover:w-full'
-                          }`}></span>
-                        </span>
-                        <FaChevronDown className={`ml-1.5 transition-transform duration-300 ${isAboutOpen ? 'rotate-180 text-teal-600' : ''}`} size={12} />
-                      </button>
-                      
-                      {/* About Dropdown - Enhanced Design with smooth borders */}
-                      {isAboutOpen && (
-                        <div 
-                          className="absolute left-0 top-full mt-2 w-64 bg-white border border-gray-100 z-50 rounded-2xl"
-                          onMouseLeave={() => setIsAboutOpen(false)}
-                        >
-                          {/* Dropdown rounded top corners effect */}
-                          <div className="absolute -top-1 left-4 right-4 h-2 bg-white"></div>
-                          
-                          {aboutItems.map((item, index) => {
-                            const Icon = item.icon;
-                            return (
-                              <button
-                                key={item.name}
-                                onClick={() => handleAboutItemClick(item.name)}
-                                className="block w-full text-left px-5 py-4 hover:bg-teal-50/30 transition-all duration-200 relative group/aboutitem"
-                              >
-                                <div className="flex items-start">
-                                  <div className="mr-3 mt-0.5">
-                                    <Icon className="text-teal-500 text-sm transition-transform duration-300 group-hover/aboutitem:scale-110" />
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="text-sm font-medium text-gray-800 group-hover/aboutitem:text-teal-600 transition-colors duration-200">
-                                      {item.name}
+                        {/* Animated border container */}
+                        <div className="relative p-0.5 rounded-xl bg-gradient-to-br from-gray-50 via-white to-gray-50">
+                          <div className="bg-white rounded-xl">
+                            {item.name === 'Courses' ? (
+                              <>
+                                {coursesItems.map((course, index) => (
+                                  <a
+                                    key={course.name}
+                                    href={course.link}
+                                    onClick={() => handleNavClick('Courses')}
+                                    className="block px-6 py-3 text-sm text-gray-700 hover:text-teal-600 transition-all duration-300 group/item relative"
+                                  >
+                                    <div className="flex items-center">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 group-hover/item:bg-teal-500 transition-all duration-300"></div>
+                                      <span className="flex-1">{course.name}</span>
+                                      <div className="opacity-0 group-hover/item:opacity-100 transform translate-x-2 group-hover/item:translate-x-0 transition-all duration-300">
+                                        <div className="w-0 group-hover/item:w-4 h-[1px] bg-teal-400 transition-all duration-300"></div>
+                                      </div>
                                     </div>
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      {item.description}
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                {/* Smooth gradient bottom border on hover */}
-                                <div className="absolute bottom-0 left-5 right-5 h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent opacity-0 group-hover/aboutitem:opacity-100 transition-all duration-500 transform scale-x-0 group-hover/aboutitem:scale-x-100 origin-center"></div>
-                              </button>
-                            );
-                          })}
-                          
-                          {/* About Page Link with border */}
-                          <div className="border-t border-gray-100/50 mt-2 pt-3 mx-5">
-                            <button
-                              onClick={handleAboutLinkClick}
-                              className="w-full text-center px-3 py-2 text-sm text-teal-600 hover:text-teal-700 font-medium transition-colors duration-200 rounded-lg hover:bg-teal-50/50"
-                            >
-                              About College →
-                            </button>
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 to-teal-500 group-hover/item:w-full transition-all duration-300"></span>
+                                  </a>
+                                ))}
+                              </>
+                            ) : item.name === 'About' ? (
+                              <>
+                                {aboutItems.map((subItem) => {
+                                  const Icon = subItem.icon;
+                                  return (
+                                    <a
+                                      key={subItem.name}
+                                      href={subItem.link}
+                                      onClick={() => handleNavClick('About')}
+                                      className="block px-6 py-4 text-sm hover:bg-teal-50/30 transition-all duration-300 group/item relative"
+                                    >
+                                      <div className="flex items-start space-x-3">
+                                        <div className="relative">
+                                          <div className="absolute inset-0 bg-teal-500/10 rounded-full blur-sm group-hover/item:blur-md transition-all duration-300"></div>
+                                          <Icon className="relative text-teal-500 text-sm transition-transform duration-300 group-hover/item:scale-110" />
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="font-medium text-gray-800 group-hover/item:text-teal-600 transition-colors duration-300">
+                                            {subItem.name}
+                                          </div>
+                                          <div className="text-xs text-gray-500 mt-0.5">
+                                            {subItem.description}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 group-hover/item:w-full transition-all duration-300 ease-out shadow-[0_1px_4px_rgba(20,184,166,0.4)]"></span>
+                                    </a>
+                                  );
+                                })}
+                              </>
+                            ) : null}
                           </div>
                         </div>
-                      )}
+                      </div>
                     </div>
                   ) : (
                     <Link
                       href={item.link}
-                      className="group relative text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-all duration-200"
-                      onClick={() => setActiveNav(item.name)}
-                      onMouseEnter={() => setHoveredItem(item.name)}
-                      onMouseLeave={() => setHoveredItem(null)}
+                      onClick={() => handleNavClick(item.name)}
+                      className="relative text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-colors duration-300 pb-1 group"
                     >
-                      <span className="relative py-2 block">
-                        {item.name}
-                        {/* Smooth bottom border for active/hover */}
-                        <span className={`absolute -bottom-1 left-0 h-0.5 bg-teal-500 transition-all duration-300 ${
-                          activeNav === item.name ? 'w-full' : 'w-0 group-hover:w-full'
-                        }`}></span>
-                      </span>
+                      {item.name}
+                      <span className={`absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 transition-all duration-300 ease-out shadow-[0_2px_8px_rgba(20,184,166,0.3)] ${
+                        activeNav === item.name ? 'w-full' : 'group-hover:w-full'
+                      }`}></span>
                     </Link>
                   )}
                 </div>
               ))}
               
-              {/* Get Started Button - Fully Rounded */}
+              {/* Get Started Button */}
               <button 
-                onClick={handleCoursesLinkClick}
-                className="bg-teal-600 hover:bg-teal-700 transition-all duration-300 text-white rounded-full px-6 py-2.5 font-medium text-sm hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => handleNavClick('Courses')}
+                className="relative overflow-hidden group bg-teal-600 text-white rounded-full px-6 py-2.5 font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
               >
-                Get Started
+                <span className="relative  z-10">Get Started</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-teal-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
 
-            {/* Mobile Menu Button - Rounded */}
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden text-gray-700 hover:text-teal-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100"
+              className="lg:hidden relative p-2 text-gray-700 hover:text-teal-600 transition-colors duration-300"
             >
-              {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+              <div className="relative w-6 h-6">
+                <div className={`absolute inset-0 transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-0' : 'opacity-100'
+                }`}>
+                  <FaBars className="w-full h-full" />
+                </div>
+                <div className={`absolute inset-0 transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-100' : 'opacity-0'
+                }`}>
+                  <FaTimes className="w-full h-full" />
+                </div>
+              </div>
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu - Rounded Slider */}
+        {/* Mobile Menu */}
         <div className="lg:hidden">
           {/* Backdrop */}
           <div 
-            className={`fixed inset-0 bg-black/40 z-40 transition-all duration-300 ${
+            className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-all duration-500 ${
               isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}
             onClick={handleCloseMenu}
           />
 
-          {/* Menu Container - Rounded right corners for soft slide in */}
+          {/* Menu Panel */}
           <div
             ref={mobileMenuRef}
-            className={`fixed inset-y-0 left-0 w-80 bg-white z-50 transform transition-transform duration-500 ease-out ${
-              isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            className={`fixed inset-y-0 left-0 w-80 bg-white z-50 transform transition-all duration-500 ease-out shadow-2xl ${
+              isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
             }`}
-            style={{ 
-              borderTopRightRadius: '1.5rem',
-              borderBottomRightRadius: '1.5rem'
-            }}
           >
             {/* Menu Header */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <div className="flex items-center space-x-3">
                 <FaGraduationCap className="text-teal-600 text-2xl" />
                 <div className="text-xl font-bold">
                   <span className="text-gray-900">Coll</span>
@@ -453,189 +402,117 @@ const Navbar = () => {
               </div>
               <button
                 onClick={handleCloseMenu}
-                className="text-gray-500 hover:text-gray-700 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100"
+                className="relative w-10 h-10 flex items-center justify-center rounded-full bg-teal-50 hover:bg-teal-100 text-gray-500 hover:text-teal-600 transition-all duration-300 group"
               >
                 <FaTimes size={20} />
               </button>
             </div>
 
-            {/* Menu Content with rounded scroll area */}
-            <div className="h-full overflow-y-auto pb-6" style={{ 
-              borderBottomRightRadius: '1.5rem'
-            }}>
+            {/* Menu Content */}
+            <div className="h-full overflow-y-auto">
               <div className="p-4">
                 {/* Navigation Links */}
                 <div className="space-y-1">
                   {navItems.map((item) => (
                     <div key={item.name} className="relative">
-                      {item.name === 'Courses' ? (
-                        <div className="mb-2">
+                      {item.name === 'Courses' || item.name === 'About' ? (
+                        <>
                           <button
-                            onClick={handleMobileCoursesToggle}
-                            className={`flex items-center justify-between w-full p-3 text-left transition-all duration-200 rounded-lg ${
-                              activeNav === item.name ? 'text-teal-600 font-semibold bg-teal-50' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50'
+                            onClick={() => handleDropdownClick(item.name)}
+                            className={`flex items-center justify-between w-full p-4 text-left transition-all duration-300 rounded-lg border-l-4 relative ${
+                              activeDropdown === item.name ? 'text-teal-600 bg-teal-50 border-teal-600' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50 border-transparent'
                             }`}
                           >
-                            <span className="relative">
-                              {item.name}
-                              {activeNav === item.name && (
-                                <span className="absolute -bottom-1 left-0 h-0.5 bg-teal-500 w-full"></span>
-                              )}
-                            </span>
-                            <FaChevronRight className={`transition-transform duration-200 ${
-                              isMobileCoursesOpen ? 'rotate-90' : ''
-                            } ${activeNav === item.name ? 'text-teal-500' : 'text-gray-400'}`} />
-                          </button>
-                          
-                          {/* Mobile Courses Submenu with smooth borders */}
-                          <div className={`overflow-hidden transition-all duration-300 ${
-                            isMobileCoursesOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                          }`}>
-                            <div className="ml-4 space-y-1 py-2 border-l border-gray-200/50">
-                              {coursesItems.map((course) => (
-                                <button
-                                  key={course.name}
-                                  onClick={() => handleCourseItemClick(course.name)}
-                                  className="block w-full text-left p-3 text-sm text-gray-600 hover:text-teal-600 hover:bg-gray-50/50 rounded-lg transition-all duration-200 relative group/mobilesubmenu"
-                                >
-                                  <div className="flex items-center">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 transition-all duration-200 group-hover/mobilesubmenu:bg-teal-500"></div>
-                                    {course.name}
-                                  </div>
-                                  
-                                  {/* Mobile submenu smooth bottom border on hover */}
-                                  <div className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent opacity-0 group-hover/mobilesubmenu:opacity-100 transition-all duration-500 transform scale-x-0 group-hover/mobilesubmenu:scale-x-100 origin-center"></div>
-                                </button>
-                              ))}
-                              {/* View All Courses in Mobile */}
-                              <button
-                                onClick={handleCoursesLinkClick}
-                                className="block w-full text-left p-3 text-sm text-teal-600 hover:text-teal-700 font-medium rounded-lg transition-all duration-200 hover:bg-teal-50/30 mt-2"
-                              >
-                                View All Courses →
-                              </button>
+                            <span className="font-medium">{item.name}</span>
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                              activeDropdown === item.name ? 'bg-teal-500/20' : ''
+                            }`}>
+                              <FaChevronDown className={`transition-transform duration-300 ${
+                                activeDropdown === item.name ? 'rotate-180' : ''
+                              }`} />
                             </div>
-                          </div>
-                        </div>
-                      ) : item.name === 'About' ? (
-                        <div className="mb-2">
-                          <button
-                            onClick={handleMobileAboutToggle}
-                            className={`flex items-center justify-between w-full p-3 text-left transition-all duration-200 rounded-lg ${
-                              activeNav === item.name ? 'text-teal-600 font-semibold bg-teal-50' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50'
-                            }`}
-                          >
-                            <span className="relative">
-                              {item.name}
-                              {activeNav === item.name && (
-                                <span className="absolute -bottom-1 left-0 h-0.5 bg-teal-500 w-full"></span>
-                              )}
-                            </span>
-                            <FaChevronRight className={`transition-transform duration-200 ${
-                              isMobileAboutOpen ? 'rotate-90' : ''
-                            } ${activeNav === item.name ? 'text-teal-500' : 'text-gray-400'}`} />
                           </button>
                           
-                          {/* Mobile About Submenu with smooth borders */}
-                          <div className={`overflow-hidden transition-all duration-300 ${
-                            isMobileAboutOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                          {/* Mobile Submenu */}
+                          <div className={`overflow-hidden transition-all duration-500 ease-out ${
+                            activeDropdown === item.name ? 'max-h-96 opacity-100 visible' : 'max-h-0 opacity-0 invisible'
                           }`}>
-                            <div className="ml-4 space-y-1 py-2 border-l border-gray-200/50">
-                              {aboutItems.map((item) => {
-                                const Icon = item.icon;
-                                return (
-                                  <button
-                                    key={item.name}
-                                    onClick={() => handleAboutItemClick(item.name)}
-                                    className="block w-full text-left p-3 text-sm text-gray-600 hover:text-teal-600 hover:bg-gray-50/50 rounded-lg transition-all duration-200 relative group/mobileabout"
+                            <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-4">
+                              {item.name === 'Courses' ? (
+                                coursesItems.map((course) => (
+                                  <a
+                                    key={course.name}
+                                    href={course.link}
+                                    onClick={() => handleNavClick('Courses')}
+                                    className="block p-3 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 rounded hover:bg-teal-50/50"
                                   >
                                     <div className="flex items-center">
-                                      <Icon className="text-teal-500 mr-3 text-sm transition-transform duration-300 group-hover/mobileabout:scale-110" />
-                                      <div>
-                                        <div className="font-medium">{item.name}</div>
-                                        <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
-                                      </div>
+                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 hover:bg-teal-500 transition-colors duration-300"></div>
+                                      {course.name}
                                     </div>
-                                    
-                                    {/* Mobile smooth bottom border on hover */}
-                                    <div className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent opacity-0 group-hover/mobileabout:opacity-100 transition-all duration-500 transform scale-x-0 group-hover/mobileabout:scale-x-100 origin-center"></div>
-                                  </button>
-                                );
-                              })}
-                              {/* About College Link */}
-                              <button
-                                onClick={handleAboutLinkClick}
-                                className="block w-full text-left p-3 text-sm text-teal-600 hover:text-teal-700 font-medium rounded-lg transition-all duration-200 hover:bg-teal-50/30 mt-2"
-                              >
-                                About College →
-                              </button>
+                                  </a>
+                                ))
+                              ) : item.name === 'About' ? (
+                                aboutItems.map((subItem) => {
+                                  const Icon = subItem.icon;
+                                  return (
+                                    <a
+                                      key={subItem.name}
+                                      href={subItem.link}
+                                      onClick={() => handleNavClick('About')}
+                                      className="block p-3 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 rounded hover:bg-teal-50/50"
+                                    >
+                                      <div className="flex items-center space-x-3">
+                                        <Icon className="text-teal-500 text-sm" />
+                                        <div>
+                                          <div className="font-medium">{subItem.name}</div>
+                                          <div className="text-xs text-gray-500 mt-0.5">{subItem.description}</div>
+                                        </div>
+                                      </div>
+                                    </a>
+                                  );
+                                })
+                              ) : null}
                             </div>
                           </div>
-                        </div>
+                        </>
                       ) : (
-                        <Link
+                        <a
                           href={item.link}
-                          className={`block p-3 rounded-lg transition-all duration-200 ${
-                            activeNav === item.name ? 'text-teal-600 font-semibold bg-teal-50' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50'
+                          onClick={() => handleNavClick(item.name)}
+                          className={`block p-4 rounded-lg border-l-4 transition-all duration-300 ${
+                            activeNav === item.name ? 'text-teal-600 font-medium bg-teal-50 border-teal-600' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50 border-transparent'
                           }`}
-                          onClick={() => {
-                            setActiveNav(item.name);
-                            handleCloseMenu();
-                          }}
                         >
-                          <span className="relative">
-                            {item.name}
-                            {activeNav === item.name && (
-                              <span className="absolute -bottom-1 left-0 h-0.5 bg-teal-500 w-full"></span>
-                            )}
-                          </span>
-                        </Link>
+                          {item.name}
+                        </a>
                       )}
                     </div>
                   ))}
                 </div>
 
-                {/* Get Started Button - Fully Rounded */}
+                {/* Get Started Button */}
                 <button 
-                  onClick={handleCoursesLinkClick}
-                  className="w-full mt-6 bg-teal-600 hover:bg-teal-700 transition-all duration-300 text-white rounded-full px-4 py-3 font-medium"
+                  onClick={() => {
+                    handleNavClick('Courses');
+                    handleCloseMenu();
+                  }}
+                  className="w-full mt-6 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full px-4 py-3 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started
                 </button>
 
-                {/* Contact Info with smooth hover effects */}
-                <div className="mt-8 pt-6 border-t border-gray-200/50">
-                  <h4 className="font-semibold text-gray-900 mb-4">Contact Info</h4>
-                  <div className="space-y-4 text-sm">
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50/50 transition-colors duration-200 relative group/contact">
-                      <FaMapMarkerAlt className="text-teal-500 mt-1 flex-shrink-0 transition-transform duration-300 group-hover/contact:scale-110" />
-                      <span className="text-gray-600">Q Kamboh plaza Lahore, Pakistan</span>
-                      <div className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-teal-400/30 to-transparent opacity-0 group-hover/contact:opacity-100 transition-opacity duration-500"></div>
-                    </div>
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50/50 transition-colors duration-200 relative group/contact">
-                      <FaEnvelope className="text-teal-500 mt-1 flex-shrink-0 transition-transform duration-300 group-hover/contact:scale-110" />
-                      <span className="text-gray-600">college@starlysoft.com</span>
-                      <div className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-teal-400/30 to-transparent opacity-0 group-hover/contact:opacity-100 transition-opacity duration-500"></div>
-                    </div>
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50/50 transition-colors duration-200 relative group/contact">
-                      <FaPhone className="text-teal-500 mt-1 flex-shrink-0 transition-transform duration-300 group-hover/contact:scale-110" />
-                      <span className="text-gray-600">+92 333 754144</span>
-                      <div className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-teal-400/30 to-transparent opacity-0 group-hover/contact:opacity-100 transition-opacity duration-500"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Social Links with smooth hover */}
-                <div className="mt-6 pt-6 border-t border-gray-200/50">
-                  <div className="flex justify-center space-x-4">
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-all duration-300 p-2 rounded-full hover:bg-gray-100/50 group/social">
-                      <FaFacebook size={18} className="transition-transform duration-300 group-hover/social:scale-110" />
+                {/* Social Links */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex justify-center space-x-6">
+                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
+                      <FaFacebook size={20} />
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-all duration-300 p-2 rounded-full hover:bg-gray-100/50 group/social">
-                      <FaTwitter size={18} className="transition-transform duration-300 group-hover/social:scale-110" />
+                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
+                      <FaTwitter size={20} />
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-all duration-300 p-2 rounded-full hover:bg-gray-100/50 group/social">
-                      <FaInstagram size={18} className="transition-transform duration-300 group-hover/social:scale-110" />
+                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
+                      <FaInstagram size={20} />
                     </a>
                   </div>
                 </div>
@@ -647,46 +524,38 @@ const Navbar = () => {
 
       {/* Custom animation styles */}
       <style jsx global>{`
-        /* Smooth slide in animation for mobile menu */
-        @keyframes softSlideIn {
+        @keyframes slideIn {
           0% {
-            transform: translateX(-100%);
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-          }
-          100% {
-            transform: translateX(0);
-            border-top-right-radius: 1.5rem;
-            border-bottom-right-radius: 1.5rem;
-          }
-        }
-
-        @keyframes softSlideOut {
-          0% {
-            transform: translateX(0);
-            border-top-right-radius: 1.5rem;
-            border-bottom-right-radius: 1.5rem;
-          }
-          100% {
-            transform: translateX(-100%);
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-          }
-        }
-
-        /* Smooth border animation */
-        @keyframes borderExpand {
-          0% {
-            transform: scaleX(0);
             opacity: 0;
+            transform: translateY(-10px);
           }
           100% {
-            transform: scaleX(1);
             opacity: 1;
+            transform: translateY(0);
           }
         }
 
-        /* Custom scrollbar for mobile menu */
+        @keyframes slideOut {
+          0% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+        }
+
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-33.33%);
+          }
+        }
+
+        /* Smooth scrollbar */
         .overflow-y-auto {
           scrollbar-width: thin;
           scrollbar-color: #cbd5e1 transparent;
@@ -698,13 +567,18 @@ const Navbar = () => {
         
         .overflow-y-auto::-webkit-scrollbar-track {
           background: transparent;
-          border-top-right-radius: 1.5rem;
-          border-bottom-right-radius: 1.5rem;
         }
         
         .overflow-y-auto::-webkit-scrollbar-thumb {
           background-color: #cbd5e1;
           border-radius: 20px;
+        }
+
+        /* Gradient animations */
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
       `}</style>
     </>

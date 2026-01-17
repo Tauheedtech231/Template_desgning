@@ -100,172 +100,164 @@ export default function HeroSection() {
           <div className="w-full grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             
             {/* LEFT CONTENT */}
-            <div className="relative z-20">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="max-w-xl"
-              >
-                {/* Welcome Text with smooth animation */}
-                <div className="h-6 mb-4 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={`welcome-${headingIndex}`}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -20, opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="text-teal-400 tracking-[0.3em] text-sm font-medium uppercase"
-                    >
-                      WELCOME TO
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
+         <div className="relative z-20">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    className="max-w-xl"
+  >
+    {/* Welcome Text */}
+    <div className="h-5 sm:h-6 mb-2 sm:mb-4 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={`welcome-${headingIndex}`}
+          initial={{ y: 16, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -16, opacity: 0 }}
+          transition={{ duration: 0.45 }}
+          className="text-teal-400 tracking-[0.25em] text-xs sm:text-sm font-medium uppercase"
+        >
+          WELCOME TO
+        </motion.p>
+      </AnimatePresence>
+    </div>
 
-                {/* Dynamic Heading */}
-                <div className="min-h-[80px] sm:min-h-[100px] md:min-h-[120px] mb-4 md:mb-6 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.h1
-                      key={headingIndex}
-                      initial={{ 
-                        y: 50, 
-                        opacity: 0, 
-                        filter: "blur(8px)" 
-                      }}
-                      animate={{ 
-                        y: 0, 
-                        opacity: 1, 
-                        filter: "blur(0px)" 
-                      }}
-                      exit={{ 
-                        y: -50, 
-                        opacity: 0, 
-                        filter: "blur(8px)" 
-                      }}
-                      transition={{ 
-                        duration: 0.8, 
-                        ease: [0.22, 1, 0.36, 1] 
-                      }}
-                      className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
-                    >
-                      {mainHeadings[headingIndex]}
-                    </motion.h1>
-                  </AnimatePresence>
-                </div>
+    {/* Dynamic Heading */}
+    <div className="min-h-[56px] sm:min-h-[72px] md:min-h-[100px] mb-2 sm:mb-4 md:mb-6 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.h1
+          key={headingIndex}
+          initial={{ y: 40, opacity: 0, filter: "blur(6px)" }}
+          animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+          exit={{ y: -40, opacity: 0, filter: "blur(6px)" }}
+          transition={{
+            duration: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
+        >
+          {mainHeadings[headingIndex]}
+        </motion.h1>
+      </AnimatePresence>
+    </div>
 
-                {/* Dynamic Description */}
-                <div className="mb-6 md:mb-8 h-[80px] sm:h-[90px] md:h-[100px] overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`description-${descIndex}`}
-                      initial={{ 
-                        x: -100, 
-                        opacity: 0,
-                        clipPath: "inset(0 100% 0 0)" 
-                      }}
-                      animate={{ 
-                        x: 0, 
-                        opacity: 1,
-                        clipPath: "inset(0 0% 0 0)" 
-                      }}
-                      exit={{ 
-                        x: 100, 
-                        opacity: 0,
-                        clipPath: "inset(0 0% 0 100%)" 
-                      }}
-                      transition={{ 
-                        duration: 0.8,
-                        ease: [0.25, 0.1, 0.25, 1],
-                        delay: 0.1
-                      }}
-                    >
-                      <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
-                        {descriptions[descIndex]}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+    {/* Dynamic Description */}
+    <div className="h-[64px] sm:h-[76px] md:h-[96px] mb-4 sm:mb-6 md:mb-8 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`description-${descIndex}`}
+          initial={{
+            x: -80,
+            opacity: 0,
+            clipPath: "inset(0 100% 0 0)",
+          }}
+          animate={{
+            x: 0,
+            opacity: 1,
+            clipPath: "inset(0 0% 0 0)",
+          }}
+          exit={{
+            x: 80,
+            opacity: 0,
+            clipPath: "inset(0 0% 0 100%)",
+          }}
+          transition={{
+            duration: 0.75,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+        >
+          <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
+            {descriptions[descIndex]}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+    </div>
 
-                {/* Contact Now Button */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className={`mt-4 md:mt-6 ${isMobile ? 'text-center' : ''}`}
-                >
-                  <Link
-                    href="#contact"
-                    className="group inline-flex items-center gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-teal-500 hover:bg-teal-600 transition-all duration-300 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <FaPhone className="text-sm md:text-base" />
-                    <span className="text-sm sm:text-base md:text-lg font-medium">Contact Now</span>
-                    <FaArrowRight className="group-hover:translate-x-1 transition-transform duration-300 text-sm md:text-base" />
-                  </Link>
-                </motion.div>
-              </motion.div>
-            </div>
+    {/* Contact Button */}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
+      className={`mt-2 sm:mt-4 md:mt-6 ${isMobile ? "text-center" : ""}`}
+    >
+      <Link
+        href="#contact"
+        className="group inline-flex items-center gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-teal-500 hover:bg-teal-600 transition-all duration-300 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <FaPhone className="text-sm md:text-base" />
+        <span className="text-sm sm:text-base md:text-lg font-medium">
+          Contact Now
+        </span>
+        <FaArrowRight className="group-hover:translate-x-1 transition-transform duration-300 text-sm md:text-base" />
+      </Link>
+    </motion.div>
+  </motion.div>
+</div>
+
 
             {/* RIGHT IMAGE - DESKTOP ONLY */}
-            <div className="relative hidden lg:block h-full rounded-l-3xl overflow-hidden shadow-2xl">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={imageIndex}
-                  className="absolute inset-0"
-                  initial={{ 
-                    opacity: 0, 
-                    scale: 1.1,
-                    rotate: 2
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    scale: 1,
-                    rotate: 0
-                  }}
-                  exit={{ 
-                    opacity: 0, 
-                    scale: 0.95,
-                    rotate: -2
-                  }}
-                  transition={{ 
-                    duration: 1.2, 
-                    ease: "easeInOut" 
-                  }}
-                >
-                  <Image
-                    src={dynamicImages[imageIndex]}
-                    alt="College illustration"
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                  {/* Subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-l from-[#0B1220]/20 via-transparent to-transparent" />
-                </motion.div>
-              </AnimatePresence>
-              
-              {/* Image Navigation Dots */}
-              <div className="absolute bottom-8 right-8 flex gap-2 z-20">
-                {dynamicImages.map((_, index) => (
-                  <motion.button
-                    key={index}
-                    onClick={() => setImageIndex(index)}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === imageIndex 
-                        ? 'bg-teal-400 w-8' 
-                        : 'bg-white/60 hover:bg-white/90'
-                    }`}
-                    aria-label={`Go to image ${index + 1}`}
-                  />
-                ))}
-              </div>
+           <div className="relative hidden lg:block h-full rounded-[2.5rem] overflow-hidden shadow-2xl">
+  <AnimatePresence mode="wait">
+    <motion.div
+      key={imageIndex}
+      className="absolute inset-0 rounded-l-[2.5rem] overflow-hidden"
+      initial={{
+        opacity: 0,
+        scale: 1.08,
+        rotate: 1.5,
+      }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        rotate: 0,
+      }}
+      exit={{
+        opacity: 0,
+        scale: 0.96,
+        rotate: -1.5,
+      }}
+      transition={{
+        duration: 1.1,
+        ease: [0.4, 0, 0.2, 1],
+      }}
+    >
+      <Image
+        src={dynamicImages[imageIndex]}
+        alt="College illustration"
+        fill
+        priority
+        sizes="(max-width: 1024px) 100vw, 50vw"
+        className="object-cover rounded-l-[2.5rem] scale-[1.01]"
+      />
 
-              {/* Desktop Contact Info - Elegant Version */}
-            
-            </div>
+      {/* Soft cinematic overlay */}
+      <div className="absolute inset-0 bg-gradient-to-l from-[#0B1220]/30 via-[#0B1220]/10 to-transparent" />
+
+      {/* Edge softening mask (premium feel) */}
+      <div className="pointer-events-none absolute inset-0 rounded-l-[2.5rem] ring-1 ring-white/10" />
+    </motion.div>
+  </AnimatePresence>
+
+  {/* Image Navigation Dots */}
+  <div className="absolute bottom-8 right-8 flex gap-2 z-20">
+    {dynamicImages.map((_, index) => (
+      <motion.button
+        key={index}
+        onClick={() => setImageIndex(index)}
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        className={`h-2 rounded-full transition-all duration-300 ${
+          index === imageIndex
+            ? "bg-teal-400 w-8"
+            : "bg-white/60 hover:bg-white/90 w-2"
+        }`}
+        aria-label={`Go to image ${index + 1}`}
+      />
+    ))}
+  </div>
+</div>
+
 
           </div>
         </div>
