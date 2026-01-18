@@ -523,7 +523,7 @@ export const HeroSection: React.FC = () => {
   return (
     <>
       {/* Hero Section - Reduced Height */}
-      <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
+      <section className="relative h-[70vh] min-h-[600px] overflow-hidden mt-6">
         {/* Background Animation with Clear Images */}
         <BackgroundSlidingAnimation />
         

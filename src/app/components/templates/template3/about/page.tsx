@@ -1,42 +1,66 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { 
-  FaBullseye, FaChartLine, FaUsers, FaAward, FaGlobe, 
+  FaBullseye, FaUsers, FaAward, FaGlobe, 
   FaShieldAlt, FaGraduationCap, FaIndustry, 
   FaCheckCircle, FaStar, FaHandshake, FaUserGraduate, 
   FaClock, FaBuilding, FaHandsHelping,
   FaBookOpen, FaLightbulb, FaRocket, FaChalkboardTeacher,
-  FaQuoteLeft
+  FaQuoteLeft, FaChevronLeft, FaChevronRight,
+  FaHeart, FaBrain, FaLeaf, FaMountain
 } from "react-icons/fa";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const About: React.FC = () => {
+export const About: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const topHeadingRef = useRef<HTMLDivElement>(null);
-  const leftColumnRef = useRef<HTMLDivElement>(null);
-  const rightColumnRef = useRef<HTMLDivElement>(null);
-  const missionSectionRef = useRef<HTMLDivElement>(null);
-  const whyChooseRef = useRef<HTMLDivElement>(null);
-  const pillarsHeadingRef = useRef<HTMLDivElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const imageSectionRef = useRef<HTMLDivElement>(null);
-  const imageTextRef = useRef<HTMLDivElement>(null);
-  const statsContainerRef = useRef<HTMLDivElement>(null);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  
+  // Refs for animations with proper typing
+  const headingRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const iconRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]); // Changed to HTMLElement for flexibility
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Helper functions for ref assignment
+  const addToHeadingRefs = (el: HTMLDivElement | null) => {
+    if (el && !headingRefs.current.includes(el)) {
+      headingRefs.current.push(el);
+    }
+  };
+
+  const addToTextRefs = (el: HTMLDivElement | null) => {
+    if (el && !textRefs.current.includes(el)) {
+      textRefs.current.push(el);
+    }
+  };
+
+  const addToIconRefs = (el: HTMLDivElement | null) => {
+    if (el && !iconRefs.current.includes(el)) {
+      iconRefs.current.push(el);
+    }
+  };
+
+  const addToCardRefs = (el: HTMLElement | null) => {
+    if (el && !cardRefs.current.includes(el)) {
+      cardRefs.current.push(el);
+    }
+  };
 
   // Static generic data
   const aboutData = {
-    name: "Institution",
+    name: "Excel College",
     tagline: "Excellence in Education & Professional Development",
     shortDescription: "Committed to delivering exceptional educational experiences that empower individuals and transform communities through innovative learning approaches.",
     mission: "To provide accessible, high-quality education that fosters intellectual growth, practical skills, and ethical leadership. We believe in creating learning environments that challenge minds, inspire innovation, and prepare students for meaningful careers and life-long success.",
     vision: "To be recognized as a leading educational institution that sets standards for academic excellence, research innovation, and community impact. We envision a future where education breaks barriers and creates opportunities for all.",
-    establishedYear: "2010",
+    establishedYear: "1995",
     highlights: [
       "Industry-Relevant Curriculum",
       "Expert Faculty Members",
@@ -50,775 +74,854 @@ const About: React.FC = () => {
         id: 1,
         title: "Academic Excellence",
         description: "Maintaining the highest standards in curriculum design, teaching methodologies, and academic outcomes across all programs.",
+        icon: FaGraduationCap,
+        color: "from-[#10B981] to-[#34D399]"
       },
       {
         id: 2,
         title: "Innovation & Research",
         description: "Fostering a culture of innovation through cutting-edge research, creative thinking, and practical problem-solving approaches.",
+        icon: FaBrain,
+        color: "from-[#059669] to-[#10B981]"
       },
       {
         id: 3,
         title: "Student Success",
         description: "Providing comprehensive support services, mentorship programs, and resources to ensure every student achieves their full potential.",
+        icon: FaHeart,
+        color: "from-[#047857] to-[#059669]"
       },
       {
         id: 4,
         title: "Community Engagement",
         description: "Building strong partnerships with industries, organizations, and communities to create real-world impact and opportunities.",
+        icon: FaHandsHelping,
+        color: "from-[#065F46] to-[#047857]"
+      },
+      {
+        id: 5,
+        title: "Ethical Leadership",
+        description: "Developing responsible leaders with strong ethical values and commitment to social responsibility.",
+        icon: FaShieldAlt,
+        color: "from-[#064E3B] to-[#065F46]"
+      },
+      {
+        id: 6,
+        title: "Global Perspective",
+        description: "Preparing students for global challenges through international collaborations and cross-cultural understanding.",
+        icon: FaGlobe,
+        color: "from-[#022C22] to-[#064E3B]"
       },
     ],
     whyChooseUs: [
       {
         id: 1,
         title: "Proven Track Record",
-        description: "Consistently high graduation and employment rates",
+        description: "Consistently high graduation and employment rates with industry recognition",
+        icon: FaAward
       },
       {
         id: 2,
         title: "Expert Faculty",
-        description: "Industry professionals and academic leaders",
+        description: "Industry professionals and academic leaders with extensive experience",
+        icon: FaChalkboardTeacher
       },
       {
         id: 3,
         title: "Modern Facilities",
-        description: "State-of-the-art labs and learning spaces",
+        description: "State-of-the-art labs, libraries, and advanced learning spaces",
+        icon: FaBuilding
       },
       {
         id: 4,
         title: "Flexible Programs",
-        description: "Multiple scheduling options and learning formats",
+        description: "Multiple scheduling options and diverse learning formats available",
+        icon: FaClock
       },
       {
         id: 5,
         title: "Global Recognition",
-        description: "Internationally recognized certifications",
+        description: "Internationally recognized certifications and partnerships",
+        icon: FaGlobe
       },
       {
         id: 6,
         title: "Career Support",
-        description: "Comprehensive placement and mentoring services",
+        description: "Comprehensive placement and continuous mentoring services",
+        icon: FaHandshake
       },
     ],
-    stats: [
-      { id: 1, label: "Years Experience", value: 14, suffix: "+" },
-      { id: 2, label: "Students Graduated", value: 8500, suffix: "+" },
-      { id: 3, label: "Success Rate", value: 95, suffix: "%" },
-      { id: 4, label: "Industry Partners", value: 120, suffix: "+" },
+    stories: [
+      {
+        year: "1995",
+        title: "The Beginning",
+        description: "Started with three classrooms and a vision to provide quality education to the local community. Focused on building strong foundations in core subjects.",
+        highlight: "First batch of 50 students enrolled"
+      },
+      {
+        year: "2005",
+        title: "Expansion Era",
+        description: "Expanded campus facilities and introduced professional courses. Established industry partnerships for practical training and job placements.",
+        highlight: "Introduced first professional certification programs"
+      },
+      {
+        year: "2015",
+        title: "Digital Transformation",
+        description: "Integrated technology into learning with smart classrooms and digital resources. Launched online learning platform for wider accessibility.",
+        highlight: "Achieved 90% placement rate milestone"
+      },
+      {
+        year: "2020",
+        title: "Modernization",
+        description: "Upgraded all facilities with modern infrastructure. Established research centers and innovation labs for advanced learning.",
+        highlight: "Received national accreditation"
+      },
+      {
+        year: "Present",
+        title: "Excellence Achieved",
+        description: "Recognized as a premier institution with thousands of successful alumni worldwide. Continues to innovate and adapt to changing educational needs.",
+        highlight: "Over 2500 students currently enrolled"
+      }
     ],
-    accreditation: "Accredited by National Education Board",
+    accreditation: "Accredited by National Education Board & ISO Certified",
   };
 
   // Extract data
-  const instituteName = aboutData.name;
-  const tagline = aboutData.tagline;
-  const description = aboutData.shortDescription;
-  const mission = aboutData.mission;
-  const vision = aboutData.vision;
-  const establishedYear = aboutData.establishedYear;
-  const highlights = aboutData.highlights;
-  const aboutCards = aboutData.pillars;
-  const whyChooseUs = aboutData.whyChooseUs;
-  const stats = aboutData.stats;
-  const accreditation = aboutData.accreditation;
-
-  // Map icons
-  const pillarWithIcons = aboutCards.map((pillar, index) => {
-    const icons = [FaGraduationCap, FaLightbulb, FaUserGraduate, FaHandsHelping];
-    return {
-      ...pillar,
-      icon: icons[index] || FaGraduationCap,
-    };
-  });
-
-  const whyChooseUsWithIcons = whyChooseUs.map((item, index) => {
-    const icons = [FaAward, FaChalkboardTeacher, FaBuilding, FaClock, FaGlobe, FaHandshake];
-    return {
-      ...item,
-      icon: icons[index] || FaAward
-    };
-  });
-
-  const statsWithIcons = stats.map((stat, index) => {
-    const icons = [FaChartLine, FaUsers, FaCheckCircle, FaIndustry];
-    return {
-      ...stat,
-      icon: icons[index] || FaChartLine
-    };
-  });
+  const {
+    tagline,
+    shortDescription: description,
+    mission,
+    vision,
+    establishedYear,
+    highlights,
+    pillars: aboutCards,
+    whyChooseUs,
+    stories,
+    accreditation
+  } = aboutData;
 
   useEffect(() => {
-    // Initialize animations only after component mounts
     const ctx = gsap.context(() => {
-      // Check if we're in a browser environment
       if (typeof window === "undefined") return;
 
-      // Top heading smooth fade in
-      if (topHeadingRef.current) {
-        gsap.fromTo(
-          topHeadingRef.current,
-          { 
-            opacity: 0,
-            y: 30 
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-          }
-        );
-      }
+      // Configure default ScrollTrigger settings
+      ScrollTrigger.defaults({
+        toggleActions: "play none none reverse",
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: false,
+        markers: false,
+      });
 
-      // Image section fade up
-      if (imageSectionRef.current) {
-        gsap.fromTo(
-          imageSectionRef.current,
-          {
-            opacity: 0,
-            y: 50,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: imageSectionRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Image text fade in
-      if (imageTextRef.current) {
-        gsap.fromTo(
-          imageTextRef.current,
-          {
-            opacity: 0,
-            y: 20,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            ease: "power3.out",
-          }
-        );
-      }
-
-      // Mission and Approach sections - smooth slide in from sides
-      if (leftColumnRef.current) {
-        gsap.fromTo(
-          leftColumnRef.current,
-          {
-            opacity: 0,
-            x: -50,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: leftColumnRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      if (rightColumnRef.current) {
-        gsap.fromTo(
-          rightColumnRef.current,
-          {
-            opacity: 0,
-            x: 50,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: rightColumnRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Mission section fade up
-      if (missionSectionRef.current) {
-        gsap.fromTo(
-          missionSectionRef.current,
-          {
-            opacity: 0,
-            y: 40,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: missionSectionRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Why Choose Us section fade up
-      if (whyChooseRef.current) {
-        gsap.fromTo(
-          whyChooseRef.current,
-          {
-            opacity: 0,
-            y: 40,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: whyChooseRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Pillars heading fade up
-      if (pillarsHeadingRef.current) {
-        gsap.fromTo(
-          pillarsHeadingRef.current,
-          {
-            opacity: 0,
-            y: 30,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: pillarsHeadingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Stats container fade up
-      if (statsContainerRef.current) {
-        gsap.fromTo(
-          statsContainerRef.current,
-          {
-            opacity: 0,
-            y: 50,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".stats-section",
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
-
-      // Cards animation
-      if (cardsContainerRef.current) {
-        const cards = cardsContainerRef.current.querySelectorAll('.pillar-card');
-        if (cards.length > 0) {
+      // Animate all headings with left/right movement
+      headingRefs.current.forEach((heading, index) => {
+        if (heading) {
           gsap.fromTo(
-            cards,
-            {
+            heading,
+            { 
+              x: index % 2 === 0 ? -100 : 100, 
               opacity: 0,
-              y: 40,
-              scale: 0.95,
+              filter: "blur(10px)"
             },
             {
+              x: 0,
               opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.8,
-              stagger: 0.1,
+              filter: "blur(0px)",
+              duration: 1.2,
               ease: "power3.out",
               scrollTrigger: {
-                trigger: cardsContainerRef.current,
+                trigger: heading,
                 start: "top 85%",
-                toggleActions: "play none none reverse",
               }
             }
           );
         }
-      }
+      });
 
-      // Why Choose Us cards - smooth staggered fade up
-      const whyChooseCards = document.querySelectorAll('.why-choose-card');
-      if (whyChooseCards.length > 0) {
+      // Animate all text content with left/right movement
+      textRefs.current.forEach((text, index) => {
+        if (text) {
+          gsap.fromTo(
+            text,
+            { 
+              x: index % 2 === 0 ? 80 : -80, 
+              opacity: 0,
+              filter: "blur(8px)"
+            },
+            {
+              x: 0,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1,
+              delay: 0.2,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: text,
+                start: "top 85%",
+              }
+            }
+          );
+        }
+      });
+
+      // Animate icons with scale and fade
+      iconRefs.current.forEach((icon, index) => {
+        if (icon) {
+          gsap.fromTo(
+            icon,
+            { 
+              scale: 0, 
+              opacity: 0,
+              rotate: -180
+            },
+            {
+              scale: 1,
+              opacity: 1,
+              rotate: 0,
+              duration: 0.8,
+              delay: index * 0.1,
+              ease: "back.out(1.7)",
+              scrollTrigger: {
+                trigger: icon,
+                start: "top 90%",
+              }
+            }
+          );
+        }
+      });
+
+      // Animate cards with staggered entrance
+      cardRefs.current.forEach((card, index) => {
+        if (card) {
+          gsap.fromTo(
+            card,
+            { 
+              y: 50, 
+              opacity: 0,
+              scale: 0.9
+            },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.8,
+              delay: index * 0.1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 90%",
+              }
+            }
+          );
+        }
+      });
+
+      // Animate story section
+      const storyElements = document.querySelectorAll('.story-element');
+      storyElements.forEach((element, index) => {
         gsap.fromTo(
-          whyChooseCards,
+          element,
           { 
-            opacity: 0, 
-            y: 20 
+            x: index % 2 === 0 ? -60 : 60, 
+            opacity: 0 
           },
           {
+            x: 0,
             opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.08,
+            duration: 0.8,
+            delay: index * 0.15,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: ".why-choose-section",
+              trigger: element,
               start: "top 90%",
-              toggleActions: "play none none reverse",
             }
           }
         );
-      }
-
-      // Stats counting animation
-      const statNumbers = document.querySelectorAll('.stat-number');
-      if (statNumbers.length > 0) {
-        statNumbers.forEach((statNumber) => {
-          const targetValue = parseInt(statNumber.getAttribute("data-value") || "0");
-          
-          gsap.to(statNumber, {
-            innerHTML: targetValue,
-            duration: 2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: ".stats-section",
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
-            onUpdate: function() {
-              const currentValue = Math.floor(parseInt(statNumber.innerHTML) || 0);
-              statNumber.innerHTML = currentValue.toString();
-            }
-          });
-        });
-      }
+      });
 
     }, sectionRef);
+
+    // Continuous slider animation
+    if (sliderRef.current) {
+      const slider = sliderRef.current;
+      const totalWidth = slider.scrollWidth;
+      const visibleWidth = slider.clientWidth;
+      let animationId: number;
+
+      const animateSlider = () => {
+        if (slider.scrollLeft >= totalWidth - visibleWidth) {
+          slider.scrollLeft = 0;
+        } else {
+          slider.scrollLeft += 0.8;
+        }
+        animationId = requestAnimationFrame(animateSlider);
+      };
+
+      animationId = requestAnimationFrame(animateSlider);
+
+      return () => {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+        ctx.revert();
+      };
+    }
 
     return () => {
       ctx.revert();
     };
   }, []);
 
+  // Story navigation
+  const nextStory = () => {
+    setCurrentStoryIndex((prev) => (prev + 1) % stories.length);
+  };
+
+  const prevStory = () => {
+    setCurrentStoryIndex((prev) => (prev - 1 + stories.length) % stories.length);
+  };
+
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="relative bg-white overflow-hidden"
+      className="relative mt-4 bg-[#0B0F0E] text-white overflow-hidden"
     >
-      {/* Top Heading Section */}
-      <div 
-        ref={topHeadingRef}
-        className="relative bg-white py-12 md:py-16"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            {/* Divider line */}
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-16 h-0.5 bg-gray-300 rounded-full"></div>
-              <div className="w-2 h-2 bg-[#064E3B] rounded-full"></div>
-              <div className="w-16 h-0.5 bg-gray-300 rounded-full"></div>
-            </div>
-            
-            {/* Main Heading */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#064E3B] mb-4">
-              About Our Institution
-            </h1>
-            
-            {/* Tagline */}
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#475569] mb-6">
-              {tagline}
-            </h2>
-            
-            {/* Description */}
-            <div className="max-w-3xl mx-auto">
-              <div className="h-0.5 w-24 bg-gray-200 mx-auto mb-6"></div>
-              <p className="text-base md:text-lg text-[#334155] leading-relaxed">
-                {description}
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#10B981] via-transparent to-transparent"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-[#10B981] via-transparent to-transparent rounded-full"></div>
       </div>
 
+      {/* Top Heading Section */}
+     <div className="relative py-16 md:py-24 bg-black">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center">
+      {/* Animated Divider */}
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-[#10B981]/50 to-transparent rounded-full"></div>
+        <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399]"></div>
+        <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-[#10B981]/50 to-transparent rounded-full"></div>
+      </div>
+      
+      {/* Main Heading with Animation */}
+      <div ref={addToHeadingRefs} className="overflow-hidden mb-6">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
+          <span className="text-white">About </span>
+          <span className="bg-gradient-to-r from-[#10B981] via-[#34D399] to-[#10B981] bg-clip-text text-transparent">
+            Excel College
+          </span>
+        </h1>
+      </div>
+      
+      {/* Tagline with Animation */}
+      <div ref={addToHeadingRefs} className="overflow-hidden mb-8">
+        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-white/80">
+          {tagline}
+        </h2>
+      </div>
+      
+      {/* Description with Animation */}
+      <div ref={addToTextRefs} className="overflow-hidden max-w-3xl mx-auto">
+        <div className="h-0.5 w-32 bg-gradient-to-r from-transparent via-[#10B981] to-transparent mx-auto mb-8 rounded-full"></div>
+        <p className="text-lg md:text-xl text-white/70 leading-relaxed">
+          {description}
+        </p>
+      </div>
+
+      {/* Established Year */}
+      <div className="mt-12">
+        <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+          <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></div>
+          <span className="text-sm text-white/60">
+            Established in <span className="text-white font-semibold">{establishedYear}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
       {/* Full Width Image Section with Text Overlay */}
-      <div 
-        ref={imageSectionRef}
-        className="relative w-full h-[300px] md:h-[350px] overflow-hidden"
-      >
+      <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjh8fGNvbGxlZ2V8ZW58MHx8MHx8fDA%3D"
+          src="https://images.unsplash.com/flagged/photo-1554473675-d0904f3cbf38?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGNvbGxlZ2V8ZW58MHx8MHx8fDA%3D"
           alt="College Campus"
           className="w-full h-full object-cover"
         />
         
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F0E]/80 via-[#0B0F0E]/50 to-[#0B0F0E]/80"></div>
         
-        {/* Text Overlay */}
-        <div 
-          ref={imageTextRef}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          <div className="text-center text-white max-w-3xl px-6">
-            <div className="flex justify-center mb-4">
-              <FaQuoteLeft className="text-3xl text-white/70" />
+        {/* Animated Text Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center max-w-4xl px-6">
+            <div className="flex justify-center mb-6">
+              <div 
+                ref={addToIconRefs}
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center shadow-lg shadow-[#10B981]/30"
+              >
+                <FaQuoteLeft className="text-white text-2xl" />
+              </div>
             </div>
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-              Shaping Futures Through Quality Education
-            </h3>
-            <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto">
-              Where academic excellence meets real-world application, creating leaders for tomorrow
-            </p>
+            
+            <div 
+              ref={addToHeadingRefs}
+              className="overflow-hidden mb-6"
+            >
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                Shaping Futures Through
+                <span className="block bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">
+                  Quality Education
+                </span>
+              </h3>
+            </div>
+            
+            <div 
+              ref={addToTextRefs}
+              className="overflow-hidden"
+            >
+              <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+                Where academic excellence meets real-world application, creating leaders for tomorrow
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Section */}
-      <div className="relative bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
-          {/* Two Column Layout: Mission & Vision */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            {/* Left Column - Mission */}
-            <div 
-              ref={leftColumnRef}
-              className="relative"
-            >
-              <div className="sticky top-24">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-lg bg-[#064E3B]/10 flex items-center justify-center">
-                    <FaBullseye className="text-[#064E3B] text-xl" />
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-[#064E3B]">
+      {/* Our Story Section */}
+     <div className="py-20 md:py-28 bg-black">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Section Heading */}
+    <div className="text-center mb-16">
+      <div ref={addToHeadingRefs} className="overflow-hidden mb-6">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+          <span className="text-white">Our </span>
+          <span className="bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">
+            Journey
+          </span>
+        </h2>
+      </div>
+
+      <div ref={addToTextRefs} className="overflow-hidden max-w-2xl mx-auto">
+        <p className="text-lg text-white/70">
+          A timeline of growth, innovation, and commitment to educational excellence
+        </p>
+      </div>
+    </div>
+
+    <div className="relative story-element">
+      {/* Navigation Buttons */}
+      <button
+        onClick={prevStory}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
+      >
+        <FaChevronLeft className="h-5 w-5 text-white" />
+      </button>
+
+      <button
+        onClick={nextStory}
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
+      >
+        <FaChevronRight className="h-5 w-5 text-white" />
+      </button>
+
+      {/* Active Story Display */}
+      <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+        <div className="grid md:grid-cols-3 gap-8 items-center">
+          <div className="text-center story-element">
+            <div className="text-6xl font-bold bg-gradient-to-br from-[#10B981] to-[#34D399] bg-clip-text text-transparent mb-4">
+              {stories[currentStoryIndex].year}
+            </div>
+            <div className="text-white/60 text-sm uppercase tracking-wider">Milestone Year</div>
+          </div>
+
+          <div className="md:col-span-2 story-element">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">
+              {stories[currentStoryIndex].title}
+            </h3>
+            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+              {stories[currentStoryIndex].description}
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center">
+                <FaStar className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-[#10B981] font-medium">{stories[currentStoryIndex].highlight}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Story Indicators */}
+      <div className="flex justify-center gap-3 mt-8 story-element">
+        {stories.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentStoryIndex(index)}
+            className={`h-1 rounded-full transition-all duration-300 ${
+              index === currentStoryIndex
+                ? 'w-12 bg-gradient-to-r from-[#10B981] to-[#34D399]'
+                : 'w-3 bg-white/30 hover:bg-white/50'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      {/* Mission & Vision Section - Updated Background */}
+      <div className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            {/* Mission */}
+            <div className="space-y-8">
+              <div className="flex items-center gap-6 mb-8">
+                <div 
+                  ref={addToIconRefs}
+                  className="w-16 h-16 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center"
+                >
+                  <FaBullseye className="text-white text-2xl" />
+                </div>
+                <div 
+                  ref={addToHeadingRefs}
+                  className="overflow-hidden"
+                >
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
                     Our Mission
                   </h3>
                 </div>
-                
-                <div className="space-y-4">
-                  {mission.split('\n').map((paragraph, index) => (
-                    <p key={index} className="text-base text-[#334155] leading-relaxed">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
+              </div>
+              
+              <div 
+                ref={addToTextRefs}
+                className="space-y-6"
+              >
+                {mission.split('\n').map((paragraph, index) => (
+                  <p key={index} className="text-lg text-gray-700 leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
 
-                {/* Key Focus Areas */}
-                <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="font-semibold text-[#064E3B] mb-4 text-lg flex items-center gap-2">
-                    <FaCheckCircle className="text-[#064E3B]" />
-                    Key Focus Areas
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    {["Academic Excellence", "Student Success", "Industry Relevance", "Community Impact"].map((item, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="w-2 h-2 bg-[#064E3B] rounded-full"></div>
-                        <span className="text-sm text-[#334155]">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {/* Key Focus Areas as List */}
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <h4 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                  <FaCheckCircle className="text-[#10B981]" />
+                  Key Focus Areas
+                </h4>
+                <ul className="space-y-2">
+                  {["Academic Excellence", "Student Success", "Industry Relevance", "Community Impact"].map((item, index) => (
+                    <li 
+                      key={index}
+                      ref={(el: HTMLLIElement | null) => addToCardRefs(el)}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="w-3 h-3 rounded-full bg-[#10B981] animate-pulse flex-shrink-0"></div>
+                      <span className="text-gray-800">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
-            {/* Right Column - Vision */}
-            <div 
-              ref={rightColumnRef}
-              className="relative"
-            >
-              <div className="sticky top-24">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-lg bg-[#064E3B] flex items-center justify-center">
-                    <FaRocket className="text-white text-xl" />
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-[#064E3B]">
+            {/* Vision */}
+            <div className="space-y-8">
+              <div className="flex items-center gap-6 mb-8">
+                <div 
+                  ref={addToIconRefs}
+                  className="w-16 h-16 rounded-full bg-gray-800 border-2 border-[#10B981]/30 flex items-center justify-center"
+                >
+                  <FaRocket className="text-white text-2xl" />
+                </div>
+                <div 
+                  ref={addToHeadingRefs}
+                  className="overflow-hidden"
+                >
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
                     Our Vision
                   </h3>
                 </div>
-                
-                <div className="space-y-4">
-                  {vision.split('\n').map((paragraph, index) => (
-                    <p key={index} className="text-base text-[#334155] leading-relaxed">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-
-                {/* Methodology Points */}
-                <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="font-semibold text-[#064E3B] mb-4 text-lg flex items-center gap-2">
-                    <FaChalkboardTeacher className="text-[#064E3B]" />
-                    Our Approach
-                  </h4>
-                  <div className="space-y-3">
-                    {[
-                      "Blended Learning Model",
-                      "Industry-Aligned Curriculum",
-                      "Practical Skill Development",
-                      "Personalized Mentorship"
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <FaCheckCircle className="text-[#064E3B] flex-shrink-0" />
-                        <span className="text-sm text-[#334155]">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Divider Line */}
-          <div className="h-0.5 w-full bg-gray-200 my-16"></div>
-
-          {/* About Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            {/* Left Column - Introduction */}
-            <div ref={missionSectionRef} className="space-y-8">
-              <div className="section-header">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-0.5 bg-[#064E3B]"></div>
-                  <span className="text-[#064E3B] text-sm font-semibold uppercase tracking-wider">
-                    Our Journey
-                  </span>
-                  <div className="w-8 h-0.5 bg-[#064E3B]"></div>
-                </div>
-                
-                <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-6">
-                  Building Excellence Since {establishedYear}
-                </h2>
-                
-                <div className="space-y-4">
-                  <p className="text-base text-[#334155] leading-relaxed">
-                    Founded in {establishedYear}, our institution has grown from a small educational center 
-                    into a respected leader in professional education. Our journey reflects our commitment 
-                    to innovation, quality, and student success.
-                  </p>
-                  <p className="text-base text-[#334155] leading-relaxed">
-                    We believe in creating learning environments that challenge conventional thinking, 
-                    foster creativity, and prepare individuals for the evolving demands of the modern world.
-                  </p>
-                </div>
-              </div>
-
-              {/* Highlights */}
-              <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <h3 className="text-xl font-bold text-[#064E3B] mb-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#064E3B]/10 flex items-center justify-center">
-                    <FaBookOpen className="text-[#064E3B]" />
-                  </div>
-                  Core Programs & Features
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {highlights.map((item, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center gap-2 p-3 bg-white rounded-lg border border-gray-200"
-                    >
-                      <div className="w-6 h-6 rounded-full bg-[#064E3B]/10 flex items-center justify-center">
-                        <FaCheckCircle className="text-[#064E3B] text-xs" />
-                      </div>
-                      <span className="text-sm text-[#334155]">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Why Choose Us */}
-            <div ref={whyChooseRef} className="why-choose-section">
-              <div className="sticky top-24">
-                <div className="bg-gray-900 rounded-xl p-6 md:p-8 text-white">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-[#064E3B] flex items-center justify-center">
-                      <FaStar className="text-white" />
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white">Why Choose Us?</h3>
-                  </div>
-                  <p className="text-white/80 mb-8 text-base">
-                    Discover what sets us apart and makes us the preferred choice for education
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {whyChooseUsWithIcons.map((item) => (
-                      <div 
-                        key={item.id}
-                        className="why-choose-card group bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-all duration-200"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-[#064E3B] flex items-center justify-center flex-shrink-0">
-                            <item.icon className="text-white" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-white text-base mb-1">{item.title}</h4>
-                            <p className="text-sm text-white/70">{item.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Divider Line */}
-          <div className="h-0.5 w-full bg-gray-200 my-16"></div>
-
-          {/* Pillars Section */}
-          <div className="cards-container mb-20">
-            <div ref={pillarsHeadingRef} className="text-center mb-12">
-              <div className="inline-flex items-center gap-4 mb-6">
-                <div className="w-16 h-0.5 bg-gray-300"></div>
-                <span className="text-[#064E3B] text-sm font-semibold uppercase tracking-wider">
-                  Our Foundation
-                </span>
-                <div className="w-16 h-0.5 bg-gray-300"></div>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-4">
-                Our Core Pillars
-              </h2>
-              <p className="text-base text-[#334155] max-w-2xl mx-auto leading-relaxed">
-                The foundational principles that guide our educational philosophy and operations
-              </p>
-            </div>
-
-            <div ref={cardsContainerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {pillarWithIcons.map((card) => (
-                <div
-                  key={card.id}
-                  className="pillar-card group bg-white rounded-lg p-6 border border-gray-200 hover:border-[#064E3B]/30 transition-all duration-300"
-                >
-                  <div className="flex flex-col h-full">
-                    {/* Icon */}
-                    <div className="mb-6">
-                      <div 
-                        className="w-14 h-14 rounded-lg bg-[#064E3B]/10 flex items-center justify-center"
-                      >
-                        <card.icon className="text-[#064E3B] text-xl" />
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="text-lg font-bold text-[#064E3B] mb-3">
-                      {card.title}
-                    </h3>
-                    
-                    <p className="text-sm text-[#334155] leading-relaxed flex-grow mb-4">
-                      {card.description}
-                    </p>
-
-                    {/* Number indicator */}
-                    <div className="mt-auto pt-4 border-t border-gray-200">
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs font-medium text-[#064E3B]">Learn More →</div>
-                        <div className="text-lg font-bold text-gray-300">0{card.id}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Divider Line */}
-          <div className="h-0.5 w-full bg-gray-200 my-16"></div>
-
-          {/* Stats Section - Our Impact */}
-          <div ref={statsContainerRef} className="stats-section mb-20">
-            <div className="bg-gray-50 rounded-xl p-6 md:p-8 border border-gray-200">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 mb-4">
-                  <FaChartLine className="text-[#064E3B]" />
-                  <span className="text-[#064E3B] text-sm font-semibold uppercase tracking-wider">
-                    Our Impact
-                  </span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-4">
-                  By The Numbers
-                </h2>
-                <p className="text-[#334155] max-w-xl mx-auto text-base">
-                  Measuring our contribution to education and professional development
-                </p>
               </div>
               
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {statsWithIcons.map((stat) => (
-                  <div
-                    key={stat.id}
-                    className="group text-center p-6 bg-white rounded-lg border border-gray-200 hover:border-[#064E3B] transition-all duration-200"
-                  >
-                    <div className="flex justify-center mb-4">
-                      <div className="w-14 h-14 rounded-full bg-[#064E3B]/10 flex items-center justify-center">
-                        <stat.icon className="text-xl text-[#064E3B]" />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-center gap-1 mb-3">
-                      <span 
-                        className="stat-number text-3xl md:text-4xl font-bold text-[#064E3B]" 
-                        data-value={stat.value}
-                      >
-                        0
-                      </span>
-                      <span className="text-3xl md:text-4xl font-bold text-[#064E3B]">
-                        {stat.suffix}
-                      </span>
-                    </div>
-                    
-                    <div className="text-sm font-semibold text-[#334155]">
-                      {stat.label}
-                    </div>
-                  </div>
+              <div 
+                ref={addToTextRefs}
+                className="space-y-6"
+              >
+                {vision.split('\n').map((paragraph, index) => (
+                  <p key={index} className="text-lg text-gray-700 leading-relaxed">
+                    {paragraph}
+                  </p>
                 ))}
               </div>
-            </div>
-          </div>
 
-          {/* Accreditation & Recognition */}
-          <div className="text-center mt-12">
-            <div className="inline-flex items-center gap-4 bg-gray-50 rounded-lg px-8 py-6 border border-gray-200">
-              <FaShieldAlt className="text-2xl text-[#064E3B]" />
-              <div className="text-left">
-                <div className="font-bold text-[#064E3B] text-lg mb-1">Quality Assured</div>
-                <div className="text-sm text-[#334155]">{accreditation}</div>
+              {/* Our Approach as List */}
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <h4 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                  <FaChalkboardTeacher className="text-[#10B981]" />
+                  Our Approach
+                </h4>
+                <ul className="space-y-2">
+                  {[
+                    "Blended Learning Model",
+                    "Industry-Aligned Curriculum",
+                    "Practical Skill Development",
+                    "Personalized Mentorship"
+                  ].map((item, index) => (
+                    <li 
+                      key={index}
+                      ref={(el: HTMLLIElement | null) => addToCardRefs(el)}
+                      className="flex items-center gap-3"
+                    >
+                      <FaCheckCircle className="text-[#10B981] flex-shrink-0" />
+                      <span className="text-gray-800">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Bottom border */}
-        <div className="py-8 border-t border-gray-200 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-sm text-[#334155]">
-              Trusted by organizations across industries for quality education and professional development
-            </p>
           </div>
         </div>
       </div>
+
+      {/* Why Choose Us Section - Updated Colors */}
+    <div className="py-20 md:py-28 bg-black">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      {/* Left Column */}
+      <div className="space-y-12">
+        <div>
+          <div ref={addToHeadingRefs} className="overflow-hidden mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Why Choose
+              <span className="block bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">
+                Excel College?
+              </span>
+            </h2>
+          </div>
+
+          <div ref={addToTextRefs} className="overflow-hidden">
+            <p className="text-lg text-gray-300 leading-relaxed">
+              Discover what sets us apart and makes us the preferred choice for quality education
+            </p>
+          </div>
+        </div>
+
+        {/* Highlights as Checkbox List */}
+        <div>
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center">
+              <FaBookOpen className="text-white text-lg" />
+            </div>
+            Core Programs & Features
+          </h3>
+          <ul className="space-y-3">
+            {highlights.map((item, index) => (
+              <li
+                key={index}
+                ref={(el: HTMLLIElement | null) => addToCardRefs(el)}
+                className="flex items-center gap-3 text-gray-300"
+              >
+                {/* Animated checkmark / dot */}
+                <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+                  <span className="block w-3 h-3 rounded-full bg-[#10B981] animate-pulse" />
+                </div>
+                <span className="text-white">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Right Column - Why Choose List */}
+      <div className="space-y-6">
+        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center">
+            <FaChalkboardTeacher className="text-white text-lg" />
+          </div>
+          Why Choose Us
+        </h3>
+
+        <ul className="space-y-3">
+          {whyChooseUs.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <li
+                key={item.id}
+                ref={(el: HTMLLIElement | null) => addToCardRefs(el)}
+                className="flex items-start gap-3"
+              >
+                {/* Animated checkbox dot */}
+                <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                  <span className="block w-3 h-3 rounded-full bg-[#10B981] animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-white font-semibold">{item.title}</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+      {/* Pillars Section with Continuous Slider - Updated Background */}
+      <div className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Heading */}
+          <div className="text-center mb-16">
+            <div 
+              ref={addToHeadingRefs}
+              className="overflow-hidden mb-6"
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+                <span className="text-gray-900">Our Core </span>
+                <span className="bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">
+                  Pillars
+                </span>
+              </h2>
+            </div>
+            
+            <div 
+              ref={addToTextRefs}
+              className="overflow-hidden max-w-2xl mx-auto"
+            >
+              <p className="text-lg text-gray-600">
+                The foundational principles that guide our educational philosophy and operations
+              </p>
+            </div>
+          </div>
+
+          {/* Continuous Slider Container */}
+          <div className="relative overflow-hidden py-8">
+            <div 
+              ref={sliderRef}
+              className="flex space-x-8"
+              style={{ 
+                width: 'max-content',
+                animation: 'scroll 40s linear infinite'
+              }}
+            >
+              {/* Duplicate cards for seamless loop */}
+              {[...aboutCards, ...aboutCards].map((card, index) => {
+                const Icon = card.icon;
+                return (
+                  <div
+                    key={`${card.id}-${index}`}
+                    className="flex-shrink-0 w-80"
+                  >
+                    <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-lg rounded-3xl p-8 hover:border-[#10B981]/30 hover:shadow-xl transition-all duration-300 group h-full">
+                      <div className="flex flex-col h-full">
+                        {/* Icon */}
+                        <div className="mb-8">
+                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-50 border border-gray-300 group-hover:border-[#10B981]/30 flex items-center justify-center transition-colors">
+                            <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${card.color} flex items-center justify-center`}>
+                              <Icon className="text-white text-2xl" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Content */}
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">
+                          {card.title}
+                        </h3>
+                        
+                        <p className="text-gray-600 leading-relaxed flex-grow mb-6">
+                          {card.description}
+                        </p>
+
+                        {/* Number indicator */}
+                        <div className="mt-auto pt-6 border-t border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-medium text-[#10B981] group-hover:translate-x-2 transition-transform">
+                              Learn More →
+                            </div>
+                            <div className="text-lg font-bold text-gray-400">0{card.id}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Gradient overlay for edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+          </div>
+        </div>
+      </div>
+
+    
+     
+
+      {/* CSS Animation for Continuous Slider */}
+      <style jsx global>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(calc(-50% - 2rem));
+          }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+          scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #10B981, #34D399);
+          border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #0EA271, #10B981);
+        }
+
+        /* Hide scrollbar for slider */
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

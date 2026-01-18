@@ -71,23 +71,23 @@ export const Navbar: React.FC = () => {
 
   const allCourses = [
     { 
-      name: "Commerce (Class 12)", 
+      name: "FSc Pre-Engineering", 
       href: "/components/templates/template3/courses"
     },
     { 
-      name: "Science (Class 12)", 
+      name: "FSc Pre-Medical", 
       href: "/components/templates/template3/courses"
     },
     { 
-      name: "Arts (Class 12)", 
+      name: "ICS (Computer Science)", 
       href: "/components/templates/template3/courses"
     },
     { 
-      name: "Information Technology", 
+      name: "ICS (Statistics)", 
       href: "/components/templates/template3/courses"
     },
     { 
-      name: "Professional Courses", 
+      name: "I.Com (Commerce)", 
       href: "/components/templates/template3/courses"
     }
   ];

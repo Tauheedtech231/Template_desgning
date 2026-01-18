@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   FaEnvelope, 
   FaMapMarkerAlt, 
@@ -10,12 +10,23 @@ import {
   FaBuilding,
   FaClock,
   FaArrowRight,
-  FaGraduationCap,
-  FaBookOpen
 } from "react-icons/fa";
+
+// Import GSAP for animations
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const ContactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const leftTitleRef = useRef<HTMLDivElement>(null);
+  const rightTitleRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+  const infoCardRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -49,6 +60,13 @@ const ContactSection = () => {
     },
   ];
 
+  // Office hours data
+  const officeHours = [
+    { day: "Monday - Friday", time: "8:00 AM - 6:00 PM" },
+    { day: "Saturday", time: "9:00 AM - 2:00 PM" },
+    { day: "Sunday", time: "Closed" },
+  ];
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -63,364 +81,474 @@ const ContactSection = () => {
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
+  // Animation effects
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Section title animation - split into left and right parts
+      gsap.fromTo(
+        leftTitleRef.current,
+        { 
+          x: -100, 
+          opacity: 0,
+          filter: "blur(10px)"
+        },
+        {
+          x: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+          }
+        }
+      );
+
+      gsap.fromTo(
+        rightTitleRef.current,
+        { 
+          x: 100, 
+          opacity: 0,
+          filter: "blur(10px)"
+        },
+        {
+          x: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+          }
+        }
+      );
+
+      // Form animation
+      gsap.fromTo(
+        formRef.current,
+        { 
+          x: 50, 
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          }
+        }
+      );
+
+      // Info card animation
+      gsap.fromTo(
+        infoCardRef.current,
+        { 
+          x: -50, 
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          }
+        }
+      );
+
+      // Contact items animation
+      gsap.fromTo(
+        ".contact-item",
+        { 
+          x: -50, 
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          }
+        }
+      );
+
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-20 bg-gradient-to-b from-[#064E3B] to-[#0B6E5E] text-white overflow-hidden"
+      className="relative mt-4 py-16 md:py-20 bg-black text-white overflow-hidden"
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-        
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(90deg, transparent 95%, white 100%),
-                             linear-gradient(180deg, transparent 95%, white 100%)`,
-            backgroundSize: '50px 50px',
-          }}></div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-            <FaEnvelope className="text-white" />
-            <span className="text-white text-sm font-medium uppercase tracking-wider">
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 border border-gray-800 rounded-full mb-6">
+            <FaEnvelope className="text-emerald-500" />
+            <span className="text-gray-300 text-sm font-medium uppercase tracking-wider">
               Get in Touch
             </span>
           </div>
           
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Contact{" "}
-            <span className="text-white/90">
-              Our College
-            </span>
-          </h2>
+         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+  <span
+    ref={leftTitleRef}
+    className="inline-block mr-2"
+  >
+    Contact
+  </span>
+  <span
+    ref={rightTitleRef}
+    className="inline-block text-emerald-500"
+  >
+    Our College
+  </span>
+</h2>
+
           
-          <p className="text-lg text-white/80 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Connect with our dedicated teams for admissions, academic support, or any assistance you may need.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Left Column - Contact Information */}
           <div>
             <h3 className="text-2xl font-bold text-white mb-8">
               Campus Departments
             </h3>
             
-            <div className="space-y-6">
+            {/* Contact List */}
+            <ul className="space-y-6">
               {contacts.map((contact, index) => (
-                <div 
+                <li 
                   key={index}
+                  className="contact-item"
                   onClick={() => setSelectedContact(index)}
-                  className={`bg-white/10 backdrop-blur-sm rounded-xl border p-6 transition-all duration-300 cursor-pointer ${
-                    selectedContact === index 
-                      ? 'border-white/50 shadow-lg' 
-                      : 'border-white/20 hover:border-white/40'
-                  }`}
                 >
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="flex-shrink-0">
-                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                        selectedContact === index 
-                          ? 'bg-white text-[#064E3B]' 
-                          : 'bg-white/20 text-white'
-                      }`}>
-                        <FaBuilding className="text-lg" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-white mb-2">
-                        {contact.title}
-                      </h4>
-                      <p className="text-sm text-white/70 mb-3">
-                        {contact.description}
-                      </p>
-                      <div className={`w-12 h-0.5 ${
-                        selectedContact === index ? 'bg-white' : 'bg-white/30'
-                      }`}></div>
-                    </div>
-                  </div>
-
-                  {/* Contact Details */}
-                  <div className="space-y-3 ml-16">
-                    {/* Email */}
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3 flex-shrink-0">
-                        <FaEnvelope className="text-white text-sm" />
+                  <div className={`p-6 transition-all duration-300 cursor-pointer border-2 rounded-2xl ${
+                    selectedContact === index 
+                      ? 'border-emerald-500 bg-emerald-900/10' 
+                      : 'border-gray-800 bg-gray-900 hover:border-gray-700 hover:bg-gray-800/50'
+                  }`}
+                  >
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="flex-shrink-0">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          selectedContact === index 
+                            ? 'bg-emerald-600 text-white' 
+                            : 'bg-gray-800 text-gray-300'
+                        }`}>
+                          <FaBuilding className="text-lg" />
+                        </div>
                       </div>
                       <div className="flex-1">
-                        <a 
-                          href={`mailto:${contact.email}`}
-                          className="text-white hover:text-white/90 transition-colors"
-                        >
-                          {contact.email}
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Phone */}
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3 flex-shrink-0">
-                        <FaPhone className="text-white text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <a 
-                          href={`tel:${contact.phone.replace(/\D/g, '')}`}
-                          className="text-white hover:text-white/90 transition-colors"
-                        >
-                          {contact.phone}
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Location */}
-                    <div className="flex items-start">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3 flex-shrink-0 mt-1">
-                        <FaMapMarkerAlt className="text-white text-sm" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white/90 text-sm leading-relaxed">
-                          {contact.location}
+                        <h4 className="text-lg font-semibold text-white mb-2">
+                          {contact.title}
+                        </h4>
+                        <p className="text-sm text-gray-400 mb-3">
+                          {contact.description}
                         </p>
+                        <div className={`w-12 h-0.5 ${
+                          selectedContact === index ? 'bg-emerald-500' : 'bg-gray-700'
+                        }`}></div>
                       </div>
                     </div>
+
+                    {/* Contact Details */}
+                    <ul className="space-y-3 ml-16">
+                      {/* Email */}
+                      <li className="flex items-center">
+                        <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3 flex-shrink-0">
+                          <FaEnvelope className="text-emerald-500 text-sm" />
+                        </div>
+                        <div className="flex-1">
+                          <a 
+                            href={`mailto:${contact.email}`}
+                            className="text-white hover:text-emerald-400 transition-colors"
+                          >
+                            {contact.email}
+                          </a>
+                        </div>
+                      </li>
+
+                      {/* Phone */}
+                      <li className="flex items-center">
+                        <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3 flex-shrink-0">
+                          <FaPhone className="text-emerald-500 text-sm" />
+                        </div>
+                        <div className="flex-1">
+                          <a 
+                            href={`tel:${contact.phone.replace(/\D/g, '')}`}
+                            className="text-white hover:text-emerald-400 transition-colors"
+                          >
+                            {contact.phone}
+                          </a>
+                        </div>
+                      </li>
+
+                      {/* Location */}
+                      <li className="flex items-start">
+                        <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                          <FaMapMarkerAlt className="text-emerald-500 text-sm" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-gray-300 text-sm leading-relaxed">
+                            {contact.location}
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
 
             {/* Response Times */}
-            <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6">
-              <h4 className="text-lg font-semibold text-white mb-6">
+            <div className="mt-8 bg-gray-900 border-2 border-gray-800 rounded-2xl p-6">
+              <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-3">
+                <FaClock className="text-emerald-500" />
                 Response Times
               </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 border border-white/10 rounded-lg bg-white/5">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
-                    <FaEnvelope className="text-white text-sm" />
+              <ul className="grid grid-cols-2 gap-4">
+                <li className="text-center p-4 border-2 border-gray-800 rounded-2xl bg-gray-800/50">
+                  <div className="w-10 h-10 rounded-full bg-emerald-900/30 flex items-center justify-center mx-auto mb-3">
+                    <FaEnvelope className="text-emerald-500 text-sm" />
                   </div>
-                  <p className="text-xs text-white/70 mb-1">Email Response</p>
+                  <p className="text-xs text-gray-400 mb-1">Email Response</p>
                   <p className="text-sm font-semibold text-white">24-48 Hours</p>
-                </div>
-                <div className="text-center p-4 border border-white/10 rounded-lg bg-white/5">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
-                    <FaPhone className="text-white text-sm" />
+                </li>
+                <li className="text-center p-4 border-2 border-gray-800 rounded-2xl bg-gray-800/50">
+                  <div className="w-10 h-10 rounded-full bg-emerald-900/30 flex items-center justify-center mx-auto mb-3">
+                    <FaPhone className="text-emerald-500 text-sm" />
                   </div>
-                  <p className="text-xs text-white/70 mb-1">Phone Response</p>
+                  <p className="text-xs text-gray-400 mb-1">Phone Response</p>
                   <p className="text-sm font-semibold text-white">2-4 Hours</p>
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
           </div>
 
-          {/* Right Column - Contact Form */}
-          <div>
-            <div className="bg-white rounded-2xl p-8">
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-[#0F172A] mb-4">
-                  Send Us a Message
-                </h2>
-                <p className="text-[#475569]">
-                  Fill out the form below and our team will get back to you within 24 hours.
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name Field */}
-                <div>
-                  <label className="block text-[#475569] text-sm font-medium mb-2" htmlFor="name">
-                    Your Name
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                      <FaUser className="text-[#64748B] text-sm" />
-                    </div>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-[#1FB6A6] focus:ring-2 focus:ring-[#1FB6A6]/20 focus:outline-none transition-all duration-300 bg-white text-[#0F172A]"
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <label className="block text-[#475569] text-sm font-medium mb-2" htmlFor="email">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                      <FaEnvelope className="text-[#64748B] text-sm" />
-                    </div>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-[#1FB6A6] focus:ring-2 focus:ring-[#1FB6A6]/20 focus:outline-none transition-all duration-300 bg-white text-[#0F172A]"
-                      placeholder="Enter your email address"
-                    />
-                  </div>
-                </div>
-
-                {/* Subject Field */}
-                <div>
-                  <label className="block text-[#475569] text-sm font-medium mb-2" htmlFor="subject">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-[#1FB6A6] focus:ring-2 focus:ring-[#1FB6A6]/20 focus:outline-none transition-all duration-300 bg-white text-[#0F172A]"
-                    placeholder="What is this regarding?"
-                  />
-                </div>
-
-                {/* Message Field */}
-                <div>
-                  <label className="block text-[#475569] text-sm font-medium mb-2" htmlFor="message">
-                    Your Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-[#1FB6A6] focus:ring-2 focus:ring-[#1FB6A6]/20 focus:outline-none transition-all duration-300 bg-white text-[#0F172A] resize-none"
-                    placeholder="Please provide details about your inquiry..."
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    className="w-full py-4 px-6 bg-white text-[#064E3B] font-semibold rounded-lg hover:bg-gray-50 hover:shadow-xl transition-all duration-300 flex items-center justify-center text-base shadow-md"
-                  >
-                    <FaPaperPlane className="mr-3 text-base" />
-                    Send Message
-                    <FaArrowRight className="ml-3 text-sm" />
-                  </button>
-                </div>
-
-                {/* Privacy Notice */}
-                <div>
-                  <p className="text-[#64748B] text-xs text-center leading-relaxed">
-                    By submitting this form, you agree to our{" "}
-                    <a href="#" className="text-[#064E3B] hover:underline font-medium">
-                      Privacy Policy
-                    </a>
-                    . We will never share your information with third parties.
+          {/* Right Column - Contact Form & Info Card */}
+          <div className="space-y-8">
+            {/* Contact Form */}
+            <div ref={formRef}>
+              <div className="bg-gray-900 border-2 border-gray-800 rounded-2xl p-6 md:p-8">
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-white mb-4">
+                    Send Us a Message
+                  </h2>
+                  <p className="text-gray-400">
+                    Fill out the form below and our team will get back to you within 24 hours.
                   </p>
                 </div>
-              </form>
 
-              {/* Additional CTA */}
-              <div className="mt-10 pt-8 border-t border-gray-200">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#064E3B]/10 flex items-center justify-center">
-                      <FaGraduationCap className="text-[#064E3B] text-lg" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#0F172A]">Schedule a Campus Tour</p>
-                      <p className="text-xs text-[#64748B]">Experience our campus firsthand</p>
-                    </div>
-                  </div>
-                  <button className="px-6 py-3 bg-[#064E3B] text-white font-medium rounded-lg hover:bg-[#04332A] transition-colors shadow-sm">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Additional Info Section */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6">
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
-              <FaMapMarkerAlt className="text-white" />
-              Campus Locations
-            </h4>
-            <div className="space-y-3">
-              {contacts.map((contact, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-white mt-2 flex-shrink-0"></div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name Field */}
                   <div>
-                    <p className="text-sm font-medium text-white">{contact.title}</p>
-                    <p className="text-xs text-white/70">{contact.location}</p>
+                    <label className="block text-gray-400 text-sm font-medium mb-2" htmlFor="name">
+                      Your Name
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <FaUser className="text-gray-500 text-sm" />
+                      </div>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all duration-300"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email Field */}
+                  <div>
+                    <label className="block text-gray-400 text-sm font-medium mb-2" htmlFor="email">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <FaEnvelope className="text-gray-500 text-sm" />
+                      </div>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all duration-300"
+                        placeholder="Enter your email address"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Subject Field */}
+                  <div>
+                    <label className="block text-gray-400 text-sm font-medium mb-2" htmlFor="subject">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all duration-300"
+                      placeholder="What is this regarding?"
+                    />
+                  </div>
+
+                  {/* Message Field */}
+                  <div>
+                    <label className="block text-gray-400 text-sm font-medium mb-2" htmlFor="message">
+                      Your Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all duration-300 resize-none"
+                      placeholder="Please provide details about your inquiry..."
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full py-4 px-6 bg-emerald-600 text-white font-semibold rounded-2xl hover:bg-emerald-700 hover:shadow-xl transition-all duration-300 flex items-center justify-center text-base shadow-md"
+                    >
+                      <FaPaperPlane className="mr-3 text-base" />
+                      Send Message
+                      <FaArrowRight className="ml-3 text-sm" />
+                    </button>
+                  </div>
+
+                  {/* Privacy Notice */}
+                  <div>
+                    <p className="text-gray-500 text-xs text-center leading-relaxed">
+                      By submitting this form, you agree to our{" "}
+                      <a href="#" className="text-emerald-500 hover:underline font-medium">
+                        Privacy Policy
+                      </a>
+                      . We will never share your information with third parties.
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Information Section with Lists */}
+            <div ref={infoCardRef}>
+              <div className="bg-gray-900 border-2 border-gray-800 rounded-2xl p-6 md:p-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Campus Locations */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                      <FaMapMarkerAlt className="text-emerald-500" />
+                      Campus Locations
+                    </h4>
+                    <ol className="space-y-4">
+                      {contacts.map((contact, index) => (
+                        <li key={index} className="pb-4 border-b border-gray-800 last:border-0 last:pb-0">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div className="w-6 h-6 rounded-full bg-emerald-900/30 flex items-center justify-center flex-shrink-0 mt-1">
+                              <span className="text-xs font-semibold text-emerald-500">{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-white">{contact.title}</p>
+                              <p className="text-xs text-gray-400 mt-1">{contact.location}</p>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  {/* Office Hours & Quick Links */}
+                  <div className="space-y-6">
+                    {/* Office Hours */}
+                    <div>
+                      <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                        <FaClock className="text-emerald-500" />
+                        Office Hours
+                      </h4>
+                      <ul className="space-y-3">
+                        {officeHours.map((hour, index) => (
+                          <li key={index} className="flex justify-between items-center py-2 border-b border-gray-800 last:border-0">
+                            <span className="text-sm text-gray-400">{hour.day}</span>
+                            <span className="text-sm font-medium text-white">{hour.time}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6">
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
-              <FaClock className="text-white" />
-              Office Hours
-            </h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/80">Monday - Friday</span>
-                <span className="text-sm font-medium text-white">8:00 AM - 6:00 PM</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/80">Saturday</span>
-                <span className="text-sm font-medium text-white">9:00 AM - 2:00 PM</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/80">Sunday</span>
-                <span className="text-sm font-medium text-white">Closed</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6">
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
-              <FaBookOpen className="text-white" />
-              Quick Links
-            </h4>
-            <div className="space-y-2">
-              {[
-                { label: "Download Brochure", href: "#" },
-                { label: "Academic Calendar", href: "#" },
-                { label: "Faculty Directory", href: "#" },
-                { label: "Virtual Tour", href: "#" },
-              ].map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  className="flex items-center justify-between text-white/90 hover:text-white transition-colors py-2 border-b border-white/10 last:border-0"
-                >
-                  <span>{link.label}</span>
-                  <FaArrowRight className="text-xs" />
-                </a>
-              ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Custom Styles */}
+      <style jsx global>{`
+        /* Smooth transitions for form inputs */
+        input, textarea {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom scrollbar styling */
+        textarea::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        textarea::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+        
+        textarea::-webkit-scrollbar-thumb {
+          background: #059669;
+          border-radius: 10px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+          .section-title h1 {
+            font-size: 1.75rem;
+          }
+          
+          input, textarea {
+            font-size: 14px;
+          }
+        }
+      `}</style>
     </section>
   );
 };

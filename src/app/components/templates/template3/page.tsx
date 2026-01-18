@@ -4,8 +4,9 @@ import React, { useEffect } from "react";
 
 import { Navbar } from "./sections/Navbar";
 import  { HeroSection } from "./sections/Hero";
-import { About } from "./sections/About";
+
 import { Footer } from "./sections/Footer";
+import About from "./sections/About";
 
 const Template3: React.FC = () => {
   useEffect(() => {
@@ -24,6 +25,7 @@ const Template3: React.FC = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       <Navbar />
+    
       <HeroSection/>
       <About />
       {/* <CertificatesSection /> */}

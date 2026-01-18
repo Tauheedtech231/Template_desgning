@@ -5,14 +5,12 @@ import {
   FaMapMarkerAlt, 
   FaPhone, 
   FaEnvelope, 
-  FaClock,
   FaArrowUp,
   FaChevronRight,
-  FaExternalLinkAlt,
+  FaCalendarAlt,
   FaBookOpen,
-  FaUserGraduate,
   FaChalkboardTeacher,
-  FaCalendarAlt
+  FaUserGraduate
 } from "react-icons/fa";
 
 export const Footer: React.FC = () => {
@@ -26,6 +24,32 @@ export const Footer: React.FC = () => {
     });
   };
 
+  const mobileContactInfo = [
+    {
+      icon: <FaMapMarkerAlt />,
+      title: "Location",
+      details: ["123 Education Street", "Academic District"]
+    },
+    {
+      icon: <FaPhone />,
+      title: "Phone",
+      details: ["+1 (555) 123-4567"]
+    },
+    {
+      icon: <FaEnvelope />,
+      title: "Email",
+      details: ["admissions@college.edu"]
+    }
+  ];
+
+  const mobilePrograms = [
+    "FSc Pre-Engineering",
+    "FSc Pre-Medical",
+    "ICS",
+    "I.Com"
+  ];
+
+  // Desktop data (unchanged)
   const contactInfo = [
     {
       icon: <FaMapMarkerAlt />,
@@ -41,11 +65,6 @@ export const Footer: React.FC = () => {
       icon: <FaEnvelope />,
       title: "Email Addresses",
       details: ["admissions@college.edu", "info@college.edu", "support@college.edu"]
-    },
-    {
-      icon: <FaClock />,
-      title: "Office Hours",
-      details: ["Monday - Friday: 8:00 AM - 6:00 PM", "Saturday: 9:00 AM - 2:00 PM", "Sunday: Closed"]
     }
   ];
 
@@ -53,20 +72,18 @@ export const Footer: React.FC = () => {
     { label: "Home", href: "/" },
     { label: "About Us", href: "/components/templates/template3/about" },
     { label: "Programs", href: "/components/templates/template3/courses" },
-    { label: "Faculty", href: "/components/templates/template3/faculty" },
-  
     { label: "Contact", href: "/components/templates/template3/contact" }
   ];
 
   const programs = [
-    "Computer Science",
-    "Business Administration",
-    "Engineering",
-    "Health Sciences",
-    "Arts & Humanities",
-    "Social Sciences",
-    "Law Studies",
-    "Research Programs"
+    "FSc Pre-Engineering",
+    "FSc Pre-Medical",
+    "ICS (Computer Science)",
+    "ICS (Statistics)",
+    "I.Com (Commerce)",
+    "FA (Humanities)",
+    "FA (General Arts)",
+    "FSc General Science"
   ];
 
   const accreditation = [
@@ -85,7 +102,7 @@ export const Footer: React.FC = () => {
 
         .footer-link-item:hover {
           transform: translateX(5px);
-          color: #064E3B !important;
+          color: #10B981 !important;
         }
 
         .footer-link-item:hover .footer-link-chevron {
@@ -95,8 +112,8 @@ export const Footer: React.FC = () => {
 
         /* Contact item hover */
         .contact-item:hover .contact-icon-container {
-          background-color: #064E3B;
-          border-color: #064E3B;
+          background-color: #10B981;
+          border-color: #10B981;
         }
 
         .contact-item:hover .contact-icon {
@@ -104,7 +121,7 @@ export const Footer: React.FC = () => {
         }
 
         .contact-item:hover .contact-title {
-          color: #064E3B;
+          color: #10B981;
         }
 
         /* Program item hover */
@@ -113,64 +130,118 @@ export const Footer: React.FC = () => {
         }
 
         .program-item:hover .program-text {
-          color: #064E3B;
+          color: #10B981;
         }
 
         .program-item:hover .program-dot {
-          background-color: #064E3B;
+          background-color: #10B981;
         }
 
         /* Back to top button */
         .back-to-top:hover {
-          background-color: #04332A;
+          background-color: #0EA271;
           transform: scale(1.05);
-        }
-
-        /* Legal links hover */
-        .legal-link:hover {
-          color: #064E3B !important;
         }
       `}</style>
       
       <footer 
         ref={footerRef} 
-        className="relative bg-[#0F172A] text-white"
+        className="relative bg-white text-gray-800"
       >
         {/* Top Divider Line */}
-        <div className="h-px bg-[#334155] w-full"></div>
+        <div className="h-px bg-gray-200 w-full"></div>
 
         {/* Main Footer Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 md:py-8 lg:py-12">
+          {/* Mobile View - 2 Columns (Programs & Contact Only) */}
+          <div className="md:hidden">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Column 1: Programs */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+                  Programs
+                </h3>
+                <ul className="space-y-2">
+                  {mobilePrograms.map((program, index) => (
+                    <li key={index} className="program-item">
+                      <div className="flex items-center py-1">
+                        <div className="program-dot w-1 h-1 bg-gray-400 rounded-full mr-2 flex-shrink-0 transition-all duration-300"></div>
+                        <span className="program-text text-xs text-gray-700 transition-colors duration-300 line-clamp-1">
+                          {program}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Column 2: Contact */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+                  Contact
+                </h3>
+                <div className="space-y-3">
+                  {mobileContactInfo.map((item, index) => (
+                    <div key={index} className="contact-item">
+                      <div className="flex items-start space-x-2">
+                        <div className="flex-shrink-0 pt-0.5">
+                          <div className="contact-icon-container w-6 h-6 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
+                            <div className="contact-icon text-[#10B981] text-[10px]">
+                              {item.icon}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="contact-title text-xs font-semibold text-gray-900 mb-0.5 transition-colors duration-300">
+                            {item.title}
+                          </h4>
+                          <div className="space-y-0.5">
+                            {item.details.map((detail, idx) => (
+                              <p key={idx} className="text-[10px] text-gray-600 leading-tight">
+                                {detail}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop View - Full 4 Columns */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Column 1: Brand & Description */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-[#064E3B] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">E</span>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#10B981] to-[#34D399] rounded-lg flex items-center justify-center shadow-md">
+                  <span className="text-white font-bold text-lg">E</span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-xl font-bold text-gray-900">
                     Excel College
                   </h2>
-                  <p className="text-sm text-[#CBD5E1]">of Professional Studies</p>
+                  <p className="text-xs text-gray-600">of Professional Studies</p>
                 </div>
               </div>
               
-              <p className="text-[#CBD5E1] text-sm leading-relaxed">
+              <p className="text-gray-600 text-xs leading-relaxed">
                 A premier educational institution committed to delivering quality education, 
                 professional development, and career-focused programs since 2005.
               </p>
 
               {/* Accreditation */}
-              <div className="pt-6 border-t border-[#334155]">
-                <p className="text-[#CBD5E1] text-sm mb-3 font-medium">Accreditation</p>
-                <div className="space-y-2">
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-gray-700 text-xs mb-2 font-medium">Accreditation</p>
+                <div className="space-y-1">
                   {accreditation.map((item, index) => (
                     <div 
                       key={index}
-                      className="flex items-center gap-2 text-[#CBD5E1] text-sm"
+                      className="flex items-center gap-2 text-gray-600 text-xs"
                     >
-                      <div className="text-[#064E3B]">
+                      <div className="text-[#10B981]">
                         {item.icon}
                       </div>
                       <span>{item.name}</span>
@@ -182,18 +253,20 @@ export const Footer: React.FC = () => {
 
             {/* Column 2: Quick Links */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-[#334155]">
+              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 Quick Navigation
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
                     <a
                       href={link.href}
-                      className="footer-link-item flex items-center group relative py-2"
+                      className="footer-link-item flex items-center group relative py-1"
                     >
-                      <FaChevronRight className="w-3 h-3 text-[#064E3B] opacity-0 group-hover:opacity-100 mr-2 footer-link-chevron transition-all duration-300" />
-                      <span className="text-sm text-[#CBD5E1] font-medium">{link.label}</span>
+                      <FaChevronRight className="w-2.5 h-2.5 text-[#10B981] opacity-0 group-hover:opacity-100 mr-1.5 footer-link-chevron transition-all duration-300" />
+                      <span className="text-sm text-gray-700 font-medium group-hover:text-[#10B981] transition-colors duration-300">
+                        {link.label}
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -202,15 +275,15 @@ export const Footer: React.FC = () => {
 
             {/* Column 3: Programs */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-[#334155]">
+              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 Academic Programs
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {programs.map((program, index) => (
                   <li key={index} className="program-item">
-                    <div className="flex items-center py-2">
-                      <div className="program-dot w-1.5 h-1.5 bg-[#334155] rounded-full mr-3 flex-shrink-0 transition-all duration-300"></div>
-                      <span className="program-text text-sm text-[#CBD5E1] transition-colors duration-300">
+                    <div className="flex items-center py-1">
+                      <div className="program-dot w-1.5 h-1.5 bg-gray-400 rounded-full mr-2.5 flex-shrink-0 transition-all duration-300"></div>
+                      <span className="program-text text-sm text-gray-700 transition-colors duration-300">
                         {program}
                       </span>
                     </div>
@@ -221,27 +294,27 @@ export const Footer: React.FC = () => {
 
             {/* Column 4: Contact Info */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-[#334155]">
+              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 Contact Information
               </h3>
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {contactInfo.map((item, index) => (
                   <div key={index} className="contact-item">
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-start space-x-2.5">
                       <div className="flex-shrink-0">
-                        <div className="contact-icon-container w-9 h-9 rounded-lg bg-[#1E293B] border border-[#334155] flex items-center justify-center transition-all duration-300">
-                          <div className="contact-icon text-[#064E3B] text-sm">
+                        <div className="contact-icon-container w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
+                          <div className="contact-icon text-[#10B981] text-xs">
                             {item.icon}
                           </div>
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="contact-title text-sm font-semibold text-white mb-1.5 transition-colors duration-300">
+                        <h4 className="contact-title text-sm font-semibold text-gray-900 mb-1 transition-colors duration-300">
                           {item.title}
                         </h4>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           {item.details.map((detail, idx) => (
-                            <p key={idx} className="text-xs text-[#CBD5E1] leading-relaxed">
+                            <p key={idx} className="text-xs text-gray-600 leading-relaxed">
                               {detail}
                             </p>
                           ))}
@@ -254,39 +327,36 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="mt-12 pt-8 border-t border-[#334155]">
-  <div className="flex flex-col items-center justify-center space-y-5">
-    
-    {/* Copyright & Info */}
-    <div className="text-center space-y-2">
-      <div className="flex items-center gap-2 justify-center">
-        <FaCalendarAlt className="text-[#064E3B] text-sm" />
-        <p className="text-[#CBD5E1] text-sm">
-          &copy; {currentYear} Excel College of Professional Studies. All rights reserved.
-        </p>
-      </div>
-      <p className="text-[#64748B] text-xs">
-        Accredited Educational Institution | Est. 2005
-      </p>
-    </div>
+          {/* Bottom Bar - For All Screens */}
+          <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
+            <div className="flex flex-col items-center justify-center space-y-3">
+              {/* Copyright & Info */}
+              <div className="text-center space-y-1">
+                <div className="flex items-center gap-1 justify-center">
+                  <FaCalendarAlt className="text-[#10B981] text-[10px] md:text-xs" />
+                  <p className="text-gray-600 text-[10px] md:text-xs">
+                    &copy; {currentYear} Excel College. All rights reserved.
+                  </p>
+                </div>
+                <p className="text-gray-500 text-[9px] md:text-[10px]">
+                  Accredited Educational Institution | Est. 2005
+                </p>
+              </div>
 
-    {/* Back to Top Button */}
-    <button
-      onClick={scrollToTop}
-      className="back-to-top w-10 h-10 rounded-lg bg-[#064E3B] flex items-center justify-center text-white transition-all duration-300"
-      aria-label="Back to top"
-    >
-      <FaArrowUp className="text-sm" />
-    </button>
-
-  </div>
-</div>
-
+              {/* Back to Top Button */}
+              <button
+                onClick={scrollToTop}
+                className="back-to-top w-7 h-7 md:w-8 md:h-8 rounded-md bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center text-white shadow transition-all duration-300"
+                aria-label="Back to top"
+              >
+                <FaArrowUp className="text-[10px] md:text-xs" />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Footer Bottom */}
-        <div className="h-px bg-[#334155] w-full"></div>
+        <div className="h-px bg-gray-200 w-full"></div>
       </footer>
     </>
   );
