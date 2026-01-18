@@ -1,35 +1,40 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  FaBookOpen, 
-  FaUserGraduate, 
-  FaChalkboardTeacher, 
-  FaAward, 
-  FaCalendarAlt,
-  FaArrowRight
-} from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 
 // High quality education background images
 const BACKGROUND_IMAGES = [
   "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://plus.unsplash.com/premium_photo-1683887034491-f58b4c4fca72?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-"https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
 ];
 
-// Stats configuration for college
-const STATS_CONFIG = [
-  { value: 0, label: "Students Enrolled", icon: <FaUserGraduate />, suffix: "+", target: 15000, color: "#064E3B" },
-  { value: 0, label: "Expert Faculty", icon: <FaChalkboardTeacher />, suffix: "+", target: 500, color: "#0F172A" },
-  { value: 0, label: "Courses Offered", icon: <FaBookOpen />, suffix: "+", target: 200, color: "#064E3B" },
-  { value: 0, label: "Graduation Rate", icon: <FaAward />, suffix: "%", target: 95, color: "#0F172A" }
+// Different headings to cycle through
+const HEADINGS = [
+  {
+    firstLine: "Excel College",
+    secondLine: "of Professional Studies"
+  },
+  {
+    firstLine: "Transformative Learning",
+    secondLine: "for Future Leaders"
+  },
+  {
+    firstLine: "Excellence in",
+    secondLine: "Higher Education"
+  },
+  {
+    firstLine: "Building Careers",
+    secondLine: "Shaping Futures"
+  }
 ];
 
-// Background Sliding Animation Component - No blur, clear images
+// Background Sliding Animation Component - Clear images
 const BackgroundSlidingAnimation = () => {
   const [currentBgImageIndex, setCurrentBgImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -48,10 +53,10 @@ const BackgroundSlidingAnimation = () => {
 
   return (
     <div className="absolute inset-0 overflow-hidden z-0">
-      {/* Main Background - Solid color */}
-      <div className="absolute inset-0 bg-[#F1F5F9] z-0" />
+      {/* Main Background - Dark theme */}
+      <div className="absolute inset-0 bg-[#0B0F0E] z-0" />
       
-      {/* Current Image - No blur, clear */}
+      {/* Current Image - Clear with minimal overlay */}
       <motion.div
         key={`current-${currentBgImageIndex}`}
         initial={{ y: "0%", opacity: 1 }}
@@ -71,15 +76,17 @@ const BackgroundSlidingAnimation = () => {
           fill
           className="object-cover"
           sizes="100vw"
-          quality={95}
+          quality={100}
           priority={true}
-          style={{ filter: "brightness(1.1) saturate(1.05)" }}
+          style={{ 
+            filter: "brightness(0.85) contrast(1.05)"
+          }}
         />
-        {/* Very light overlay for text readability - minimal opacity */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F1F5F9]/20 via-transparent to-[#F1F5F9]/10" />
+        {/* Very subtle overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F0E]/40 via-transparent to-[#0B0F0E]/50" />
       </motion.div>
 
-      {/* Next Image - No blur, clear */}
+      {/* Next Image */}
       <motion.div
         key={`next-${(currentBgImageIndex + 1) % BACKGROUND_IMAGES.length}`}
         initial={{ y: "100%", opacity: 0 }}
@@ -99,368 +106,500 @@ const BackgroundSlidingAnimation = () => {
           fill
           className="object-cover"
           sizes="100vw"
-          quality={95}
-          style={{ filter: "brightness(1.1) saturate(1.05)" }}
+          quality={100}
+          style={{ 
+            filter: "brightness(0.85) contrast(1.05)"
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F1F5F9]/20 via-transparent to-[#F1F5F9]/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F0E]/40 via-transparent to-[#0B0F0E]/50" />
       </motion.div>
     </div>
   );
 };
 
-// Animated Tagline Component
-const AnimatedTagline = () => {
-  const taglines = [
-    "EXCELLENCE IN EDUCATION",
-    "BUILDING FUTURE LEADERS",
-    "INNOVATIVE LEARNING",
-    "GLOBAL STANDARDS"
-  ];
+// Enhanced Moving Description with better UX
+const MovingDescription = () => {
+  const [isMoving, setIsMoving] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const description = "For over two decades, we have been committed to delivering quality education with a focus on practical learning and career development. Empowering students to become leaders in their chosen fields.";
 
-  const [currentTagline, setCurrentTagline] = useState(0);
+  return (
+    <div 
+      className="relative overflow-hidden py-2"
+      onMouseEnter={() => {
+        setIsMoving(false);
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        setIsMoving(true);
+        setIsHovered(false);
+      }}
+    >
+      <motion.div
+        animate={isMoving ? {
+          x: [0, -200],
+        } : {
+          x: 0
+        }}
+        transition={isMoving ? {
+          x: {
+            duration: 25,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "linear"
+          }
+        } : {
+          x: {
+            duration: 0.4,
+            ease: "easeOut"
+          }
+        }}
+        className="flex whitespace-nowrap"
+      >
+        {/* Multiple copies for seamless looping */}
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="inline-flex items-center">
+            <motion.span
+              animate={{
+                color: isHovered ? "#ffffff" : "#E2E8F0"
+              }}
+              transition={{ duration: 0.3 }}
+              className="text-base md:text-lg font-medium mr-6"
+            >
+              {description}
+            </motion.span>
+            {/* Animated Separator */}
+            <motion.div
+              animate={{
+                width: isHovered ? "20px" : "10px",
+                backgroundColor: isHovered ? "#10B981" : "#10B981/50"
+              }}
+              transition={{ duration: 0.3 }}
+              className="h-0.5 rounded-full mr-6"
+            />
+          </div>
+        ))}
+      </motion.div>
+      
+      {/* Gradient fade on edges */}
+      <motion.div
+        animate={{ opacity: isMoving ? 1 : 0.3 }}
+        transition={{ duration: 0.3 }}
+        className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0B0F0E] to-transparent pointer-events-none"
+      />
+      <motion.div
+        animate={{ opacity: isMoving ? 1 : 0.3 }}
+        transition={{ duration: 0.3 }}
+        className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0B0F0E] to-transparent pointer-events-none"
+      />
+      
+      {/* Hover Indicator */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 border-y border-[#10B981]/20 pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTagline((prev) => (prev + 1) % taglines.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+// Premium Button with Enhanced UX
+const PremiumButton = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="inline-flex items-center gap-3 mb-8"
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration: 0.8,
+          ease: "easeOut",
+          delay: 0.8
+        }
+      }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <div className="h-px w-8 bg-[#064E3B]/50" />
-      
-      <div className="relative h-6 overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={currentTagline}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute left-0 right-0 text-[#064E3B] text-sm font-semibold tracking-[0.15em] uppercase"
-          >
-            {taglines[currentTagline]}
-          </motion.span>
+      <Link
+        href="/components/templates/template3/courses"
+        className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 text-white font-semibold rounded-full overflow-hidden"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onMouseDown={() => setIsClicked(true)}
+        onMouseUp={() => setIsClicked(false)}
+      >
+        {/* Animated Background Gradient */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: isHovered 
+              ? "linear-gradient(135deg, #10B981 0%, #0EA271 50%, #059669 100%)" 
+              : "linear-gradient(135deg, #10B981 0%, #0EA271 100%)"
+          }}
+          transition={{ duration: 0.4 }}
+        />
+        
+        {/* Shimmer Effect */}
+        <motion.div
+          className="absolute inset-0 opacity-0"
+          animate={{
+            opacity: isHovered ? [0, 0.3, 0] : 0,
+            x: isHovered ? ["-100%", "100%"] : "-100%"
+          }}
+          transition={{
+            opacity: { duration: 1.5, repeat: Infinity },
+            x: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+          }}
+          style={{
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)"
+          }}
+        />
+        
+        {/* Click Ripple Effect */}
+        <AnimatePresence>
+          {isClicked && (
+            <motion.div
+              className="absolute inset-0 bg-white/30 rounded-full"
+              initial={{ scale: 0, opacity: 1 }}
+              animate={{ scale: 2, opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+            />
+          )}
         </AnimatePresence>
-      </div>
-      
-      <div className="h-px w-8 bg-[#064E3B]/50" />
+        
+        {/* Glowing Border */}
+        <motion.div
+          className="absolute inset-0 rounded-full border-2"
+          animate={{
+            borderColor: isHovered ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.2)",
+            boxShadow: isHovered 
+              ? "0 0 20px rgba(16, 185, 129, 0.3)" 
+              : "0 0 10px rgba(16, 185, 129, 0.2)"
+          }}
+          transition={{ duration: 0.3 }}
+        />
+        
+        {/* Text Content */}
+        <motion.span
+          animate={{ 
+            x: isHovered ? -4 : 0,
+            textShadow: isHovered ? "0 2px 10px rgba(255,255,255,0.3)" : "none"
+          }}
+          transition={{ duration: 0.2 }}
+          className="relative z-10 text-base tracking-wide"
+        >
+          Explore Our Programs
+        </motion.span>
+        
+        {/* Animated Arrow */}
+        <motion.div
+          className="relative z-10"
+          animate={{
+            x: isHovered ? 6 : 0,
+            rotate: isHovered ? 0 : 0
+          }}
+          transition={{ 
+            x: { duration: 0.3, type: "spring", stiffness: 200 }
+          }}
+        >
+          <FaArrowRight className="h-4 w-4" />
+          
+          {/* Motion Trail */}
+          <AnimatePresence>
+            {isHovered && (
+              <>
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute top-1/2 -translate-y-1/2 h-0.5 bg-white/40 rounded-full"
+                    initial={{ width: 0, x: -6, opacity: 0 }}
+                    animate={{ 
+                      width: [0, 10, 0],
+                      x: [-6, -12],
+                      opacity: [0, 0.6, 0]
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      duration: 0.8,
+                      delay: i * 0.1,
+                      repeat: Infinity,
+                      repeatDelay: 1
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          </AnimatePresence>
+        </motion.div>
+        
+        {/* Floating Particles */}
+        <AnimatePresence>
+          {isHovered && (
+            <>
+              {[...Array(4)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-white/40 rounded-full"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{
+                    opacity: [0, 0.8, 0],
+                    scale: [0, 1, 0],
+                    y: [0, -20],
+                    x: Math.cos(i * 90 * (Math.PI / 180)) * 20
+                  }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{
+                    duration: 1.2,
+                    delay: i * 0.1,
+                    repeat: Infinity,
+                    repeatDelay: 0.5
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </AnimatePresence>
+      </Link>
     </motion.div>
   );
 };
 
-// Stat Item Component
-const StatItem = ({ 
-  stat, 
-  index, 
-  hasAnimated 
-}: { 
-  stat: typeof STATS_CONFIG[0] & { value: number }; 
-  index: number; 
-  hasAnimated: boolean 
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay: index * 0.2 }}
-    whileHover={{ y: -5 }}
-    className="relative group"
-  >
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 h-full">
-      {/* Icon */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: hasAnimated ? 1 : 0 }}
-        transition={{ delay: index * 0.3 + 0.5 }}
-        className="w-12 h-12 mb-4 rounded-lg bg-[#064E3B]/10 flex items-center justify-center"
-      >
-        <div className="text-[#064E3B] text-lg">
-          {stat.icon}
-        </div>
-      </motion.div>
-      
-      {/* Counter Value */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: index * 0.3 + 0.8 }}
-        className="mb-3"
-      >
-        <div className="text-3xl font-bold text-[#0F172A]">
-          {stat.value.toLocaleString()}
-          <span className="text-[#064E3B] ml-1">{stat.suffix}</span>
-        </div>
-      </motion.div>
-      
-      {/* Label */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: index * 0.3 + 1 }}
-      >
-        <div className="text-[#334155] font-medium">
-          {stat.label}
-        </div>
-      </motion.div>
-    </div>
-  </motion.div>
-);
+// Premium Dynamic Heading with Reduced Font Size
+const PremiumDynamicHeading = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-export const HeroSection: React.FC = () => {
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [animatedStats, setAnimatedStats] = useState(STATS_CONFIG);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % HEADINGS.length);
+        setIsAnimating(false);
+      }, 1200); // Match animation duration
+    }, 5000); // Slightly longer interval for better UX
 
-  // Animation function for counters
-  const animateCounter = useCallback((index: number, start: number, end: number, duration: number) => {
-    const startTime = performance.now();
-    
-    const updateCounter = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentValue = Math.floor(start + (end - start) * easeOutQuart);
-      
-      setAnimatedStats(prev => prev.map((stat, i) => 
-        i === index ? { ...stat, value: currentValue } : stat
-      ));
-      
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      } else {
-        setAnimatedStats(prev => prev.map((stat, i) => 
-          i === index ? { ...stat, value: end } : stat
-        ));
-      }
-    };
-    
-    requestAnimationFrame(updateCounter);
+    return () => clearInterval(interval);
   }, []);
 
-  // Intersection Observer for stats animation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated) {
-            setHasAnimated(true);
-            animatedStats.forEach((stat, index) => {
-              setTimeout(() => {
-                animateCounter(index, 0, stat.target, 2000);
-              }, index * 300);
-            });
-          }
-        });
-      },
-      { threshold: 0.2, rootMargin: "50px" }
-    );
-
-    const currentStatsRef = statsRef.current;
-    if (currentStatsRef) {
-      observer.observe(currentStatsRef);
-    }
-
-    return () => {
-      if (currentStatsRef) {
-        observer.unobserve(currentStatsRef);
-      }
-    };
-  }, [hasAnimated, animatedStats, animateCounter]);
+  const currentHeading = HEADINGS[currentIndex];
+  const nextHeading = HEADINGS[(currentIndex + 1) % HEADINGS.length];
 
   return (
+    <div className="relative h-60 w-full overflow-hidden">
+      {/* Current Heading - Elegant Exit */}
+      <motion.div
+        key={`current-${currentIndex}`}
+        initial={false}
+        animate={{
+          y: isAnimating ? -50 : 0,
+          opacity: isAnimating ? 0 : 1,
+          scale: isAnimating ? 0.92 : 1,
+          filter: isAnimating ? "blur(4px)" : "blur(0px)"
+        }}
+        transition={{
+          duration: 1.2,
+          ease: [0.22, 1, 0.36, 1], // Premium easing curve
+        }}
+        className="absolute inset-0 flex flex-col items-center justify-center"
+      >
+        <div className="text-center w-full">
+          <motion.h1
+            className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight"
+            animate={{ 
+              letterSpacing: isAnimating ? "0.02em" : "0em" 
+            }}
+            transition={{ duration: 1.2 }}
+          >
+            <div className="text-white mb-3">{currentHeading.firstLine}</div>
+            <motion.div
+              animate={{ scaleX: isAnimating ? 0.8 : 1 }}
+              transition={{ duration: 1.2 }}
+              className="h-[1.5px] w-56 mx-auto bg-gradient-to-r from-transparent via-white/60 to-transparent my-4"
+            />
+            <div className="relative">
+              <span className="text-white text-2xl md:text-3xl lg:text-4xl">
+                {currentHeading.secondLine.split(' ')[0]} 
+              </span>
+              <span className="bg-gradient-to-r from-black via-gray-900 to-black bg-clip-text text-transparent ml-2 text-2xl md:text-3xl lg:text-4xl">
+                {currentHeading.secondLine.split(' ').slice(1).join(' ')}
+              </span>
+            </div>
+          </motion.h1>
+        </div>
+      </motion.div>
+
+      {/* Next Heading - Premium Entrance */}
+      <motion.div
+        key={`next-${(currentIndex + 1) % HEADINGS.length}`}
+        initial={false}
+        animate={{
+          x: isAnimating ? 0 : 80,
+          opacity: isAnimating ? 1 : 0,
+          scale: isAnimating ? 1 : 0.92,
+          filter: isAnimating ? "blur(0px)" : "blur(4px)"
+        }}
+        transition={{
+          duration: 1.2,
+          ease: [0.22, 1, 0.36, 1], // Same premium easing
+          delay: 0.1,
+        }}
+        className="absolute inset-0 flex flex-col items-center justify-center"
+      >
+        <div className="text-center w-full">
+          <motion.h1
+            className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight"
+            animate={{ 
+              letterSpacing: isAnimating ? "0em" : "0.02em" 
+            }}
+            transition={{ duration: 1.2, delay: 0.1 }}
+          >
+            <div className="text-white mb-3">{nextHeading.firstLine}</div>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: isAnimating ? 1 : 0 }}
+              transition={{ duration: 1.2, delay: 0.2 }}
+              className="h-[1.5px] w-56 mx-auto bg-gradient-to-r from-transparent via-white/60 to-transparent my-4"
+            />
+            <div className="relative">
+              <span className="text-white text-2xl md:text-3xl lg:text-4xl">
+                {nextHeading.secondLine.split(' ')[0]} 
+              </span>
+              <span className="bg-gradient-to-r from-black via-gray-900 to-black bg-clip-text text-transparent ml-2 text-2xl md:text-3xl lg:text-4xl">
+                {nextHeading.secondLine.split(' ').slice(1).join(' ')}
+              </span>
+            </div>
+          </motion.h1>
+        </div>
+      </motion.div>
+      
+      {/* Premium Transition Overlay */}
+      <AnimatePresence>
+        {isAnimating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: [0, 0.1, 0],
+              background: [
+                "radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                "radial-gradient(circle at 70% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                "radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)"
+              ]
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0 pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+      
+      {/* Progress Indicator */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-0.5 overflow-hidden">
+        <motion.div
+          animate={{
+            scaleX: [0, 1, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="h-full bg-gradient-to-r from-transparent via-[#10B981] to-transparent"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const HeroSection: React.FC = () => {
+  return (
     <>
-      {/* Hero Section - Clear background */}
-      <section className="relative min-h-screen overflow-hidden">
-        {/* Background Animation with clear images */}
+      {/* Hero Section - Reduced Height */}
+      <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
+        {/* Background Animation with Clear Images */}
         <BackgroundSlidingAnimation />
         
-        {/* Content Overlay - Minimal for clear background */}
-        <div className="absolute inset-0 z-5">
-          {/* Very subtle gradient for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#F1F5F9]/10 via-transparent to-[#F1F5F9]/20" />
-        </div>
-
-        {/* Content Container */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
-          <div className="w-full">
+        {/* Content Container - Centered Everything */}
+        <div className="relative z-20 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+          {/* Premium Background Pattern */}
+          <div className="absolute inset-0 z-0 opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#10B981]/10 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
+          </div>
+          
+          {/* Centered Main Content */}
+          <div className="relative z-20 w-full max-w-4xl mx-auto text-center">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              className="max-w-3xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.5 }}
+              className="space-y-8"
             >
-              <div className="space-y-8">
-                {/* Tagline */}
-                <AnimatedTagline />
+              {/* Premium Dynamic Heading */}
+              <PremiumDynamicHeading />
 
-                {/* Main Title */}
-                <div className="space-y-4">
-                  <motion.h1
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#0F172A] leading-tight"
-                  >
-                    Excel College
-                    <br />
-                    <span className="text-[#064E3B]">of Professional Studies</span>
-                  </motion.h1>
+              {/* Enhanced Moving Description */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="pt-4"
+              >
+                <MovingDescription />
+              </motion.div>
 
-                  {/* Decorative Line */}
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 1, delay: 0.4 }}
-                    className="h-1 w-48 bg-gradient-to-r from-[#064E3B] to-[#064E3B]/50 rounded-full"
-                  />
-                </div>
-
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                  className="text-[#334155] text-lg md:text-xl leading-relaxed max-w-2xl"
-                >
-                  For over two decades, we have been committed to delivering quality education 
-                  with a focus on practical learning and career development. Empowering students 
-                  to become leaders in their chosen fields.
-                </motion.p>
-
-                {/* CTA Buttons */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-4 pt-8"
-                >
-                  <Link
-                    href="/components/templates/template3/courses"
-                    className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#064E3B] text-white font-semibold rounded-lg hover:bg-[#04332A] hover:shadow-xl transition-all duration-300 shadow-lg"
-                  >
-                    <span>Explore Our Programs</span>
-                    <FaArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
-                  </Link>
-                  
-                  <Link
-                    href="/components/templates/template3/contact"
-                    className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#064E3B] font-semibold rounded-lg border-2 border-[#064E3B] hover:bg-[#064E3B]/5 hover:shadow-lg transition-all duration-300"
-                  >
-                    <FaCalendarAlt className="h-5 w-5" />
-                    <span>Apply Now</span>
-                  </Link>
-                </motion.div>
-
-                {/* Quick Info */}
-              
-              </div>
+              {/* Premium Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="pt-8"
+              >
+                <PremiumButton />
+              </motion.div>
             </motion.div>
           </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
-        >
-         
-        </motion.div>
-      </section>
-
-      {/* Stats Section */}
-      <section ref={statsRef} className="bg-white py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
+          
+          {/* Subtle Scroll Indicator */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
           >
-            <div className="inline-flex items-center gap-4 mb-6">
-              <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#064E3B]" />
-              <div className="p-4 bg-[#064E3B]/10 rounded-xl">
-                <FaBookOpen className="h-8 w-8 text-[#064E3B]" />
-              </div>
-              <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#064E3B]" />
-            </div>
-            
-            <h2 className="text-[#0F172A] text-3xl md:text-4xl font-bold mb-4">
-              Excellence in Numbers
-            </h2>
-            <p className="text-[#334155] text-lg max-w-2xl mx-auto">
-              Our commitment to quality education reflected through achievements
-            </p>
-          </motion.div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {animatedStats.map((stat, index) => (
-              <StatItem 
-                key={index} 
-                stat={stat} 
-                index={index} 
-                hasAnimated={hasAnimated} 
+            <motion.div
+              animate={{ 
+                y: [0, 8, 0],
+                opacity: [0.6, 1, 0.6]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="flex flex-col items-center gap-1"
+            >
+              <div className="text-xs text-white/60 tracking-wider">SCROLL</div>
+              <motion.div
+                animate={{ 
+                  height: [6, 12, 6]
+                }}
+                transition={{ 
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="w-[1px] bg-gradient-to-b from-transparent via-[#10B981] to-transparent"
               />
-            ))}
-          </div>
-
-          {/* Additional Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="mt-16 bg-gradient-to-r from-[#F1F5F9] to-white rounded-2xl p-8 border border-gray-200"
-          >
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-[#0F172A] text-xl font-bold mb-4">Why Choose Us?</h3>
-                <ul className="space-y-3">
-                  {[
-                    "Industry-aligned curriculum",
-                    "Practical hands-on training",
-                    "Experienced faculty",
-                    "Modern facilities",
-                    "Career support services",
-                    "Global certifications"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-center gap-3 text-[#334155]">
-                      <div className="w-2 h-2 bg-[#064E3B] rounded-full" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[#0F172A] text-xl font-bold mb-4">Upcoming Events</h3>
-                <div className="space-y-4">
-                  {[
-                    { date: "Dec 15", title: "Open House", desc: "Campus Tour & Program Info" },
-                    { date: "Dec 20", title: "Career Fair", desc: "Meet Top Employers" },
-                    { date: "Jan 5", title: "Workshop", desc: "Skill Development Session" }
-                  ].map((event, index) => (
-                    <div key={index} className="flex items-start gap-4 p-3 hover:bg-white rounded-lg transition-colors">
-                      <div className="bg-[#064E3B]/10 rounded-lg p-3">
-                        <div className="text-[#064E3B] font-bold text-lg">{event.date}</div>
-                      </div>
-                      <div>
-                        <div className="text-[#0F172A] font-semibold">{event.title}</div>
-                        <div className="text-[#334155] text-sm">{event.desc}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
