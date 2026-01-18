@@ -155,7 +155,7 @@ export const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 md:py-8 lg:py-12">
           {/* Mobile View - 2 Columns (Programs & Contact Only) */}
           <div className="md:hidden">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               {/* Column 1: Programs */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
@@ -165,8 +165,8 @@ export const Footer: React.FC = () => {
                   {mobilePrograms.map((program, index) => (
                     <li key={index} className="program-item">
                       <div className="flex items-center py-1">
-                        <div className="program-dot w-1 h-1 bg-gray-400 rounded-full mr-2 flex-shrink-0 transition-all duration-300"></div>
-                        <span className="program-text text-xs text-gray-700 transition-colors duration-300 line-clamp-1">
+                        <div className="program-dot w-1.5 h-1.5 bg-gray-400 rounded-full mr-2.5 flex-shrink-0 transition-all duration-300"></div>
+                        <span className="program-text text-xs md:text-sm text-gray-700 transition-colors duration-300 line-clamp-1">
                           {program}
                         </span>
                       </div>
@@ -183,21 +183,21 @@ export const Footer: React.FC = () => {
                 <div className="space-y-3">
                   {mobileContactInfo.map((item, index) => (
                     <div key={index} className="contact-item">
-                      <div className="flex items-start space-x-2">
+                      <div className="flex items-start space-x-2.5">
                         <div className="flex-shrink-0 pt-0.5">
-                          <div className="contact-icon-container w-6 h-6 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
-                            <div className="contact-icon text-[#10B981] text-[10px]">
+                          <div className="contact-icon-container w-7 h-7 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
+                            <div className="contact-icon text-[#10B981] text-xs">
                               {item.icon}
                             </div>
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="contact-title text-xs font-semibold text-gray-900 mb-0.5 transition-colors duration-300">
+                          <h4 className="contact-title text-xs font-semibold text-gray-900 mb-1 transition-colors duration-300">
                             {item.title}
                           </h4>
                           <div className="space-y-0.5">
                             {item.details.map((detail, idx) => (
-                              <p key={idx} className="text-[10px] text-gray-600 leading-tight">
+                              <p key={idx} className="text-xs text-gray-600 leading-tight">
                                 {detail}
                               </p>
                             ))}
@@ -212,34 +212,34 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Desktop View - Full 4 Columns */}
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
             {/* Column 1: Brand & Description */}
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#10B981] to-[#34D399] rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-lg">E</span>
+                <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#34D399] rounded-lg flex items-center justify-center shadow-md">
+                  <span className="text-white font-bold text-xl">E</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-gray-900">
                     Excel College
                   </h2>
-                  <p className="text-xs text-gray-600">of Professional Studies</p>
+                  <p className="text-sm text-gray-600">of Professional Studies</p>
                 </div>
               </div>
               
-              <p className="text-gray-600 text-xs leading-relaxed">
+              <p className="text-gray-600 text-sm leading-relaxed">
                 A premier educational institution committed to delivering quality education, 
                 professional development, and career-focused programs since 2005.
               </p>
 
               {/* Accreditation */}
               <div className="pt-4 border-t border-gray-200">
-                <p className="text-gray-700 text-xs mb-2 font-medium">Accreditation</p>
-                <div className="space-y-1">
+                <p className="text-gray-700 text-sm mb-3 font-medium">Accreditation</p>
+                <div className="space-y-2">
                   {accreditation.map((item, index) => (
                     <div 
                       key={index}
-                      className="flex items-center gap-2 text-gray-600 text-xs"
+                      className="flex items-center gap-3 text-gray-600 text-sm"
                     >
                       <div className="text-[#10B981]">
                         {item.icon}
@@ -253,18 +253,18 @@ export const Footer: React.FC = () => {
 
             {/* Column 2: Quick Links */}
             <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-200">
                 Quick Navigation
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
                     <a
                       href={link.href}
-                      className="footer-link-item flex items-center group relative py-1"
+                      className="footer-link-item flex items-center group relative py-1.5"
                     >
-                      <FaChevronRight className="w-2.5 h-2.5 text-[#10B981] opacity-0 group-hover:opacity-100 mr-1.5 footer-link-chevron transition-all duration-300" />
-                      <span className="text-sm text-gray-700 font-medium group-hover:text-[#10B981] transition-colors duration-300">
+                      <FaChevronRight className="w-3 h-3 text-[#10B981] opacity-0 group-hover:opacity-100 mr-2 footer-link-chevron transition-all duration-300" />
+                      <span className="text-base text-gray-700 font-medium group-hover:text-[#10B981] transition-colors duration-300">
                         {link.label}
                       </span>
                     </a>
@@ -275,15 +275,15 @@ export const Footer: React.FC = () => {
 
             {/* Column 3: Programs */}
             <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-200">
                 Academic Programs
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {programs.map((program, index) => (
                   <li key={index} className="program-item">
-                    <div className="flex items-center py-1">
-                      <div className="program-dot w-1.5 h-1.5 bg-gray-400 rounded-full mr-2.5 flex-shrink-0 transition-all duration-300"></div>
-                      <span className="program-text text-sm text-gray-700 transition-colors duration-300">
+                    <div className="flex items-center py-1.5">
+                      <div className="program-dot w-2 h-2 bg-gray-400 rounded-full mr-3 flex-shrink-0 transition-all duration-300"></div>
+                      <span className="program-text text-base text-gray-700 transition-colors duration-300">
                         {program}
                       </span>
                     </div>
@@ -294,27 +294,27 @@ export const Footer: React.FC = () => {
 
             {/* Column 4: Contact Info */}
             <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-200">
                 Contact Information
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {contactInfo.map((item, index) => (
                   <div key={index} className="contact-item">
-                    <div className="flex items-start space-x-2.5">
+                    <div className="flex items-start space-x-3">
                       <div className="flex-shrink-0">
-                        <div className="contact-icon-container w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
-                          <div className="contact-icon text-[#10B981] text-xs">
+                        <div className="contact-icon-container w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center transition-all duration-300">
+                          <div className="contact-icon text-[#10B981] text-sm">
                             {item.icon}
                           </div>
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="contact-title text-sm font-semibold text-gray-900 mb-1 transition-colors duration-300">
+                        <h4 className="contact-title text-base font-semibold text-gray-900 mb-1.5 transition-colors duration-300">
                           {item.title}
                         </h4>
-                        <div className="space-y-0.5">
+                        <div className="space-y-1">
                           {item.details.map((detail, idx) => (
-                            <p key={idx} className="text-xs text-gray-600 leading-relaxed">
+                            <p key={idx} className="text-sm text-gray-600 leading-relaxed">
                               {detail}
                             </p>
                           ))}
@@ -328,17 +328,17 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Bottom Bar - For All Screens */}
-          <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
-            <div className="flex flex-col items-center justify-center space-y-3">
+          <div className="mt-6 md:mt-8 pt-5 md:pt-8 border-t border-gray-200">
+            <div className="flex flex-col items-center justify-center space-y-4">
               {/* Copyright & Info */}
-              <div className="text-center space-y-1">
-                <div className="flex items-center gap-1 justify-center">
-                  <FaCalendarAlt className="text-[#10B981] text-[10px] md:text-xs" />
-                  <p className="text-gray-600 text-[10px] md:text-xs">
+              <div className="text-center space-y-2">
+                <div className="flex items-center gap-2 justify-center">
+                  <FaCalendarAlt className="text-[#10B981] text-sm md:text-base" />
+                  <p className="text-gray-600 text-sm md:text-base">
                     &copy; {currentYear} Excel College. All rights reserved.
                   </p>
                 </div>
-                <p className="text-gray-500 text-[9px] md:text-[10px]">
+                <p className="text-gray-500 text-xs md:text-sm">
                   Accredited Educational Institution | Est. 2005
                 </p>
               </div>
@@ -346,10 +346,10 @@ export const Footer: React.FC = () => {
               {/* Back to Top Button */}
               <button
                 onClick={scrollToTop}
-                className="back-to-top w-7 h-7 md:w-8 md:h-8 rounded-md bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center text-white shadow transition-all duration-300"
+                className="back-to-top w-9 h-9 md:w-10 md:h-10 rounded-md bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center text-white shadow transition-all duration-300"
                 aria-label="Back to top"
               >
-                <FaArrowUp className="text-[10px] md:text-xs" />
+                <FaArrowUp className="text-sm" />
               </button>
             </div>
           </div>

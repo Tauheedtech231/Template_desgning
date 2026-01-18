@@ -12,7 +12,7 @@ interface NavSubItem {
 
 interface NavItem {
   name: string;
-  href?: string;
+  href: string; // Changed from optional to required
   showInMobilePrimary: boolean;
   subItems?: NavSubItem[];
 }
@@ -53,6 +53,7 @@ export const Navbar: React.FC = () => {
     },
     {
       name: "Courses",
+      href: "#", // Added a placeholder href
       showInMobilePrimary: false,
       subItems: [
         { name: "Commerce (Class 12)", href: "/components/templates/template3/courses" },
@@ -246,7 +247,7 @@ export const Navbar: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full">
           <div className="flex items-center justify-between h-full">
-            {/* Logo - Left Aligned with Rounded Design */}
+            {/* Logo - Mobile पर सिर्फ Logo, Desktop पर Logo + Text */}
             <motion.div 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -267,7 +268,9 @@ export const Navbar: React.FC = () => {
                   </motion.div>
                   <div className="absolute -inset-1 bg-gradient-to-r from-[#064E3B] to-[#065A46] rounded-full blur-sm opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 </div>
-                <div className="relative">
+                
+                {/* Desktop Text Only */}
+                <div className="relative hidden lg:block">
                   <span className="font-bold text-lg text-white/90 leading-tight block tracking-tight">
                     PROFESSIONAL
                   </span>
@@ -338,14 +341,14 @@ export const Navbar: React.FC = () => {
                     className="relative"
                   >
                     <Link
-                      href={item.href!}
+                      href={item.href}
                       className={`px-6 py-3 font-medium transition-all duration-300 rounded-full ${
                         item.name === "Get Started"
                           ? 'bg-gradient-to-r from-[#064E3B] to-[#065A46] text-white hover:from-[#10B981] hover:to-[#064E3B] shadow-lg hover:shadow-[#10B981]/20'
                           : 'text-white/90 hover:text-[#10B981] hover:bg-white/5'
                       }`}
                       onClick={() => {
-                        setActivePage(item.href!);
+                        setActivePage(item.href);
                         if (isMobile) setIsMenuOpen(false);
                       }}
                       onMouseEnter={() => setHoveredItem(item.name)}
@@ -377,7 +380,7 @@ export const Navbar: React.FC = () => {
               ))}
             </nav>
 
-            {/* Mobile Menu Button - Rounded */}
+            {/* Mobile Menu Button - Just Menu Button */}
             <div className="flex items-center lg:hidden">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -467,7 +470,7 @@ export const Navbar: React.FC = () => {
 
                   <button
                     onClick={() => setShowCoursesSidebar(false)}
-                    className="p-2 rounded-md hover:bg-white/5 transition"
+                    className="p-2 rounded-full hover:bg-white/5 transition"
                   >
                     <X className="h-5 w-5 text-white/70" />
                   </button>
@@ -535,7 +538,7 @@ export const Navbar: React.FC = () => {
                   <Link
                     href="/components/templates/template3/contact"
                     onClick={() => setShowCoursesSidebar(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-white/15 text-white font-medium hover:bg-white/5 transition"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-full border border-white/15 text-white font-medium hover:bg-white/5 transition"
                   >
                     Book Consultation
                     <ChevronRight className="h-4 w-4" />
@@ -547,7 +550,7 @@ export const Navbar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu - Smooth Sidebar from Left */}
+      {/* Mobile Menu - Clean Minimal Design */}
       <AnimatePresence>
         {isMenuOpen && isMobile && (
           <>
@@ -560,82 +563,81 @@ export const Navbar: React.FC = () => {
                 setIsMenuOpen(false);
                 setActiveDropdown(null);
               }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/50 z-40"
             />
 
-            {/* Sidebar from Left with Smooth Animation */}
+            {/* Sidebar - Clean Minimal */}
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ 
                 type: "tween",
-                duration: 0.4,
-                ease: [0.25, 0.46, 0.45, 0.94]
+                duration: 0.3,
+                ease: "easeOut"
               }}
-              className="menu-container fixed top-0 left-0 h-full w-80 bg-[#0B0F0E] shadow-2xl border-r border-white/10 z-[100] overflow-y-auto"
+              className="menu-container fixed top-0 left-0 h-full w-full max-w-sm bg-[#0B0F0E] z-[100] overflow-y-auto"
               style={{
-                borderTopRightRadius: '2rem',
-                borderBottomRightRadius: '2rem'
+                // No box shadow for clean look
+                boxShadow: "none"
               }}
             >
-              {/* Header with Rounded Logo */}
-              <div className="sticky top-0 bg-gradient-to-br from-[#064E3B] to-[#065A46] z-10 p-6"
-                style={{
-                  borderTopRightRadius: '2rem'
-                }}
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xl">P</span>
+              {/* Header with Simple Close Button */}
+              <div className="sticky top-0 bg-[#0B0F0E] z-10 p-6 border-b border-white/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#064E3B] to-[#065A46] rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">P</span>
                     </div>
                     <div>
-                      <div className="font-bold text-white text-base">PROFESSIONAL</div>
-                      <div className="text-xs text-white/80">EXCELLENCE</div>
+                      <div className="font-bold text-white text-xl">Professional</div>
+                      <div className="text-sm text-white/60 mt-0.5">Excellence College</div>
                     </div>
-                  </motion.div>
-                  <motion.button
-                    initial={{ rotate: -180 }}
-                    animate={{ rotate: 0 }}
-                    whileHover={{ rotate: 90 }}
+                  </div>
+                  
+                  <button
                     onClick={() => setIsMenuOpen(false)}
-                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    className="p-2 text-white/70 hover:text-white transition-colors"
                   >
-                    <X className="h-5 w-5 text-white" />
-                  </motion.button>
+                    <X className="h-6 w-6" />
+                  </button>
                 </div>
               </div>
 
-              {/* Menu Items with Staggered Animation */}
-              <div className="p-6">
+              {/* Clean Menu Items - No Shadows, Only Bottom Borders on Hover */}
+              <div className="p-6 pb-32">
                 <nav className="space-y-1">
                   {navItems.map((item, idx) => (
                     item.name === "Courses" ? (
-                      <motion.div 
-                        key={idx} 
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: idx * 0.05 + 0.1 }}
-                        className="mb-2"
-                      >
+                      <div key={item.name} className="border-b border-white/5 last:border-b-0">
                         <button
                           onClick={() => toggleMobileDropdown(item.name)}
-                          className="w-full flex items-center justify-between p-4 rounded-full hover:bg-white/5 transition-all duration-300"
+                          className="
+                            w-full text-left
+                            px-4 py-4
+                            font-medium text-white
+                            transition-colors duration-200
+                            relative
+                            group
+                          "
                         >
-                          <div className="text-left">
-                            <div className="font-semibold text-white/90">{item.name}</div>
+                          <div className="flex items-center justify-between">
+                            <span>{item.name}</span>
+                            <motion.div
+                              animate={{ rotate: activeDropdown === item.name ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronDown className="h-4 w-4 text-white/50" />
+                            </motion.div>
                           </div>
-                          <motion.div
-                            animate={{ rotate: activeDropdown === item.name ? 180 : 0 }}
-                          >
-                            <ChevronDown className="h-4 w-4 text-white/40" />
-                          </motion.div>
+                          
+                          {/* Hover Bottom Border */}
+                          <div className="
+                            absolute bottom-0 left-0 w-0 h-0.5 
+                            bg-gradient-to-r from-[#10B981] to-[#34D399]
+                            transition-all duration-200
+                            group-hover:w-full
+                          " />
                         </button>
 
                         <AnimatePresence>
@@ -644,90 +646,145 @@ export const Navbar: React.FC = () => {
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              className="mt-1 overflow-hidden"
+                              transition={{ duration: 0.25, ease: "easeOut" }}
+                              className="overflow-hidden"
                             >
-                              <div className="bg-white/5 rounded-xl p-2 space-y-1 ml-4">
-                                {navItems.find(i => i.name === "Courses")?.subItems?.map((sub, i) => (
-                                  <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.03 }}
+                              <div className="pb-2 pl-4">
+                                {item.subItems?.map(sub => (
+                                  <Link
+                                    key={sub.href}
+                                    href={sub.href}
+                                    onClick={() => {
+                                      setIsMenuOpen(false);
+                                      setActivePage(sub.href);
+                                      setActiveDropdown(null);
+                                    }}
+                                    className="
+                                      block
+                                      px-4 py-3
+                                      text-sm text-white/70
+                                      hover:text-white
+                                      transition-colors duration-200
+                                      relative
+                                      group
+                                    "
                                   >
-                                    <Link
-                                      href={sub.href}
-                                      onClick={() => {
-                                        setIsMenuOpen(false);
-                                        setActivePage(sub.href);
-                                        setActiveDropdown(null);
-                                      }}
-                                      className="flex items-center justify-between p-3 rounded-lg hover:bg-white/10 transition-all duration-300"
-                                    >
-                                      <div className="text-white/90 font-medium">{sub.name}</div>
-                                      <ChevronRight className="h-4 w-4 text-white/40" />
-                                    </Link>
-                                  </motion.div>
+                                    {sub.name}
+                                    {/* Hover Bottom Border for Sub Items */}
+                                    <div className="
+                                      absolute bottom-0 left-0 w-0 h-0.5 
+                                      bg-gradient-to-r from-[#10B981] to-[#34D399]
+                                      transition-all duration-200
+                                      group-hover:w-full
+                                    " />
+                                  </Link>
                                 ))}
                               </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </motion.div>
+                      </div>
                     ) : (
-                      <motion.div 
-                        key={idx} 
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: idx * 0.05 + 0.1 }}
-                        className="mb-2"
-                      >
-                        <Link
-                          href={item.href!}
-                          onClick={() => {
-                            setIsMenuOpen(false);
-                            setActivePage(item.href!);
-                          }}
-                          className={`w-full flex items-center justify-between p-4 rounded-full transition-all duration-300 ${
-                            item.name === "Get Started"
-                              ? 'bg-gradient-to-r from-[#064E3B] to-[#065A46] text-white hover:from-[#10B981] hover:to-[#064E3B]'
-                              : 'hover:bg-white/5 text-white/90 hover:text-[#10B981]'
-                          }`}
-                        >
-                          <div className="text-left">
-                            <div className="font-semibold">{item.name}</div>
-                          </div>
-                          <ChevronRight className="h-4 w-4 text-white/40" />
-                        </Link>
-                      </motion.div>
+                      <div key={item.name} className="border-b border-white/5 last:border-b-0">
+                        {item.name === "Get Started" ? (
+                          <Link
+                            href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="
+                              block mx-4 my-3
+                              px-6 py-3
+                              rounded-full
+                              font-medium text-white
+                              bg-gradient-to-r from-[#064E3B] to-[#065A46]
+                              hover:from-[#0F766E] hover:to-[#064E3B]
+                              transition-all duration-200
+                              text-center
+                            "
+                          >
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <Link
+                            href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="
+                              block
+                              px-4 py-4
+                              font-medium text-white
+                              transition-colors duration-200
+                              relative
+                              group
+                            "
+                          >
+                            {item.name}
+                            
+                            {/* Hover Bottom Border */}
+                            <div className="
+                              absolute bottom-0 left-0 w-0 h-0.5 
+                              bg-gradient-to-r from-[#10B981] to-[#34D399]
+                              transition-all duration-200
+                              group-hover:w-full
+                            " />
+                          </Link>
+                        )}
+                      </div>
                     )
                   ))}
                 </nav>
 
-                {/* Contact Info - Rounded */}
-                <motion.ul
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="mt-6 space-y-2"
-                >
-                  <h4 className="font-semibold text-white/90 mb-2 text-base">Contact Info</h4>
+                {/* Simple Contact Info */}
+                <div className="mt-12">
+                  <h4 className="font-medium text-white mb-4 text-lg pl-4">
+                    Contact Information
+                  </h4>
 
-                  {/* List Items */}
-                  <li className="flex items-center gap-2 text-white/70 text-sm">
-                    <span className="w-2 h-2 bg-[#10B981] rounded-full flex-shrink-0" />
-                    <span>Email: info@professional.com</span>
-                  </li>
-
-                  <li className="flex items-center gap-2 text-white/70 text-sm">
-                    <span className="w-2 h-2 bg-[#10B981] rounded-full flex-shrink-0" />
-                    <span>Phone: +1 (555) 123-4567</span>
-                  </li>
-
-                  <li className="flex items-center gap-2 text-white/50 text-xs">
-                    <span className="w-2 h-2 bg-[#10B981]/50 rounded-full flex-shrink-0" />
-                    <span>Working Hours: 9AM - 6PM (Mon-Fri)</span>
-                  </li>
-                </motion.ul>
+                  <ul className="space-y-4">
+                    <li className="flex items-start pl-4 group cursor-pointer">
+                      <div className="flex-shrink-0 w-2 h-2 mt-2 bg-[#10B981] rounded-full mr-3"></div>
+                      <div className="relative">
+                        <p className="text-white font-medium">Email Address</p>
+                        <p className="text-white/60 text-sm">info@professional.com</p>
+                        {/* Hover Bottom Border */}
+                        <div className="
+                          absolute bottom-0 left-0 w-0 h-0.5 
+                          bg-gradient-to-r from-[#10B981] to-[#34D399]
+                          transition-all duration-200
+                          group-hover:w-full
+                        " />
+                      </div>
+                    </li>
+                    
+                    <li className="flex items-start pl-4 group cursor-pointer">
+                      <div className="flex-shrink-0 w-2 h-2 mt-2 bg-[#10B981] rounded-full mr-3"></div>
+                      <div className="relative">
+                        <p className="text-white font-medium">Phone Number</p>
+                        <p className="text-white/60 text-sm">+1 (555) 123-4567</p>
+                        {/* Hover Bottom Border */}
+                        <div className="
+                          absolute bottom-0 left-0 w-0 h-0.5 
+                          bg-gradient-to-r from-[#10B981] to-[#34D399]
+                          transition-all duration-200
+                          group-hover:w-full
+                        " />
+                      </div>
+                    </li>
+                    
+                    <li className="flex items-start pl-4 group cursor-pointer">
+                      <div className="flex-shrink-0 w-2 h-2 mt-2 bg-[#10B981] rounded-full mr-3"></div>
+                      <div className="relative">
+                        <p className="text-white font-medium">Working Hours</p>
+                        <p className="text-white/60 text-sm">9:00 AM - 6:00 PM (Mon-Fri)</p>
+                        {/* Hover Bottom Border */}
+                        <div className="
+                          absolute bottom-0 left-0 w-0 h-0.5 
+                          bg-gradient-to-r from-[#10B981] to-[#34D399]
+                          transition-all duration-200
+                          group-hover:w-full
+                        " />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </motion.div>
           </>
