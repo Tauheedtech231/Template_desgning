@@ -225,33 +225,33 @@ const PremiumButton = () => {
           delay: 0.6
         }
       }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
     >
       <Link
         href="/components/templates/template3/courses"
-        className="group relative inline-flex items-center justify-center gap-2 px-8 py-3 text-white font-semibold rounded-full overflow-hidden"
+        className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 text-white font-bold rounded-full overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
       >
-        {/* Animated Background Gradient */}
+        {/* Animated Background Gradient - Enhanced Green Gradient */}
         <motion.div
           className="absolute inset-0"
           animate={{
             background: isHovered 
-              ? "linear-gradient(135deg, #10B981 0%, #0EA271 50%, #059669 100%)" 
-              : "linear-gradient(135deg, #10B981 0%, #0EA271 100%)"
+              ? "linear-gradient(135deg, #10B981 0%, #059669 25%, #047857 50%, #065F46 75%, #064E3B 100%)" 
+              : "linear-gradient(135deg, #10B981 0%, #059669 50%, #065F46 100%)"
           }}
           transition={{ duration: 0.4 }}
         />
         
-        {/* Shimmer Effect */}
+        {/* Enhanced Shimmer Effect */}
         <motion.div
           className="absolute inset-0 opacity-0"
           animate={{
-            opacity: isHovered ? [0, 0.3, 0] : 0,
+            opacity: isHovered ? [0, 0.4, 0] : 0,
             x: isHovered ? ["-100%", "100%"] : "-100%"
           }}
           transition={{
@@ -259,7 +259,7 @@ const PremiumButton = () => {
             x: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
           }}
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)"
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)"
           }}
         />
         
@@ -267,35 +267,35 @@ const PremiumButton = () => {
         <AnimatePresence>
           {isClicked && (
             <motion.div
-              className="absolute inset-0 bg-white/30 rounded-full"
+              className="absolute inset-0 bg-white/40 rounded-full"
               initial={{ scale: 0, opacity: 1 }}
-              animate={{ scale: 2, opacity: 0 }}
+              animate={{ scale: 2.5, opacity: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.6 }}
             />
           )}
         </AnimatePresence>
         
-        {/* Glowing Border */}
+        {/* Enhanced Glowing Border */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2"
+          className="absolute inset-0 rounded-full border-3"
           animate={{
-            borderColor: isHovered ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.2)",
+            borderColor: isHovered ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.3)",
             boxShadow: isHovered 
-              ? "0 0 15px rgba(16, 185, 129, 0.3)" 
-              : "0 0 8px rgba(16, 185, 129, 0.2)"
+              ? "0 0 20px rgba(16, 185, 129, 0.5), 0 0 40px rgba(5, 150, 105, 0.3)" 
+              : "0 0 12px rgba(16, 185, 129, 0.4), 0 0 25px rgba(5, 150, 105, 0.2)"
           }}
           transition={{ duration: 0.3 }}
         />
         
-        {/* Text Content */}
+        {/* Text Content with Increased Font Size */}
         <motion.span
           animate={{ 
-            x: isHovered ? -4 : 0,
-            textShadow: isHovered ? "0 2px 8px rgba(255,255,255,0.3)" : "none"
+            x: isHovered ? -5 : 0,
+            textShadow: isHovered ? "0 2px 12px rgba(255,255,255,0.4)" : "0 2px 4px rgba(0,0,0,0.2)"
           }}
           transition={{ duration: 0.2 }}
-          className="relative z-10 text-sm tracking-wide"
+          className="relative z-10 text-base md:text-lg tracking-wider font-extrabold"
         >
           Explore Our Programs
         </motion.span>
@@ -304,35 +304,35 @@ const PremiumButton = () => {
         <motion.div
           className="relative z-10"
           animate={{
-            x: isHovered ? 4 : 0,
+            x: isHovered ? 6 : 0,
             rotate: isHovered ? 0 : 0
           }}
           transition={{ 
-            x: { duration: 0.3, type: "spring", stiffness: 200 }
+            x: { duration: 0.3, type: "spring", stiffness: 300 }
           }}
         >
-          <FaArrowRight className="h-3.5 w-3.5" />
+          <FaArrowRight className="h-5 w-5 md:h-6 md:w-6" />
           
-          {/* Motion Trail */}
+          {/* Enhanced Motion Trail */}
           <AnimatePresence>
             {isHovered && (
               <>
-                {[0, 1, 2].map((i) => (
+                {[0, 1, 2, 3].map((i) => (
                   <motion.div
                     key={i}
-                    className="absolute top-1/2 -translate-y-1/2 h-0.5 bg-white/40 rounded-full"
-                    initial={{ width: 0, x: -4, opacity: 0 }}
+                    className="absolute top-1/2 -translate-y-1/2 h-0.5 bg-white/50 rounded-full"
+                    initial={{ width: 0, x: -5, opacity: 0 }}
                     animate={{ 
-                      width: [0, 8, 0],
-                      x: [-4, -8],
-                      opacity: [0, 0.6, 0]
+                      width: [0, 12, 0],
+                      x: [-5, -10],
+                      opacity: [0, 0.8, 0]
                     }}
                     exit={{ opacity: 0 }}
                     transition={{
                       duration: 0.8,
-                      delay: i * 0.1,
+                      delay: i * 0.08,
                       repeat: Infinity,
-                      repeatDelay: 1
+                      repeatDelay: 0.8
                     }}
                   />
                 ))}
@@ -341,39 +341,49 @@ const PremiumButton = () => {
           </AnimatePresence>
         </motion.div>
         
-        {/* Floating Particles */}
+        {/* Enhanced Floating Particles */}
         <AnimatePresence>
           {isHovered && (
             <>
-              {[...Array(3)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-0.5 h-0.5 bg-white/40 rounded-full"
+                  className="absolute w-1 h-1 bg-white/50 rounded-full"
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{
-                    opacity: [0, 0.8, 0],
+                    opacity: [0, 0.9, 0],
                     scale: [0, 1, 0],
-                    y: [0, -15],
-                    x: Math.cos(i * 90 * (Math.PI / 180)) * 15
+                    y: [0, -25],
+                    x: Math.cos(i * 72 * (Math.PI / 180)) * 25
                   }}
                   exit={{ opacity: 0, scale: 0 }}
                   transition={{
-                    duration: 1.2,
+                    duration: 1.5,
                     delay: i * 0.1,
                     repeat: Infinity,
-                    repeatDelay: 0.5
+                    repeatDelay: 0.3
                   }}
                 />
               ))}
             </>
           )}
         </AnimatePresence>
+        
+        {/* Subtle Inner Glow */}
+        <motion.div
+          className="absolute inset-0 rounded-full opacity-0"
+          animate={{
+            opacity: isHovered ? 0.1 : 0,
+            background: "radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)"
+          }}
+          transition={{ duration: 0.3 }}
+        />
       </Link>
     </motion.div>
   );
 };
 
-// Premium Dynamic Heading with Larger Desktop Font Size
+// Premium Dynamic Heading with Larger Desktop Font Size and Green Gradient
 const PremiumDynamicHeading = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -394,7 +404,7 @@ const PremiumDynamicHeading = () => {
   const nextHeading = HEADINGS[(currentIndex + 1) % HEADINGS.length];
 
   return (
-    <div className="relative h-36 w-full overflow-hidden">
+    <div className="relative h-40 w-full overflow-hidden">
       {/* Current Heading - Elegant Exit */}
       <motion.div
         key={`current-${currentIndex}`}
@@ -413,7 +423,7 @@ const PremiumDynamicHeading = () => {
       >
         <div className="text-center w-full">
           <motion.h1
-            className="text-xl md:text-3xl lg:text-4xl font-bold leading-snug"
+            className="text-2xl md:text-4xl lg:text-6xl font-bold leading-tight"
             animate={{ 
               letterSpacing: isAnimating ? "0.01em" : "0em"
             }}
@@ -423,13 +433,13 @@ const PremiumDynamicHeading = () => {
             <motion.div
               animate={{ scaleX: isAnimating ? 0.8 : 1 }}
               transition={{ duration: 1 }}
-              className="h-[1px] w-32 md:w-40 lg:w-48 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent my-1 md:my-2"
+              className="h-[1px] w-32 md:w-48 lg:w-56 mx-auto bg-gradient-to-r from-transparent via-[#10B981]/70 to-transparent my-2 md:my-3"
             />
-            <div className="relative mt-0 md:mt-1">
-              <span className="text-white text-lg md:text-2xl lg:text-3xl">
+            <div className="relative mt-1 md:mt-2">
+              <span className="text-white text-xl md:text-3xl lg:text-4xl">
                 {currentHeading.secondLine.split(' ')[0]} 
               </span>
-              <span className="bg-gradient-to-r from-black via-gray-900 to-black bg-clip-text text-transparent ml-1 text-lg md:text-2xl lg:text-3xl">
+              <span className="bg-gradient-to-r from-emerald-300 via-green-400 to-emerald-500 bg-clip-text text-transparent ml-2 text-xl md:text-3xl lg:text-4xl">
                 {currentHeading.secondLine.split(' ').slice(1).join(' ')}
               </span>
             </div>
@@ -456,7 +466,7 @@ const PremiumDynamicHeading = () => {
       >
         <div className="text-center w-full">
           <motion.h1
-            className="text-xl md:text-3xl lg:text-4xl font-bold leading-snug"
+            className="text-2xl md:text-4xl lg:text-6xl font-bold leading-tight"
             animate={{ 
               letterSpacing: isAnimating ? "0em" : "0.01em"
             }}
@@ -467,13 +477,13 @@ const PremiumDynamicHeading = () => {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: isAnimating ? 1 : 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="h-[1px] w-32 md:w-40 lg:w-48 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent my-1 md:my-2"
+              className="h-[1px] w-32 md:w-48 lg:w-56 mx-auto bg-gradient-to-r from-transparent via-[#10B981]/70 to-transparent my-2 md:my-3"
             />
-            <div className="relative mt-0 md:mt-1">
-              <span className="text-white text-lg md:text-2xl lg:text-3xl">
+            <div className="relative mt-1 md:mt-2">
+              <span className="text-white text-xl md:text-3xl lg:text-4xl">
                 {nextHeading.secondLine.split(' ')[0]} 
               </span>
-              <span className="bg-gradient-to-r from-black via-gray-900 to-black bg-clip-text text-transparent ml-1 text-lg md:text-2xl lg:text-3xl">
+              <span className="bg-gradient-to-r from-emerald-300 via-green-400 to-emerald-500 bg-clip-text text-transparent ml-2 text-xl md:text-3xl lg:text-4xl">
                 {nextHeading.secondLine.split(' ').slice(1).join(' ')}
               </span>
             </div>
@@ -487,7 +497,8 @@ const PremiumDynamicHeading = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ 
-              opacity: [0, 0.08, 0],
+              opacity: [0, 0.1, 0],
+              background: "linear-gradient(90deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05))"
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
@@ -496,8 +507,8 @@ const PremiumDynamicHeading = () => {
         )}
       </AnimatePresence>
       
-      {/* Progress Indicator */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-28 md:w-36 lg:w-40 h-0.5 overflow-hidden">
+      {/* Progress Indicator with Green Gradient */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 md:w-48 lg:w-56 h-1 overflow-hidden rounded-full bg-[#0B0F0E]/30">
         <motion.div
           animate={{
             scaleX: [0, 1, 0],
@@ -518,7 +529,7 @@ export const HeroSection: React.FC = () => {
   return (
     <>
       {/* Hero Section - Reduced Height */}
-      <section className="relative h-[70vh] min-h-[600px] overflow-hidden mt-6">
+      <section className="relative h-[75vh] min-h-[650px] overflow-hidden mt-6">
         {/* Background Animation with Clear Images */}
         <BackgroundSlidingAnimation />
         
@@ -526,17 +537,17 @@ export const HeroSection: React.FC = () => {
         <div className="relative z-20 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           {/* Premium Background Pattern */}
           <div className="absolute inset-0 z-0 opacity-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#10B981]/10 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#10B981]/15 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1)_0%,transparent_50%)]" />
           </div>
           
           {/* Centered Main Content - Very Compact layout */}
-          <div className="relative z-20 w-full max-w-4xl mx-auto text-center">
+          <div className="relative z-20 w-full max-w-6xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5 }}
-              className="space-y-4"
+              className="space-y-6 md:space-y-8"
             >
               {/* Premium Dynamic Heading */}
               <PremiumDynamicHeading />
@@ -546,7 +557,7 @@ export const HeroSection: React.FC = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="pt-1"
+                className="pt-2"
               >
                 <MovingDescription />
               </motion.div>
@@ -556,7 +567,7 @@ export const HeroSection: React.FC = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="pt-2"
+                className="pt-4"
               >
                 <PremiumButton />
               </motion.div>
@@ -568,11 +579,11 @@ export const HeroSection: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
+            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
           >
             <motion.div
               animate={{ 
-                y: [0, 6, 0],
+                y: [0, 8, 0],
                 opacity: [0.6, 1, 0.6]
               }}
               transition={{ 
@@ -580,19 +591,19 @@ export const HeroSection: React.FC = () => {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="flex flex-col items-center gap-0.5"
+              className="flex flex-col items-center gap-1"
             >
-              <div className="text-xs text-white/60 tracking-wider">SCROLL</div>
+              <div className="text-xs text-white/60 tracking-wider font-medium">SCROLL</div>
               <motion.div
                 animate={{ 
-                  height: [4, 8, 4]
+                  height: [4, 12, 4]
                 }}
                 transition={{ 
                   duration: 1.5,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-[1px] bg-gradient-to-b from-transparent via-[#10B981] to-transparent"
+                className="w-[1.5px] bg-gradient-to-b from-transparent via-[#10B981] to-transparent"
               />
             </motion.div>
           </motion.div>
