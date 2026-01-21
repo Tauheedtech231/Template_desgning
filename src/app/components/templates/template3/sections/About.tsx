@@ -14,7 +14,8 @@ import {
   FaHeart, FaBrain, 
   FaArrowRight,
   FaChevronDown, FaChevronUp,
-  FaArrowDown
+  FaArrowDown,
+  FaCircle
 } from "react-icons/fa";
 
 if (typeof window !== "undefined") {
@@ -1134,68 +1135,73 @@ export const About: React.FC = () => {
       </div>
 
       {/* FAQ Section - White Background */}
-      <div className="py-20 md:py-28 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
+     <div className="py-20 md:py-28 bg-white">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        Frequently Asked Questions
+      </h2>
 
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Find answers to common questions about Excel College
-            </p>
-          </div>
+      <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+        Find answers to common questions about Excel College
+      </p>
+    </div>
 
-          {/* FAQ List */}
-          <div className="space-y-4">
-            {faqs.map((faq) => (
-              <div
-                key={faq.id}
-                className="faq-item border-b border-gray-200 last:border-b-0 rounded-lg overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleFaq(faq.id)}
-                  className="w-full py-6 text-left flex items-center justify-between hover:bg-gray-100 transition-colors duration-300"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10B981] to-[#34D399] flex items-center justify-center">
-                      <span className="text-white font-bold">Q{faq.id}</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {faq.question}
-                    </h3>
-                  </div>
+    {/* FAQ List */}
+    <div className="space-y-4">
+      {faqs.map((faq) => (
+        <div
+          key={faq.id}
+          className="faq-item border-b border-gray-200 last:border-b-0 rounded-lg overflow-hidden"
+        >
+          <button
+            onClick={() => toggleFaq(faq.id)}
+            className="w-full py-6 text-left flex items-center justify-between hover:bg-gray-100 transition-colors duration-300"
+          >
+            <div className="flex items-center gap-4">
+              {/* Checkmark Icon */}
+              {openFaq === faq.id ? (
+                <FaCheckCircle className="text-[#10B981] w-6 h-6 flex-shrink-0" />
+              ) : (
+                <FaCircle className="text-gray-300 w-6 h-6 flex-shrink-0" />
+              )}
 
-                  <div
-                    className={`transition-transform duration-300 ${
-                      openFaq === faq.id ? "rotate-180" : ""
-                    }`}
-                  >
-                    {openFaq === faq.id ? (
-                      <FaChevronUp className="text-[#10B981] text-xl" />
-                    ) : (
-                      <FaChevronDown className="text-gray-400 text-xl" />
-                    )}
-                  </div>
-                </button>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {faq.question}
+              </h3>
+            </div>
 
-                <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    openFaq === faq.id ? "max-h-96 pb-6" : "max-h-0"
-                  }`}
-                >
-                  <div className="pl-14">
-                    <div className="flex items-start gap-4">
-                      <FaArrowRight className="text-[#10B981] mt-1 flex-shrink-0" />
-                      <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
-                    </div>
-                  </div>
-                </div>
+            <div
+              className={`transition-transform duration-300 ${
+                openFaq === faq.id ? "rotate-180" : ""
+              }`}
+            >
+              {openFaq === faq.id ? (
+                <FaChevronUp className="text-[#10B981] text-xl" />
+              ) : (
+                <FaChevronDown className="text-gray-400 text-xl" />
+              )}
+            </div>
+          </button>
+
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              openFaq === faq.id ? "max-h-96 pb-6" : "max-h-0"
+            }`}
+          >
+            <div className="pl-10">
+              <div className="flex items-start gap-4">
+                <FaArrowRight className="text-[#10B981] mt-1 flex-shrink-0" />
+                <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
       {/* Contact CTA Button - Black Background */}
       <div className="py-20 md:py-28 bg-black">
@@ -1214,7 +1220,9 @@ export const About: React.FC = () => {
             </div>
 
             <button
-              onClick={handleContactClick}
+              onClick={(()=>{
+                window.location.href=("/components/templates/template3/contact")
+              })}
               className="group relative inline-flex items-center justify-center gap-4 px-16 py-6 text-black font-bold text-xl rounded-full overflow-hidden transition-all duration-300 transform hover:scale-105 shadow-xl"
             >
               {/* Background Gradient */}
