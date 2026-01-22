@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
-import { Menu, X, Home, User, Users, Search, ChevronUp } from "lucide-react";
+import { Menu, X, Search, ChevronDown } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,18 +11,43 @@ export const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
+  const [showMobileCoursesDropdown, setShowMobileCoursesDropdown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [activeLink, setActiveLink] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchResultsRef = useRef<HTMLDivElement>(null);
+  const coursesDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Color Scheme
+  const colors = {
+    background: "#FFFFFF",
+    text: "#2C3E50",
+    accent: "#8B6B61",
+    accentHover: "#A17A74",
+    border: "#E8E8E8",
+    searchBg: "#F8F8F8",
+    placeholder: "#7F8C8D"
+  };
+
+  // Courses data for dropdown
+  const coursesData = [
+    { name: "Computer Science", duration: "4 Years" },
+    { name: "Business Management", duration: "3 Years" },
+    { name: "Engineering", duration: "4 Years" },
+    { name: "Medical Sciences", duration: "5 Years" },
+    { name: "Arts & Humanities", duration: "3 Years" },
+    { name: "Law Program", duration: "5 Years" },
+  ];
 
   // Search data
   const searchData = [
     { title: "Home", url: "/", category: "Main" },
     { title: "About", url: "/components/templates/template5/about", category: "Information" },
-    { title: "Faculty", url: "/components/templates/template5/faculty", category: "People" },
-    { title: "Courses", url: "/components/templates/template5/courses", category: "Education" },
-    { title: "Gallery", url: "/components/templates/template5/gallery", category: "Portfolio" },
-    { title: "Contact", url: "/components/templates/template5/contact", category: "Contact" },
+    { title: "Faculty", url: "/components/templates/template5/faculty", category: "Teachers" },
+    { title: "Courses", url: "/components/templates/template5/courses", category: "Programs" },
+    { title: "Gallery", url: "/components/templates/template5/gallery", category: "Photos" },
+    { title: "Contact", url: "/components/templates/template5/contact", category: "Get in Touch" },
   ];
 
   // Filtered search results
@@ -79,6 +104,55 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  const coursesDropdownVariants: Variants = {
+    hidden: { 
+      opacity: 0,
+      y: -10,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    },
+    exit: { 
+      opacity: 0,
+      y: -10,
+      scale: 0.95,
+      transition: {
+        duration: 0.15,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  };
+
+  const mobileCoursesDropdownVariants: Variants = {
+    hidden: { 
+      opacity: 0,
+      height: 0,
+    },
+    visible: { 
+      opacity: 1,
+      height: "auto",
+      transition: {
+        duration: 0.25,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    },
+    exit: { 
+      opacity: 0,
+      height: 0,
+      transition: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  };
+
   // ==================== EFFECTS ====================
   useEffect(() => {
     const checkMobile = () => {
@@ -94,9 +168,10 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 30);
+      setIsScrolled(currentScrollY > 10);
       setLastScrollY(currentScrollY);
       setShowSearchResults(false);
+      setShowCoursesDropdown(false);
     };
     
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -109,6 +184,8 @@ export const Navbar: React.FC = () => {
       const menuButton = document.querySelector('.mobile-menu-button');
       const searchResults = searchResultsRef.current;
       const searchInput = searchInputRef.current;
+      const coursesDropdown = coursesDropdownRef.current;
+      const coursesButton = document.querySelector('.courses-dropdown-button');
       
       // Close mobile menu
       if (menu && !menu.contains(event.target as Node) && !menuButton?.contains(event.target as Node)) {
@@ -120,6 +197,13 @@ export const Navbar: React.FC = () => {
           !searchResults.contains(event.target as Node) && 
           !searchInput.contains(event.target as Node)) {
         setShowSearchResults(false);
+      }
+
+      // Close courses dropdown
+      if (coursesDropdown && coursesButton && 
+          !coursesDropdown.contains(event.target as Node) && 
+          !coursesButton.contains(event.target as Node)) {
+        setShowCoursesDropdown(false);
       }
     };
     
@@ -138,6 +222,17 @@ export const Navbar: React.FC = () => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    // Set active link based on current path
+    const pathname = window.location.pathname;
+    if (pathname.includes("about")) setActiveLink("about");
+    else if (pathname.includes("faculty")) setActiveLink("faculty");
+    else if (pathname.includes("courses")) setActiveLink("courses");
+    else if (pathname.includes("gallery")) setActiveLink("gallery");
+    else if (pathname.includes("contact")) setActiveLink("contact");
+    else setActiveLink("home");
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim() && searchResults.length > 0) {
@@ -155,6 +250,134 @@ export const Navbar: React.FC = () => {
   // ==================== DESKTOP NAVIGATION ====================
   const DesktopNav = () => (
     <div className="hidden lg:flex items-center gap-6">
+      {/* Navigation Links - NO ICONS */}
+      <nav className="flex items-center gap-0">
+        {[
+          { name: "Home", href: "/", id: "home" },
+          { name: "About Us", href: "/components/templates/template5/about", id: "about" },
+          { name: "Faculty", href: "/components/templates/template5/faculty", id: "faculty" },
+        ].map((item) => (
+          <Link
+            key={item.id}
+            href={item.href}
+            onClick={() => setActiveLink(item.id)}
+            className={`px-5 py-3 font-medium text-[16px] tracking-[0.15px] transition-all duration-300 relative group/navitem ${
+              activeLink === item.id 
+                ? `text-[#8B6B61] font-semibold` 
+                : `text-[#2C3E50] hover:text-[#8B6B61]`
+            }`}
+          >
+            <span className="relative">
+              {item.name}
+              <span className={`absolute -bottom-[2px] left-1/2 -translate-x-1/2 h-[2px] rounded-full transition-all duration-300 ${
+                activeLink === item.id 
+                  ? 'w-[70%] bg-[#8B6B61] opacity-100' 
+                  : 'w-0 bg-[#A17A74] opacity-0 group-hover/navitem:w-[70%] group-hover/navitem:opacity-100'
+              }`}></span>
+            </span>
+          </Link>
+        ))}
+
+        {/* Courses Dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setShowCoursesDropdown(!showCoursesDropdown)}
+            className={`px-5 py-3 font-medium text-[16px] tracking-[0.15px] transition-all duration-300 relative group/courses courses-dropdown-button ${
+              activeLink === "courses" 
+                ? `text-[#8B6B61] font-semibold` 
+                : `text-[#2C3E50] hover:text-[#8B6B61]`
+            }`}
+          >
+            <span className="relative flex items-center gap-2">
+              Programs
+              <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showCoursesDropdown ? 'rotate-180' : ''}`} />
+              <span className={`absolute -bottom-[2px] left-1/2 -translate-x-1/2 h-[2px] rounded-full transition-all duration-300 ${
+                activeLink === "courses" || showCoursesDropdown
+                  ? 'w-[70%] bg-[#8B6B61] opacity-100' 
+                  : 'w-0 bg-[#A17A74] opacity-0 group-hover/courses:w-[70%] group-hover/courses:opacity-100'
+              }`}></span>
+            </span>
+          </button>
+
+          {/* Cool Courses Dropdown */}
+          <AnimatePresence>
+            {showCoursesDropdown && (
+              <motion.div
+                ref={coursesDropdownRef}
+                className="absolute top-full left-0 mt-2 w-72 bg-white border border-[#E0E0E0] rounded-2xl shadow-[0_20px_60px_rgba(139,107,97,0.15)] overflow-hidden z-40"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={coursesDropdownVariants}
+              >
+                <div className="p-4">
+                  <div className="font-semibold text-[14px] text-[#8B6B61] mb-3 px-2">Popular Programs</div>
+                  <div className="space-y-1">
+                    {coursesData.map((course, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          window.location.href = "/components/templates/template5/courses";
+                          setShowCoursesDropdown(false);
+                          setActiveLink("courses");
+                        }}
+                        className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#F8F8F8] transition-all duration-200 group/courseitem"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-[15px] text-[#2C3E50] tracking-[0.15px] group-hover/courseitem:text-[#8B6B61]">
+                              {course.name}
+                            </div>
+                            <div className="text-[13px] text-[#7F8C8D] tracking-[0.08px] mt-1">
+                              Duration: {course.duration}
+                            </div>
+                          </div>
+                          <div className="text-[#E0E0E0] group-hover/courseitem:text-[#8B6B61] transition-colors duration-200 text-lg">→</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => {
+                      window.location.href = "/components/templates/template5/courses";
+                      setShowCoursesDropdown(false);
+                      setActiveLink("courses");
+                    }}
+                    className="w-full mt-3 px-4 py-3 bg-[#8B6B61] text-white rounded-xl font-medium text-[14px] text-center hover:bg-[#7A5D54] transition-colors duration-300"
+                  >
+                    View All Programs
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {[
+          { name: "Gallery", href: "/components/templates/template5/gallery", id: "gallery" },
+        ].map((item) => (
+          <Link
+            key={item.id}
+            href={item.href}
+            onClick={() => setActiveLink(item.id)}
+            className={`px-5 py-3 font-medium text-[16px] tracking-[0.15px] transition-all duration-300 relative group/navitem ${
+              activeLink === item.id 
+                ? `text-[#8B6B61] font-semibold` 
+                : `text-[#2C3E50] hover:text-[#8B6B61]`
+            }`}
+          >
+            <span className="relative">
+              {item.name}
+              <span className={`absolute -bottom-[2px] left-1/2 -translate-x-1/2 h-[2px] rounded-full transition-all duration-300 ${
+                activeLink === item.id 
+                  ? 'w-[70%] bg-[#8B6B61] opacity-100' 
+                  : 'w-0 bg-[#A17A74] opacity-0 group-hover/navitem:w-[70%] group-hover/navitem:opacity-100'
+              }`}></span>
+            </span>
+          </Link>
+        ))}
+      </nav>
+
       {/* Search Input */}
       <div className="relative">
         <form onSubmit={handleSearchSubmit} className="relative">
@@ -165,8 +388,9 @@ export const Navbar: React.FC = () => {
             value={searchQuery}
             onChange={(e) => handleSearchInputChange(e.target.value)}
             onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
-            className="w-48 px-4 py-2 bg-white border border-[#D8D8D8] rounded-full focus:outline-none focus:border-[#2F5D62] focus:ring-0 text-[#121212] placeholder:text-[#888888] text-[14px] tracking-[0.1px] font-normal transition-colors duration-240"
+            className="w-56 px-5 py-3 bg-[#F8F8F8] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#8B6B61] text-[#2C3E50] placeholder:text-[#7F8C8D] text-[15px] tracking-[0.15px] font-normal transition-all duration-300 hover:border-[#D0C9C6]"
           />
+          <Search className="absolute right-5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#7F8C8D]" />
           {searchQuery && (
             <button
               type="button"
@@ -174,7 +398,7 @@ export const Navbar: React.FC = () => {
                 setSearchQuery("");
                 setShowSearchResults(false);
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#121212] transition-colors duration-200 text-[16px] leading-none"
+              className="absolute right-12 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50] transition-colors duration-200 text-[18px] leading-none"
             >
               ×
             </button>
@@ -186,64 +410,53 @@ export const Navbar: React.FC = () => {
           {showSearchResults && searchResults.length > 0 && (
             <motion.div
               ref={searchResultsRef}
-              className="absolute top-full left-0 mt-1 w-64 bg-white border border-[#E8E8E8] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden z-40"
+              className="absolute top-full left-0 mt-2 w-72 bg-white border border-[#E0E0E0] rounded-2xl shadow-[0_20px_60px_rgba(139,107,97,0.15)] overflow-hidden z-40"
               initial="hidden"
               animate="visible"
               exit="hidden"
               variants={searchResultsVariants}
             >
-              <div className="py-2">
-                {searchResults.map((result, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      window.location.href = result.url;
-                      setSearchQuery("");
-                      setShowSearchResults(false);
-                    }}
-                    className="w-full text-left px-4 py-3 hover:bg-[#FAFAFA] transition-colors duration-200 flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-normal text-[14px] text-[#121212] tracking-[0.1px]">
-                        {result.title}
+              <div className="p-4">
+                <div className="space-y-1">
+                  {searchResults.map((result, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        window.location.href = result.url;
+                        setSearchQuery("");
+                        setShowSearchResults(false);
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-xl hover:bg-[#F8F8F8] transition-all duration-200 group/searchitem"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-[15px] text-[#2C3E50] tracking-[0.15px] group-hover/searchitem:text-[#8B6B61]">
+                            {result.title}
+                          </div>
+                          <div className="text-[13px] text-[#7F8C8D] tracking-[0.08px] mt-1">
+                            {result.category}
+                          </div>
+                        </div>
+                        <div className="text-[#E0E0E0] group-hover/searchitem:text-[#8B6B61] transition-colors duration-200 text-lg">→</div>
                       </div>
-                      <div className="text-[12px] text-[#666666] tracking-[0.05px] mt-0.5">
-                        {result.category}
-                      </div>
-                    </div>
-                    <div className="text-[#D8D8D8]">→</div>
-                  </button>
-                ))}
+                    </button>
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex items-center gap-0">
-        {[
-          { name: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
-          { name: "About", href: "/components/templates/template5/about", icon: <User className="h-4 w-4" /> },
-          { name: "Faculty", href: "/components/templates/template5/faculty", icon: <Users className="h-4 w-4" /> },
-        ].map((item, idx) => (
-          <Link
-            key={idx}
-            href={item.href}
-            className="px-4 py-2.5 font-normal text-[15px] tracking-[0.1px] text-[#121212] hover:text-[#2F5D62] transition-colors duration-240 relative group/navitem"
-          >
-            <span className="relative">
-              {item.name}
-              <span className="absolute -bottom-[1px] left-1/2 -translate-x-1/2 w-0 h-[1px] bg-[#2F5D62] opacity-0 group-hover/navitem:w-[55%] group-hover/navitem:opacity-60 transition-all duration-240"></span>
-            </span>
-          </Link>
-        ))}
-      </nav>
-
-      {/* Contact Button */}
+      {/* Contact Button - NO ICON */}
       <Link
         href="/components/templates/template5/contact"
-        className="px-5 py-2.5 bg-[#121212] text-white font-normal text-[14px] rounded-full hover:bg-[#2F5D62] transition-colors duration-240 tracking-[0.1px]"
+        onClick={() => setActiveLink("contact")}
+        className={`px-7 py-3.5 font-semibold text-[15px] rounded-full transition-all duration-300 tracking-[0.15px] ${
+          activeLink === "contact"
+            ? 'bg-[#8B6B61] text-white hover:bg-[#7A5D54] shadow-sm'
+            : 'bg-[#2C3E50] text-white hover:bg-[#8B6B61] shadow-sm'
+        }`}
       >
         Contact
       </Link>
@@ -252,73 +465,12 @@ export const Navbar: React.FC = () => {
 
   // ==================== MOBILE NAVIGATION ====================
   const MobileNav = () => (
-    <div className="flex items-center gap-3 lg:hidden">
-      {/* Search Input (Mobile) */}
-      <div className="relative">
-        <form onSubmit={handleSearchSubmit} className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => handleSearchInputChange(e.target.value)}
-            onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
-            className="w-32 px-3 py-2 bg-white border border-[#D8D8D8] rounded-full focus:outline-none focus:border-[#2F5D62] text-[#121212] placeholder:text-[#888888] text-[14px] tracking-[0.1px] font-normal transition-colors duration-240"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery("");
-                setShowSearchResults(false);
-              }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#121212] transition-colors duration-200 text-[16px] leading-none"
-            >
-              ×
-            </button>
-          )}
-        </form>
-
-        {/* Search Results Dropdown (Mobile) */}
-        <AnimatePresence>
-          {showSearchResults && searchResults.length > 0 && (
-            <motion.div
-              className="absolute top-full right-0 mt-1 w-56 bg-white border border-[#E8E8E8] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden z-40"
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              variants={searchResultsVariants}
-            >
-              <div className="py-2">
-                {searchResults.map((result, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      window.location.href = result.url;
-                      setSearchQuery("");
-                      setShowSearchResults(false);
-                    }}
-                    className="w-full text-left px-3 py-2.5 hover:bg-[#FAFAFA] transition-colors duration-200"
-                  >
-                    <div className="font-normal text-[14px] text-[#121212] tracking-[0.1px]">
-                      {result.title}
-                    </div>
-                    <div className="text-[11px] text-[#666666] tracking-[0.05px] mt-0.5">
-                      {result.category}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      
-      {/* Menu Button */}
+    <div className="flex items-center gap-4 lg:hidden">
       <button
         onClick={() => setIsMenuOpen(true)}
-        className="p-2.5 text-[#666666] hover:text-[#121212] transition-colors duration-240 mobile-menu-button"
+        className="p-3 text-[#8B6B61] hover:text-[#A17A74] transition-colors duration-300 mobile-menu-button rounded-full hover:bg-[#F8F8F8]"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-6 w-6" />
       </button>
     </div>
   );
@@ -333,7 +485,7 @@ export const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMenuOpen(false)}
-            className="fixed inset-0 bg-black/20 backdrop-blur-[0.5px] z-40"
+            className="fixed inset-0 bg-black/25 backdrop-blur-[1px] z-40"
           />
 
           <motion.div
@@ -341,50 +493,50 @@ export const Navbar: React.FC = () => {
             animate="visible"
             exit="exit"
             variants={mobileSliderVariants}
-            className="mobile-menu-container fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0_-4px_30px_rgba(0,0,0,0.08)] border-t border-[#F0F0F0] z-40 max-h-[85vh] overflow-hidden"
+            className="mobile-menu-container fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl border-t border-[#E0E0E0] z-40 max-h-[85vh] overflow-hidden"
           >
-            {/* Drag Handle */}
-            <div className="sticky top-0 bg-white z-10 pt-3 pb-2 flex justify-center">
-              <div className="w-12 h-1.5 bg-[#E0E0E0] rounded-full"></div>
+            {/* Header with Cool Close Button */}
+            <div className="sticky top-0 bg-white z-10 border-b border-[#E0E0E0]">
+              <div className="flex items-center justify-between px-6 py-4">
+                <div>
+                  <span className="font-bold text-[18px] text-[#2C3E50] tracking-[0.2px] block">
+                    Excellence College
+                  </span>
+                  <span className="text-[12px] text-[#7F8C8D] font-medium tracking-[0.1px]">
+                    Menu
+                  </span>
+                </div>
+                
+                {/* Cool Rounded Circle Close Button */}
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-3 hover:bg-[#F8F8F8] rounded-full transition-all duration-300 group/close"
+                >
+                  <div className="relative w-6 h-6">
+                    <X className="w-6 h-6 text-[#8B6B61] group-hover/close:text-[#A17A74] transition-colors duration-300" />
+                  </div>
+                </button>
+              </div>
             </div>
 
             <div className="overflow-y-auto h-full">
-              <div className="p-4">
-                {/* Header with Close Button */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#121212] rounded-full flex items-center justify-center">
-                      <span className="text-white font-normal text-[16px]">P</span>
-                    </div>
-                    <div>
-                      <div className="font-normal text-[16px] text-[#121212] tracking-[0.1px]">Institution</div>
-                      <div className="text-[13px] text-[#666666] tracking-[0.05px]">Template 5</div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setIsMenuOpen(false)}
-                    className="p-2 hover:bg-[#FAFAFA] rounded-full transition-colors duration-240"
-                  >
-                    <X className="h-5 w-5 text-[#666666] hover:text-[#121212]" />
-                  </button>
-                </div>
-
-                {/* Mobile Menu Search Input */}
-                <form onSubmit={handleSearchSubmit} className="relative mb-6">
+              <div className="p-6">
+                {/* Mobile में सिर्फ Search Input */}
+                <form onSubmit={handleSearchSubmit} className="relative mb-8">
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#7F8C8D]" />
                     <input
                       type="text"
-                      placeholder="Search courses, faculty..."
+                      placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => handleSearchInputChange(e.target.value)}
-                      className="w-full pl-11 pr-10 py-3.5 bg-[#FAFAFA] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#2F5D62] text-[#121212] placeholder:text-[#888888] text-[14px] tracking-[0.1px] font-normal"
+                      className="w-full pl-12 pr-10 py-3.5 bg-[#F8F8F8] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#8B6B61] text-[#2C3E50] placeholder:text-[#7F8C8D] text-[15px] tracking-[0.15px] font-medium"
                     />
                     {searchQuery && (
                       <button
                         type="button"
                         onClick={() => setSearchQuery("")}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#121212] transition-colors duration-200"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50] transition-colors duration-200"
                       >
                         ×
                       </button>
@@ -392,26 +544,102 @@ export const Navbar: React.FC = () => {
                   </div>
                 </form>
 
-                {/* Navigation Grid */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                {/* Navigation Links */}
+                <div className="space-y-1 mb-8">
                   {[
-                    { name: "Home", href: "/", icon: <Home className="h-5 w-5" />, color: "bg-blue-50" },
-                    { name: "About", href: "/components/templates/template5/about", icon: <User className="h-5 w-5" />, color: "bg-green-50" },
-                    { name: "Faculty", href: "/components/templates/template5/faculty", icon: <Users className="h-5 w-5" />, color: "bg-purple-50" },
-                    { name: "Courses", href: "/components/templates/template5/courses", icon: <span className="text-[18px]">📘</span>, color: "bg-amber-50" },
-                    { name: "Gallery", href: "/components/templates/template5/gallery", icon: <span className="text-[18px]">🖼️</span>, color: "bg-pink-50" },
-                    { name: "Events", href: "/components/templates/template5/events", icon: <span className="text-[18px]">📅</span>, color: "bg-cyan-50" },
-                  ].map((item, idx) => (
+                    { name: "Home", href: "/", id: "home" },
+                    { name: "About Us", href: "/components/templates/template5/about", id: "about" },
+                    { name: "Faculty", href: "/components/templates/template5/faculty", id: "faculty" },
+                  ].map((item) => (
                     <Link
-                      key={idx}
+                      key={item.id}
                       href={item.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`${item.color} p-4 rounded-xl hover:opacity-90 transition-opacity duration-200 flex flex-col items-center justify-center group/menuitem`}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setActiveLink(item.id);
+                      }}
+                      className={`block w-full text-left px-4 py-3.5 rounded-xl transition-all duration-300 ${
+                        activeLink === item.id
+                          ? 'bg-[#F8F8F8] text-[#8B6B61] font-semibold'
+                          : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
+                      }`}
                     >
-                      <div className="p-2.5 mb-2 rounded-lg bg-white/80">
-                        {item.icon}
+                      <div className="font-medium text-[16px] tracking-[0.15px]">
+                        {item.name}
                       </div>
-                      <div className="font-normal text-[14px] text-[#121212] tracking-[0.1px] text-center">
+                    </Link>
+                  ))}
+
+                  {/* Mobile Courses Dropdown Toggle */}
+                  <button
+                    onClick={() => setShowMobileCoursesDropdown(!showMobileCoursesDropdown)}
+                    className={`w-full text-left px-4 py-3.5 rounded-xl transition-all duration-300 flex items-center justify-between ${
+                      activeLink === "courses" || showMobileCoursesDropdown
+                        ? 'bg-[#F8F8F8] text-[#8B6B61] font-semibold'
+                        : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
+                    }`}
+                  >
+                    <div className="font-medium text-[16px] tracking-[0.15px]">
+                      Programs
+                    </div>
+                    <ChevronDown 
+                      className={`h-4 w-4 transition-transform duration-300 ${
+                        showMobileCoursesDropdown ? 'rotate-180' : ''
+                      }`} 
+                    />
+                  </button>
+
+                  {/* Mobile Courses Dropdown Content */}
+                  <AnimatePresence>
+                    {showMobileCoursesDropdown && (
+                      <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        variants={mobileCoursesDropdownVariants}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-2 pl-4 mt-2 border-l border-[#E0E0E0] ml-2">
+                          {coursesData.map((course, index) => (
+                            <Link
+                              key={index}
+                              href="/components/templates/template5/courses"
+                              onClick={() => {
+                                setIsMenuOpen(false);
+                                setActiveLink("courses");
+                              }}
+                              className="block px-4 py-3 rounded-xl hover:bg-[#F8F8F8] transition-colors duration-300"
+                            >
+                              <div className="font-medium text-[15px] text-[#2C3E50]">
+                                {course.name}
+                              </div>
+                              <div className="text-[13px] text-[#7F8C8D] mt-1">
+                                {course.duration}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {[
+                    { name: "Gallery", href: "/components/templates/template5/gallery", id: "gallery" },
+                  ].map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setActiveLink(item.id);
+                      }}
+                      className={`block w-full text-left px-4 py-3.5 rounded-xl transition-all duration-300 ${
+                        activeLink === item.id
+                          ? 'bg-[#F8F8F8] text-[#8B6B61] font-semibold'
+                          : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
+                      }`}
+                    >
+                      <div className="font-medium text-[16px] tracking-[0.15px]">
                         {item.name}
                       </div>
                     </Link>
@@ -420,31 +648,35 @@ export const Navbar: React.FC = () => {
 
                 {/* Contact Section */}
                 <div className="mb-6">
-                  <div className="font-normal text-[15px] text-[#121212] mb-3 tracking-[0.1px]">Get in Touch</div>
                   <div className="space-y-3">
                     <Link
                       href="/components/templates/template5/contact"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 bg-[#121212] text-white rounded-xl font-normal text-[14px] text-center hover:bg-[#2F5D62] transition-colors duration-240 tracking-[0.1px]"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setActiveLink("contact");
+                      }}
+                      className="block w-full px-5 py-4 bg-[#8B6B61] text-white rounded-xl font-semibold text-[15px] text-center hover:bg-[#7A5D54] transition-all duration-300"
                     >
-                      <span>Contact Us</span>
+                      Contact Us
                     </Link>
                     
                     <Link
                       href="/components/templates/template5/courses"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3.5 bg-white text-[#121212] border border-[#E0E0E0] rounded-xl font-normal text-[14px] text-center hover:border-[#2F5D62] hover:text-[#2F5D62] transition-colors duration-240 tracking-[0.1px]"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setActiveLink("courses");
+                      }}
+                      className="block w-full px-5 py-4 bg-white text-[#2C3E50] border border-[#E0E0E0] rounded-xl font-semibold text-[15px] text-center hover:border-[#8B6B61] hover:text-[#8B6B61] transition-all duration-300"
                     >
-                      <span>Browse All Courses</span>
+                      View All Programs
                     </Link>
                   </div>
                 </div>
 
                 {/* Footer Info */}
-                <div className="pt-4 border-t border-[#E8E8E8]">
-                  <div className="text-[12px] text-[#666666] tracking-[0.05px] text-center">
-                    <p className="mb-1">Institution Template 5</p>
-                    <p>Premium Education Experience Since 2024</p>
+                <div className="pt-6 border-t border-[#E0E0E0]">
+                  <div className="text-[13px] text-[#7F8C8D] tracking-[0.08px] text-center">
+                    <p>Quality Education Since 1995</p>
                   </div>
                 </div>
               </div>
@@ -468,34 +700,31 @@ export const Navbar: React.FC = () => {
           damping: 20,
           delay: 0.1
         }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled 
-            ? "bg-white/95 backdrop-blur-[0.5px] py-2.5 border-b border-[#E8E8E8]" 
-            : "bg-white py-3.5 border-b border-[#F0F0F0]"
+            ? "bg-white/98 backdrop-blur-[4px] py-3.5 border-b border-[#E8E8E8]" 
+            : "bg-white py-5"
         }`}
         style={{ 
-          height: isScrolled ? '64px' : '68px'
+          height: isScrolled ? '72px' : '76px'
         }}
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-5 lg:px-6 h-full">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-full">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
-            <Link 
-              href="/" 
-              className="flex items-center gap-3 group"
-            >
-              <div className="w-9 h-9 bg-[#121212] rounded-full flex items-center justify-center transition-colors duration-240 hover:bg-[#2F5D62]">
-                <span className="text-white font-normal text-[16px]">P</span>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#8B6B61] rounded-full flex items-center justify-center">
+                {/* NO ICON - Just a circle */}
               </div>
               <div>
-                <span className="font-normal text-[16px] text-[#121212] tracking-[0.15px] block leading-tight">
-                  Institution
+                <span className="font-bold text-[20px] text-[#2C3E50] tracking-[0.2px] block leading-tight">
+                  Excellence College
                 </span>
-                <span className="text-[12.5px] text-[#666666] font-normal tracking-[0.1px]">
-                  Template 5
+                <span className="text-[13px] text-[#7F8C8D] font-medium tracking-[0.1px] hidden md:block">
+                  Quality Education Since 1995
                 </span>
               </div>
-            </Link>
+            </div>
 
             {/* Desktop Navigation */}
             <DesktopNav />
@@ -507,7 +736,7 @@ export const Navbar: React.FC = () => {
       </motion.header>
 
       {/* Spacer */}
-      <div style={{ height: isScrolled ? '64px' : '68px' }} />
+      <div style={{ height: isScrolled ? '72px' : '76px' }} />
 
       {/* Bottom Slider Menu */}
       <BottomSliderMenu />

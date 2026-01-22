@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 
 import { Navbar } from "./sections/Navbar";
-import  { HeroSection } from "./sections/Hero";
+import  HeroSection  from "./sections/Hero";
 import { About } from "./sections/About";
 import { Footer } from "./sections/Footer";
 import ContactSection from "./sections/Contact";
@@ -27,7 +27,7 @@ const Template5: React.FC = () => {
       <Navbar />
       <HeroSection/>
       <About />
-      <ContactSection />
+      
       <Footer />
     </div>
   );
