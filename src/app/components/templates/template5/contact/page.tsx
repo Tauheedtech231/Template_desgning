@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable */
 
 import { useState, useRef } from "react";
 import { 
@@ -7,15 +8,36 @@ import {
   FiPhone,
   FiSend,
   FiUser,
-  FiBookOpen,
-  FiClock,
-  FiArrowRight,
-  FiMessageSquare,
-  FiCalendar,
   FiChevronRight,
-  FiCheck
+  FiCheck,
+  FiArrowLeft,
+  FiClock,
+ 
 } from "react-icons/fi";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Define proper types
+interface ContactCard {
+  id: number;
+  title: string;
+  front: {
+    icon: any;
+    mainInfo: string;
+    description: string;
+    actionText: string;
+  };
+  back: {
+    type: "email" | "phone" | "location";
+    email?: string;
+    phone?: string;
+    address?: string;
+    department: string;
+    responseTime: string;
+    bestFor: string[];
+    details: string;
+  };
+}
 
 const ContactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -26,34 +48,77 @@ const ContactSection = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState(0);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [flippedCard, setFlippedCard] = useState<number | null>(null);
 
-  // Editorial-style contact data
-  const departments = [
+  // Only 3 cards as requested
+  const contactCards: ContactCard[] = [
     {
-      title: "Admissions & inquiries",
-      email: "admissions@college.edu",
-      location: "123 Education Street, Academic District",
-      phone: "+1 (555) 123-4567",
-      description: "Questions about enrollment, applications, or visiting campus",
-      hours: "Weekdays 9–5, Saturdays 10–2"
+      id: 1,
+      title: "Email Support",
+      front: {
+        icon: FiMail,
+        mainInfo: "contact@college.edu",
+        description: "For general inquiries and support",
+        actionText: "View Email Details"
+      },
+      back: {
+        type: "email",
+        email: "contact@college.edu",
+        department: "General Support",
+        responseTime: "24 hours",
+        bestFor: [
+          "General questions",
+          "Document submissions",
+          "Information requests"
+        ],
+        details: "Our support team responds to all emails within 24 business hours. Include relevant details for faster assistance."
+      }
     },
     {
-      title: "Academic support",
-      email: "academic@college.edu",
-      location: "456 University Avenue, Campus Center",
-      phone: "+1 (555) 987-6543",
-      description: "Curriculum, program details, and academic guidance",
-      hours: "Weekdays 10–6"
+      id: 2,
+      title: "Phone Support",
+      front: {
+        icon: FiPhone,
+        mainInfo: "+1 (555) 123-4567",
+        description: "For immediate assistance",
+        actionText: "View Call Details"
+      },
+      back: {
+        type: "phone",
+        phone: "+1 (555) 123-4567",
+        department: "Student Services",
+        responseTime: "Immediate",
+        bestFor: [
+          "Urgent inquiries",
+          "Technical support",
+          "Live assistance"
+        ],
+        details: "Available Monday-Friday, 9am-5pm. Press 1 for admissions, 2 for academic support, 3 for student services."
+      }
     },
     {
-      title: "Student services",
-      email: "support@college.edu",
-      location: "789 Student Union Building",
-      phone: "+1 (555) 456-7890",
-      description: "General assistance and campus services",
-      hours: "Weekdays 8–7, Saturdays 9–1"
-    },
+      id: 3,
+      title: "Campus Visit",
+      front: {
+        icon: FiMapPin,
+        mainInfo: "123 Education Street",
+        description: "Visit our main campus",
+        actionText: "View Location Details"
+      },
+      back: {
+        type: "location",
+        address: "123 Education Street, Academic District",
+        department: "Campus Administration",
+        responseTime: "By appointment",
+        bestFor: [
+          "In-person meetings",
+          "Campus tours",
+          "Document drop-off"
+        ],
+        details: "Main campus location. Free parking available. Wheelchair accessible. Public transit accessible via multiple routes."
+      }
+    }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -68,7 +133,6 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate submission delay
     await new Promise(resolve => setTimeout(resolve, 1200));
     
     console.log("Form submitted:", formData);
@@ -76,18 +140,40 @@ const ContactSection = () => {
     setIsSubmitting(false);
   };
 
+  const handleCardFlip = (id: number) => {
+    setFlippedCard(flippedCard === id ? null : id);
+  };
+
+  const handleSelectCard = (id: number) => {
+    setSelectedCard(id);
+    const card = contactCards.find(c => c.id === id);
+    if (card?.back.type === "email") {
+      setFormData(prev => ({
+        ...prev,
+        email: card.back.email || "",
+        subject: `Inquiry for ${card.back.department}`
+      }));
+    }
+  };
+
+  // Get selected card details for the info list
+  const selectedCardDetails = selectedCard ? contactCards.find(c => c.id === selectedCard) : null;
+
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="relative bg-white overflow-hidden"
+      className="relative overflow-hidden"
+      style={{
+        background: "#EADBC8"
+      }}
     >
-      {/* Hero Image Section */}
-      <div className="relative w-full h-[60vh] min-h-[500px] md:h-[70vh] overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative w-full h-[50vh] min-h-[400px] md:h-[60vh] overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-            alt="College campus with students walking and interacting"
+            src="/contact-5.jpg" 
+            alt="College campus"
             fill
             className="object-cover"
             priority
@@ -95,457 +181,420 @@ const ContactSection = () => {
           />
         </div>
         
-        {/* Dark overlay for better text contrast */}
-        <div className="absolute inset-0 bg-[#121212]/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/20"></div>
         
-        {/* Gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#121212]/30 via-[#121212]/20 to-[#121212]/40"></div>
-        
-        {/* Hero Content */}
         <div className="relative h-full flex items-center justify-center">
           <div className="max-w-6xl mx-auto px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
-              {/* Decorative divider */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-px w-12 bg-white/50" />
-                <span className="text-[13px] text-white/80 tracking-widest uppercase">
-                  Connect with us
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-px w-8 bg-white/50" />
+                <span className="text-sm text-white/80 tracking-widest">
+                  CONTACT US
                 </span>
-                <div className="h-px w-12 bg-white/50" />
+                <div className="h-px w-8 bg-white/50" />
               </div>
               
-              {/* Main heading */}
-              <h1 className="font-serif text-[42px] md:text-[52px] leading-[1.1] tracking-tight text-white font-medium mb-8">
-                We are here <br />
-                <span className="text-[#2F5D62]">to help</span>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                Get In Touch
               </h1>
               
-              {/* Subheading */}
-              <p className="font-sans text-[18px] md:text-[20px] text-white/90 leading-relaxed max-w-xl">
-                Have questions or want to learn more? Reach out to our dedicated teams. 
-                We typically respond within a day.
+              <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-xl">
+                Choose your preferred contact method or fill out the form below.
               </p>
-              
-              {/* Scroll indicator */}
-              <div className="mt-12 flex items-center gap-4">
-                <div className="w-6 h-px bg-white/50"></div>
-                <div className="text-[13px] text-white/70 tracking-widest uppercase">
-                  Scroll to connect
-                </div>
-                <div className="w-6 h-px bg-white/50"></div>
-              </div>
             </div>
           </div>
         </div>
-        
-        {/* Decorative corner elements */}
-        <div className="absolute top-8 left-8 w-16 h-px bg-white/30"></div>
-        <div className="absolute top-8 left-8 w-px h-16 bg-white/30"></div>
-        <div className="absolute bottom-8 right-8 w-16 h-px bg-white/30"></div>
-        <div className="absolute bottom-8 right-8 w-px h-16 bg-white/30"></div>
       </div>
 
-      {/* Simple background texture - matches About section */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute inset-0 opacity-[0.01]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-24 md:py-32">
-        {/* Quick Stats Banner */}
-        <div className="mb-20 p-8 bg-[#FAFAFA] border border-[#EDEDED] rounded-lg">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center md:text-left">
-              <div className="text-[32px] font-serif font-medium text-[#2F5D62] mb-2">24–48h</div>
-              <div className="text-[14px] text-[#4A4A4A]">Average response time</div>
-            </div>
-            <div className="text-center md:text-left">
-              <div className="text-[32px] font-serif font-medium text-[#2F5D62] mb-2">98%</div>
-              <div className="text-[14px] text-[#4A4A4A]">Student satisfaction</div>
-            </div>
-            <div className="text-center md:text-left">
-              <div className="text-[32px] font-serif font-medium text-[#2F5D62] mb-2">6am–8pm</div>
-              <div className="text-[14px] text-[#4A4A4A]">Extended support hours</div>
-            </div>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16 md:py-24">
+        {/* Contact Cards Section - Only 3 cards */}
+        <div className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: "#A17A74" }}>
+              Contact Methods
+            </h2>
+            <p className="text-lg" style={{ color: "#3B3B3B" }}>
+              Click on any card to see complete details
+            </p>
           </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
-          {/* Left Column - Contact Information */}
-          <div className="lg:w-7/12">
-            {/* Department Selector */}
-            <div className="mb-12">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-px w-8 bg-[#2F5D62]" />
-                <span className="text-[13px] text-[#2F5D62] tracking-widest uppercase font-medium">
-                  Departments & hours
-                </span>
-              </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {contactCards.map((card) => {
+              const FrontIcon = card.front.icon;
               
-              <div className="space-y-6">
-                {departments.map((dept, index) => (
+              return (
+                <div key={card.id} className="relative h-[280px] perspective-1000">
                   <div 
-                    key={index}
-                    onClick={() => setSelectedDepartment(index)}
-                    className={`border rounded-lg p-6 cursor-pointer transition-all duration-300 ${
-                      selectedDepartment === index 
-                        ? 'border-[#2F5D62] bg-[#F6F6F6]' 
-                        : 'border-[#EDEDED] hover:border-[#2F5D62]/30'
+                    className={`absolute inset-0 transition-all duration-500 ${
+                      flippedCard === card.id ? 'rotate-y-180' : ''
                     }`}
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      transform: flippedCard === card.id ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                    }}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="space-y-2">
-                        <h3 className="font-serif text-[18px] font-medium text-[#121212]">
-                          {dept.title}
+                    {/* Front of Card */}
+                    <motion.div 
+                      className="absolute inset-0 bg-white rounded-2xl p-6 backface-hidden overflow-hidden cursor-pointer border border-[#D9C9BB] shadow-sm"
+                      style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden'
+                      }}
+                      whileHover={{ y: -5 }}
+                      onClick={() => handleCardFlip(card.id)}
+                    >
+                      <div className="relative z-10 h-full flex flex-col items-center justify-between">
+                        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[#F7F2EE] border border-[#D9C9BB] mb-4">
+                          <FrontIcon className="text-xl" style={{ color: "#A17A74" }} />
+                        </div>
+                        
+                        <div className="text-center mb-4">
+                          <h3 className="text-lg font-bold mb-2" style={{ color: "#A17A74" }}>
+                            {card.title}
+                          </h3>
+                          <p className="text-lg font-medium mb-2" style={{ color: "#A17A74" }}>
+                            {card.front.mainInfo}
+                          </p>
+                          <p className="text-sm" style={{ color: "#3B3B3B" }}>
+                            {card.front.description}
+                          </p>
+                        </div>
+                        
+                        <div className="text-center">
+                          <button className="inline-flex items-center gap-2 text-sm font-medium" style={{ color: "#C99789" }}>
+                            <span>{card.front.actionText}</span>
+                            <FiChevronRight className="text-xs" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Back of Card - Now shows complete info in list format */}
+                    <motion.div 
+                      className="absolute inset-0 bg-white rounded-2xl p-6 overflow-hidden border border-[#A17A74] shadow-sm"
+                      style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)',
+                        color: "#3B3B3B"
+                      }}
+                    >
+                      <button 
+                        onClick={() => setFlippedCard(null)}
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white border border-[#D9C9BB] flex items-center justify-center hover:bg-[#F7F2EE] transition-colors z-10"
+                      >
+                        <FiArrowLeft className="text-sm" style={{ color: "#A17A74" }} />
+                      </button>
+                      
+                      <div className="h-full overflow-y-auto pt-8">
+                        <h3 className="text-lg font-bold mb-6 text-center" style={{ color: "#A17A74" }}>
+                          Complete Details
                         </h3>
-                        <p className="font-sans text-[14px] text-[#6E6E6E]">
-                          {dept.description}
-                        </p>
-                      </div>
-                      <div className={`w-6 h-6 rounded-full border flex items-center justify-center flex-shrink-0 ${
-                        selectedDepartment === index 
-                          ? 'border-[#2F5D62] bg-[#2F5D62]' 
-                          : 'border-[#EDEDED]'
-                      }`}>
-                        {selectedDepartment === index && (
-                          <FiCheck className="h-3 w-3 text-white" />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Contact details */}
-                    <div className="space-y-4 pl-2">
-                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center flex-shrink-0">
-                          <FiMail className="h-3 w-3 text-[#2F5D62]" />
-                        </div>
-                        <div>
-                          <div className="text-[11px] text-[#6E6E6E] uppercase tracking-wider mb-1">
-                            Email
+                        
+                        <div className="space-y-4">
+                          {/* Main Info */}
+                          <div>
+                            <h4 className="text-sm font-medium mb-2" style={{ color: "#A17A74" }}>Contact Information</h4>
+                            <ul className="space-y-2">
+                              {card.back.type === "email" && (
+                                <li className="flex items-center gap-3">
+                                  <FiMail className="text-[#C99789] flex-shrink-0" />
+                                  <span>{card.back.email}</span>
+                                </li>
+                              )}
+                              {card.back.type === "phone" && (
+                                <li className="flex items-center gap-3">
+                                  <FiPhone className="text-[#C99789] flex-shrink-0" />
+                                  <span>{card.back.phone}</span>
+                                </li>
+                              )}
+                              {card.back.type === "location" && (
+                                <li className="flex items-start gap-3">
+                                  <FiMapPin className="text-[#C99789] flex-shrink-0 mt-0.5" />
+                                  <span>{card.back.address}</span>
+                                </li>
+                              )}
+                              <li className="flex items-center gap-3">
+                                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: "#C99789" }}></div>
+                                <span>Department: {card.back.department}</span>
+                              </li>
+                            </ul>
                           </div>
-                          <a 
-                            href={`mailto:${dept.email}`}
-                            className="font-sans text-[15px] text-[#121212] hover:text-[#2F5D62] transition-colors"
-                          >
-                            {dept.email}
-                          </a>
-                        </div>
-                      </div>
 
-                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center flex-shrink-0">
-                          <FiPhone className="h-3 w-3 text-[#2F5D62]" />
-                        </div>
-                        <div>
-                          <div className="text-[11px] text-[#6E6E6E] uppercase tracking-wider mb-1">
-                            Phone
+                          {/* Response Time */}
+                          <div>
+                            <h4 className="text-sm font-medium mb-2" style={{ color: "#A17A74" }}>Response Time</h4>
+                            <div className="flex items-center gap-2">
+                              <FiClock className="text-[#C99789]" />
+                              <span>{card.back.responseTime}</span>
+                            </div>
                           </div>
-                          <a 
-                            href={`tel:${dept.phone.replace(/\D/g, '')}`}
-                            className="font-sans text-[15px] text-[#121212] hover:text-[#2F5D62] transition-colors"
-                          >
-                            {dept.phone}
-                          </a>
-                        </div>
-                      </div>
 
-                      <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center flex-shrink-0 mt-1">
-                          <FiMapPin className="h-3 w-3 text-[#2F5D62]" />
-                        </div>
-                        <div>
-                          <div className="text-[11px] text-[#6E6E6E] uppercase tracking-wider mb-1">
-                            Location
+                          {/* Best For - List */}
+                          <div>
+                            <h4 className="text-sm font-medium mb-2" style={{ color: "#A17A74" }}>Best Used For</h4>
+                            <ul className="space-y-1">
+                              {card.back.bestFor.map((item, idx) => (
+                                <li key={idx} className="text-sm flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#C99789" }}></div>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                          <p className="font-sans text-[14px] text-[#4A4A4A] leading-relaxed">
-                            {dept.location}
-                          </p>
-                        </div>
-                      </div>
 
-                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center flex-shrink-0">
-                          <FiClock className="h-3 w-3 text-[#2F5D62]" />
-                        </div>
-                        <div>
-                          <div className="text-[11px] text-[#6E6E6E] uppercase tracking-wider mb-1">
-                            Hours
+                          {/* Additional Details */}
+                          <div>
+                            <h4 className="text-sm font-medium mb-2" style={{ color: "#A17A74" }}>Additional Information</h4>
+                            <p className="text-sm leading-relaxed">{card.back.details}</p>
                           </div>
-                          <p className="font-sans text-[14px] text-[#4A4A4A]">
-                            {dept.hours}
-                          </p>
+
+                          {/* Action Button for email cards */}
+                          {card.back.type === "email" && (
+                            <button 
+                              onClick={() => handleSelectCard(card.id)}
+                              className="w-full py-3 text-sm font-medium rounded-xl transition-colors mt-4"
+                              style={{
+                                backgroundColor: selectedCard === card.id ? "#A17A74" : "#C99789",
+                                color: "#FFFFFF"
+                              }}
+                            >
+                              {selectedCard === card.id ? "✓ Selected for Form" : "Use This Email for Form"}
+                            </button>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Information - Editorial layout */}
-            <div className="border-t border-[#EDEDED] pt-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-serif text-[18px] font-medium text-[#121212] mb-6">
-                    Campus visits
-                  </h3>
-                  <p className="font-sans text-[14px] text-[#4A4A4A] leading-relaxed mb-6">
-                    We welcome visitors Monday through Friday. Tours are best scheduled in advance.
-                  </p>
-                  <button className="inline-flex items-center gap-2 text-[#2F5D62] font-sans text-sm font-medium hover:text-[#121212] transition-colors">
-                    <span>Schedule a tour</span>
-                    <FiChevronRight className="h-3 w-3" />
-                  </button>
-                </div>
-
-                <div>
-                  <h3 className="font-serif text-[18px] font-medium text-[#121212] mb-6">
-                    Response times
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="font-sans text-[14px] text-[#4A4A4A]">Email inquiries</span>
-                      <span className="font-sans text-[14px] text-[#121212] font-medium">1–2 days</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-sans text-[14px] text-[#4A4A4A]">Phone calls</span>
-                      <span className="font-sans text-[14px] text-[#121212] font-medium">Same day</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-sans text-[14px] text-[#4A4A4A]">Admissions</span>
-                      <span className="font-sans text-[14px] text-[#121212] font-medium">3–5 days</span>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Right Column - Contact Form */}
-          <div className="lg:w-5/12">
-            <div className="border border-[#EDEDED] rounded-lg p-8">
-              <div className="mb-10">
+        {/* Selected Card Info Section - Now shows as a list on the side */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <AnimatePresence>
+            {selectedCardDetails && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-white rounded-2xl p-8 border border-[#D9C9BB] shadow-sm"
+              >
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-px w-6 bg-[#2F5D62]" />
-                  <h2 className="font-serif text-[24px] font-medium text-[#121212]">
-                    Send a message
-                  </h2>
+                  <FiCheck className="text-xl" style={{ color: "#A17A74" }} />
+                  <h3 className="text-xl font-bold" style={{ color: "#A17A74" }}>
+                    Selected Contact Method
+                  </h3>
                 </div>
-                <p className="font-sans text-[15px] text-[#4A4A4A] leading-relaxed">
-                  Complete the form below and we will respond as soon as possible.
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Name Field */}
-                <div>
-                  <label className="block font-sans text-[14px] text-[#4A4A4A] font-medium mb-3" htmlFor="name">
-                    Your name
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                      <FiUser className="text-[#6E6E6E] text-sm" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Contact Info List */}
+                  <div>
+                    <h4 className="text-lg font-medium mb-4" style={{ color: "#3B3B3B" }}>Contact Details</h4>
+                    <ul className="space-y-4">
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: "#C99789" }}></div>
+                        <div>
+                          <div className="text-sm font-medium" style={{ color: "#A17A74" }}>Method</div>
+                          <div style={{ color: "#3B3B3B" }}>{selectedCardDetails.title}</div>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: "#C99789" }}></div>
+                        <div>
+                          <div className="text-sm font-medium" style={{ color: "#A17A74" }}>Department</div>
+                          <div style={{ color: "#3B3B3B" }}>{selectedCardDetails.back.department}</div>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: "#C99789" }}></div>
+                        <div>
+                          <div className="text-sm font-medium" style={{ color: "#A17A74" }}>Response Time</div>
+                          <div style={{ color: "#3B3B3B" }}>{selectedCardDetails.back.responseTime}</div>
+                        </div>
+                      </li>
+                      {selectedCardDetails.back.email && (
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: "#C99789" }}></div>
+                          <div>
+                            <div className="text-sm font-medium" style={{ color: "#A17A74" }}>Email</div>
+                            <div style={{ color: "#3B3B3B" }}>{selectedCardDetails.back.email}</div>
+                          </div>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  {/* Best For List */}
+                  <div>
+                    <h4 className="text-lg font-medium mb-4" style={{ color: "#3B3B3B" }}>Best For</h4>
+                    <ul className="space-y-2">
+                      {selectedCardDetails.back.bestFor.map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-3">
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#C99789" }}></div>
+                          <span style={{ color: "#3B3B3B" }}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <div className="mt-6 p-4 bg-[#F7F2EE] rounded-xl border border-[#D9C9BB]">
+                      <p className="text-sm" style={{ color: "#3B3B3B" }}>
+                        This contact method has been selected for your form submission.
+                      </p>
                     </div>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-[#EDEDED] rounded-lg focus:border-[#2F5D62] focus:ring-0 focus:outline-none transition-all duration-300 bg-white text-[#121212] font-sans text-[15px]"
-                      placeholder="Enter your full name"
-                    />
                   </div>
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-                {/* Email Field */}
-                <div>
-                  <label className="block font-sans text-[14px] text-[#4A4A4A] font-medium mb-3" htmlFor="email">
-                    Email address
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                      <FiMail className="text-[#6E6E6E] text-sm" />
-                    </div>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-[#EDEDED] rounded-lg focus:border-[#2F5D62] focus:ring-0 focus:outline-none transition-all duration-300 bg-white text-[#121212] font-sans text-[15px]"
-                      placeholder="your.email@example.com"
-                    />
+        {/* Form Section */}
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#D9C9BB]">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-4" style={{ color: "#A17A74" }}>
+                Send Us a Message
+              </h2>
+              <p className="text-lg" style={{ color: "#3B3B3B" }}>
+                Fill out the form below and we will get back to you soon
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="name" style={{ color: "#3B3B3B" }}>
+                  Your Name
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <FiUser className="text-sm" style={{ color: "#C99789" }} />
                   </div>
-                </div>
-
-                {/* Subject Field */}
-                <div>
-                  <label className="block font-sans text-[14px] text-[#4A4A4A] font-medium mb-3" htmlFor="subject">
-                    Subject
-                  </label>
                   <input
                     type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-[#EDEDED] rounded-lg focus:border-[#2F5D62] focus:ring-0 focus:outline-none transition-all duration-300 bg-white text-[#121212] font-sans text-[15px]"
-                    placeholder="What would you like to discuss?"
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-[#D9C9BB] rounded-xl focus:border-[#A17A74] focus:ring-0 focus:outline-none transition-all duration-300"
+                    style={{ color: "#3B3B3B" }}
+                    placeholder="Enter your full name"
                   />
                 </div>
+              </div>
 
-                {/* Message Field */}
-                <div>
-                  <label className="block font-sans text-[14px] text-[#4A4A4A] font-medium mb-3" htmlFor="message">
-                    Your message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
+              <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="email" style={{ color: "#3B3B3B" }}>
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <FiMail className="text-sm" style={{ color: "#C99789" }} />
+                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
                     required
-                    rows={6}
-                    className="w-full px-4 py-3 border border-[#EDEDED] rounded-lg focus:border-[#2F5D62] focus:ring-0 focus:outline-none transition-all duration-300 bg-white text-[#121212] font-sans text-[15px] resize-none leading-relaxed"
-                    placeholder="Please share details about your inquiry..."
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-[#D9C9BB] rounded-xl focus:border-[#A17A74] focus:ring-0 focus:outline-none transition-all duration-300"
+                    style={{ color: "#3B3B3B" }}
+                    placeholder="your.email@example.com"
                   />
                 </div>
-
-                {/* Submit Button */}
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full py-3 px-6 border border-[#2F5D62] text-[#2F5D62] font-sans text-[15px] font-medium rounded-lg transition-all duration-300 flex items-center justify-center hover:bg-[#2F5D62] hover:text-white ${
-                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="mr-3">Sending...</span>
-                        <div className="w-4 h-4 border-2 border-[#2F5D62] border-t-transparent rounded-full animate-spin"></div>
-                      </>
-                    ) : (
-                      <>
-                        <FiSend className="mr-3 h-4 w-4" />
-                        Send message
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Privacy Notice */}
-                <div>
-                  <p className="font-sans text-[12px] text-[#6E6E6E] leading-relaxed text-center">
-                    Your information is secure. We respect your privacy and never share contact details.
-                  </p>
-                </div>
-              </form>
-
-              {/* Direct Contact Option */}
-              <div className="mt-12 pt-8 border-t border-[#EDEDED]">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#F6F6F6] border border-[#EDEDED] flex items-center justify-center flex-shrink-0">
-                    <FiMessageSquare className="h-4 w-4 text-[#2F5D62]" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-sans text-[14px] text-[#121212] font-medium">
-                      Prefer to call?
-                    </p>
-                    <p className="font-sans text-[13px] text-[#6E6E6E]">
-                      Speak directly with our team during office hours
-                    </p>
-                  </div>
-                  <a 
-                    href={`tel:${departments[selectedDepartment].phone.replace(/\D/g, '')}`}
-                    className="font-sans text-[14px] text-[#2F5D62] font-medium hover:text-[#121212] transition-colors whitespace-nowrap"
-                  >
-                    Call now →
-                  </a>
-                </div>
               </div>
-            </div>
 
-            {/* Quick Links - Editorial style */}
-            <div className="mt-12 p-6 border border-[#EDEDED] rounded-lg">
-              <h3 className="font-serif text-[18px] font-medium text-[#121212] mb-6">
-                Quick resources
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { label: "Academic calendar", icon: FiCalendar },
-                  { label: "Faculty directory", icon: FiBookOpen },
-                  { label: "Campus map", icon: FiMapPin },
-                  { label: "FAQs", icon: FiMessageSquare }
-                ].map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <a
-                      key={index}
-                      href="#"
-                      className="flex items-center justify-between font-sans text-[14px] text-[#4A4A4A] hover:text-[#121212] transition-colors py-3 border-b border-[#EDEDED] last:border-0 group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon className="h-3 w-3 text-[#6E6E6E]" />
-                        <span>{item.label}</span>
-                      </div>
-                      <FiArrowRight className="h-3 w-3 text-[#6E6E6E] group-hover:text-[#121212]" />
-                    </a>
-                  );
-                })}
+              <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="subject" style={{ color: "#3B3B3B" }}>
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 bg-white border border-[#D9C9BB] rounded-xl focus:border-[#A17A74] focus:ring-0 focus:outline-none transition-all duration-300"
+                  style={{ color: "#3B3B3B" }}
+                  placeholder="What would you like to discuss?"
+                />
               </div>
-            </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" htmlFor="message" style={{ color: "#3B3B3B" }}>
+                  Your Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white border border-[#D9C9BB] rounded-xl focus:border-[#A17A74] focus:ring-0 focus:outline-none transition-all duration-300 resize-none"
+                  style={{ color: "#3B3B3B" }}
+                  placeholder="Please share details about your inquiry..."
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-3 px-6 font-medium rounded-xl transition-all duration-300 flex items-center justify-center ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'
+                  }`}
+                  style={{
+                    backgroundColor: "#C99789",
+                    color: "#FFFFFF"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSubmitting) {
+                      e.currentTarget.style.backgroundColor = "#A17A74";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSubmitting) {
+                      e.currentTarget.style.backgroundColor = "#C99789";
+                    }
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="mr-3">Sending...</span>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </>
+                  ) : (
+                    <>
+                      <FiSend className="mr-3 h-4 w-4" />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Privacy Notice */}
+              <div className="text-center pt-4">
+                <p className="text-xs" style={{ color: "#3B3B3B" }}>
+                  Your information is secure. We respect your privacy and never share contact details.
+                </p>
+              </div>
+            </form>
           </div>
         </div>
 
-        {/* Location Note */}
-        <div className="mt-20 pt-12 border-t border-[#EDEDED]">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="md:w-8/12">
-              <h3 className="font-serif text-[20px] font-medium text-[#121212] mb-6">
-                Our location
-              </h3>
-              <p className="font-sans text-[15px] text-[#4A4A4A] leading-relaxed mb-6">
-                Main campus is located in the academic district, accessible by public transit 
-                and with ample parking. Visitors are welcome during business hours.
-              </p>
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#2F5D62] rounded-full"></div>
-                  <span className="font-sans text-[14px] text-[#4A4A4A]">Free parking available</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#2F5D62] rounded-full"></div>
-                  <span className="font-sans text-[14px] text-[#4A4A4A]">Public transit accessible</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#2F5D62] rounded-full"></div>
-                  <span className="font-sans text-[14px] text-[#4A4A4A]">Wheelchair accessible</span>
-                </div>
-              </div>
-            </div>
-            <div className="md:w-4/12">
-              <div className="bg-[#F6F6F6] border border-[#EDEDED] p-6 rounded-lg">
-                <p className="font-sans text-[13px] text-[#6E6E6E] mb-3">
-                  For urgent matters outside business hours:
-                </p>
-                <a 
-                  href="mailto:emergency@college.edu"
-                  className="font-sans text-[14px] text-[#2F5D62] font-medium hover:text-[#121212] transition-colors"
-                >
-                  emergency@college.edu
-                </a>
-              </div>
-            </div>
-          </div>
+        {/* Footer Note */}
+        <div className="mt-16 text-center">
+          <p className="text-sm" style={{ color: "#3B3B3B" }}>
+            We are here to help. Your success is our priority.
+          </p>
         </div>
       </div>
     </section>

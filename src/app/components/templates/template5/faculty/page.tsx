@@ -1,22 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   FaLinkedin, 
-  
   FaEnvelope, 
- 
   FaChalkboardTeacher,
- 
   FaBookOpen,
- 
   FaHeart,
   FaLightbulb,
   FaHandsHelping,
   FaCompass,
-  FaLeaf
+  FaLeaf,
+  FaGraduationCap,
+  FaUsers,
+  FaStar,
+  FaPlay,
+  FaPause
 } from "react-icons/fa";
 import Image from "next/image";
+import { motion, Variants } from "framer-motion";
 
 interface Faculty {
   id: number;
@@ -37,8 +39,12 @@ interface Faculty {
 
 const FacultySection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
-  // Updated faculty data with human, personal bios
+  // Updated faculty data with theme colors
   const facultyMembers: Faculty[] = [
     {
       id: 1,
@@ -51,7 +57,7 @@ const FacultySection: React.FC = () => {
       quote: "Education is not the learning of facts, but the training of the mind to think.",
       expertise: ["Artificial Intelligence", "Machine Learning", "Data Science"],
       experience: "15+ Years",
-      description: "Her approach to teaching is shaped by a belief that computational thinking should be accessible to everyone, not just specialists.",
+      description: "Her approach to teaching is shaped by a belief that computational thinking should be accessible to everyone.",
       department: "Computer Science",
       bio: "After years in industry research, she found her true calling in helping students uncover their own curiosity.",
       skills: ["AI Research", "Curriculum Development", "Student Mentorship"]
@@ -69,7 +75,7 @@ const FacultySection: React.FC = () => {
       experience: "12+ Years",
       description: "Believes that business education should be grounded in ethical decision-making and real-world impact.",
       department: "Business",
-      bio: "Spent a decade in corporate leadership before deciding to focus on developing the next generation of thoughtful leaders.",
+      bio: "Spent a decade in corporate leadership before deciding to focus on developing the next generation of leaders.",
       skills: ["Business Strategy", "Leadership Development", "Corporate Finance"]
     },
     {
@@ -85,7 +91,7 @@ const FacultySection: React.FC = () => {
       experience: "18+ Years",
       description: "His teaching philosophy centers on the idea that elegant solutions emerge from understanding fundamental principles.",
       department: "Engineering",
-      bio: "Finds equal joy in publishing research papers and helping a student grasp a difficult concept for the first time.",
+      bio: "Finds equal joy in publishing research papers and helping a student grasp a difficult concept.",
       skills: ["Structural Analysis", "Research Methodology", "Innovation"]
     },
     {
@@ -101,7 +107,7 @@ const FacultySection: React.FC = () => {
       experience: "20+ Years",
       description: "Passionate about creating healthcare professionals who see patients as whole people, not just cases.",
       department: "Health Sciences",
-      bio: "Combines clinical experience with a deep commitment to compassionate, patient-centered care in her teaching.",
+      bio: "Combines clinical experience with a deep commitment to compassionate, patient-centered care.",
       skills: ["Healthcare Education", "Clinical Training", "Public Policy"]
     },
     {
@@ -115,9 +121,9 @@ const FacultySection: React.FC = () => {
       quote: "Art enables us to find ourselves and lose ourselves at the same time.",
       expertise: ["Visual Arts", "Art History", "Creative Theory"],
       experience: "14+ Years",
-      description: "Encourages students to see art not as decoration, but as a vital form of human expression and inquiry.",
+      description: "Encourages students to see art as a vital form of human expression and inquiry.",
       department: "Arts & Humanities",
-      bio: "An exhibiting artist who believes the studio and the classroom are both places of discovery and transformation.",
+      bio: "An exhibiting artist who believes the studio and the classroom are both places of discovery.",
       skills: ["Art Criticism", "Exhibition Curation", "Creative Direction"]
     },
     {
@@ -139,242 +145,440 @@ const FacultySection: React.FC = () => {
   ];
 
   // Personal touch icons for different faculty
-  const personalIcons = [FaHeart, FaCompass, FaLightbulb, FaHandsHelping, FaLeaf, FaBookOpen];
+  const personalIcons = [FaGraduationCap, FaUsers, FaStar, FaHeart, FaCompass, FaLeaf];
+
+  // Animation variants
+  const headingVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const slideInLeftVariants: Variants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const slideInRightVariants: Variants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const cardVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const staggerContainer: Variants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const toggleVideoPlay = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsVideoPlaying(!isVideoPlaying);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-play video on component mount
+    if (videoRef.current) {
+      videoRef.current.play().catch(console.error);
+    }
+  }, []);
 
   return (
     <section
-      id="faculty"
-      className="relative py-20 bg-[#FAFAFA] font-sans"
+      ref={sectionRef}
+      className="relative bg-white"
+      style={{ background: "linear-gradient(135deg, #FFFFFF 0%, #F7F2EE 100%)" }}
     >
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
-        {/* Section Header - refined typography */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-3 mb-8">
-            <div className="w-8 h-px bg-[#E0E0E0]"></div>
-            <div className="text-[13px] text-[#8A8A8A] tracking-[0.3em] uppercase">
-              Our Educators
-            </div>
-            <div className="w-8 h-px bg-[#E0E0E0]"></div>
-          </div>
+      {/* Hero Video Section */}
+      <div className="relative w-full h-[70vh] min-h-[600px] md:h-[80vh] overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            poster="/data/team-poster.jpg"
+          >
+            <source src="/data/team.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
           
-          <h1 className="text-[30px] md:text-[34px] font-serif font-medium text-[#1E1E1E] mb-6 leading-[1.3]">
-            Mentors & <span className="text-[#2F5D62]">Guides</span>
-          </h1>
-          
-          <p className="text-[17px] md:text-[18px] text-[#4A4A4A] max-w-2xl mx-auto leading-[1.75] px-4">
-            People who bring more than credentials to the classroom—they bring perspective, 
-            patience, and a genuine commitment to student growth.
-          </p>
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
         </div>
 
-        {/* Faculty Grid - organic, non-uniform layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        {/* Video Controls */}
+        <button
+          onClick={toggleVideoPlay}
+          className="absolute bottom-8 right-8 z-20 w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all duration-300 group"
+        >
+          {isVideoPlaying ? (
+            <FaPause className="text-white text-lg group-hover:scale-110 transition-transform" />
+          ) : (
+            <FaPlay className="text-white text-lg group-hover:scale-110 transition-transform" />
+          )}
+        </button>
+
+        {/* Hero Content */}
+        <div className="relative h-full flex items-center justify-center">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8 w-full">
+            <div className="max-w-2xl">
+              <motion.div 
+                className="inline-flex items-center gap-4 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <div className="h-px w-12 bg-gradient-to-r from-transparent via-white to-transparent" />
+                <span className="text-sm text-white/80 tracking-widest uppercase">
+                  OUR FACULTY TEAM
+                </span>
+                <div className="h-px w-12 bg-gradient-to-r from-transparent via-white to-transparent" />
+              </motion.div>
+              
+              <motion.h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Meet Our 
+                <span className="block mt-4">
+                  <span className="bg-gradient-to-r from-[#A17A74] to-[#C99789] bg-clip-text text-transparent">
+                    Dedicated
+                  </span>
+                  <span className="text-white ml-4">Educators</span>
+                </span>
+              </motion.h1>
+              
+              <motion.p 
+                className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Passionate educators committed to shaping future leaders through innovative teaching and personalized mentorship.
+              </motion.p>
+              
+              <motion.div 
+                className="flex items-center gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <div className="w-6 h-px bg-white/50"></div>
+                <div className="text-sm text-white/70 tracking-widest uppercase">
+                  Scroll to Explore
+                </div>
+                <div className="w-6 h-px bg-white/50"></div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          <div className="flex flex-col items-center">
+            <div className="h-8 w-px bg-gradient-to-b from-white via-white/50 to-transparent"></div>
+            <div className="w-2 h-2 rounded-full bg-white mt-2"></div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23A17A74' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-20">
+        {/* Section Header with unique left-right animation */}
+        <div ref={headingRef} className="text-center mb-20">
+          <motion.div 
+            className="inline-flex items-center gap-4 mb-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={headingVariants}
+          >
+            <motion.div 
+              className="w-12 h-0.5 rounded-full bg-gradient-to-r from-transparent to-[#A17A74]"
+              variants={slideInLeftVariants}
+            />
+            <span className="text-sm text-[#A17A74] tracking-widest uppercase font-medium">
+              Distinguished Faculty
+            </span>
+            <motion.div 
+              className="w-12 h-0.5 rounded-full bg-gradient-to-r from-[#A17A74] to-transparent"
+              variants={slideInRightVariants}
+            />
+          </motion.div>
+          
+          <div className="overflow-hidden">
+            <motion.h2 
+              className="text-3xl md:text-4xl font-bold text-[#3B3B3B] mb-6 leading-tight"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+            >
+              Expert Educators Across All Disciplines
+            </motion.h2>
+          </div>
+          
+          <motion.p 
+            className="text-lg text-[#3B3B3B]/80 max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            Our faculty combines academic excellence with real-world experience to provide comprehensive education.
+          </motion.p>
+        </div>
+
+        {/* Faculty Grid with soft rounded cards */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {facultyMembers.map((faculty, index) => {
             const PersonalIcon = personalIcons[index];
-            // Vary card styles slightly for organic feel
-            const cardStyle = index % 3 === 0 ? "border-t-[3px] border-[#2F5D62]" : 
-                            index % 3 === 1 ? "border-l-[3px] border-[#2F5D62]" : 
-                            "border-b-[3px] border-[#2F5D62]";
-            
-            // Vary text alignment for natural feel
-            const textAlignment = index % 2 === 0 ? "text-left" : "text-center";
             
             return (
-              <div
+              <motion.div
                 key={faculty.id}
-                className={`faculty-card bg-white border border-[#EDEDED] transition-all duration-300 overflow-hidden hover:border-[#E0E0E0] ${cardStyle} ${textAlignment}`}
-                onClick={() => setActiveIndex(index)}
-                style={{
-                  // Slight variations in padding for organic feel
-                  paddingTop: index % 4 === 0 ? '2rem' : '1.5rem',
-                  paddingBottom: index % 4 === 2 ? '2.5rem' : '2rem',
-                }}
+                variants={cardVariants}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className="group cursor-pointer"
               >
-                <div className="relative px-6">
-                  {/* Avatar with organic positioning */}
-                  <div className={`relative mb-6 ${textAlignment === 'text-center' ? 'flex justify-center' : ''}`}>
-                    <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] mx-auto">
+                <div 
+                  className="bg-white border border-[#EADBC8] rounded-2xl p-8 hover:shadow-xl transition-all duration-300 h-full overflow-hidden relative"
+                  onClick={() => setActiveIndex(index)}
+                >
+                  {/* Hover dot indicator */}
+                  <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-[#C99789] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Profile Image with soft rounded corners */}
+                  <div className="relative mb-6 flex justify-center">
+                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
                       <Image
                         src={faculty.image}
                         alt={faculty.name}
                         fill
-                        className="object-cover"
-                        sizes="112px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="128px"
                       />
+                      {/* Soft gradient overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#A17A74]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     
-                    {/* Personal touch icon */}
-                    <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-white border border-[#EDEDED] flex items-center justify-center shadow-sm">
-                      <PersonalIcon className="text-[#2F5D62] text-sm" />
-                    </div>
-
-                    {/* Experience - organic placement */}
-                    <div className={`mt-4 ${textAlignment === 'text-center' ? 'mx-auto' : ''}`}>
-                      <div className="inline-block px-3 py-1.5 bg-[#FAFAFA] border border-[#EDEDED] rounded-sm text-[13px] text-[#6E6E6E]">
-                        {faculty.experience}
-                      </div>
+                    {/* Personal icon badge */}
+                    <div className="absolute -bottom-2 right-8 w-12 h-12 rounded-full bg-white border-2 border-[#A17A74] flex items-center justify-center shadow-lg">
+                      <PersonalIcon className="text-[#A17A74] text-lg" />
                     </div>
                   </div>
 
-                  {/* Name and designation - human typography */}
-                  <div className="mb-6">
-                    {/* Name - Merriweather 18-20px, Weight 500 */}
-                    <h3 className="text-[18px] md:text-[20px] font-serif font-medium text-[#1E1E1E] mb-2">
+                  {/* Experience badge */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="inline-block px-4 py-2 bg-[#F7F2EE] border border-[#EADBC8] rounded-full text-sm text-[#A17A74] font-medium">
+                      {faculty.experience}
+                    </div>
+                  </div>
+
+                  {/* Name and Designation */}
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold text-[#A17A74] mb-2 group-hover:text-[#C99789] transition-colors duration-300">
                       {faculty.name}
                     </h3>
-                    <div className="mb-4">
-                      {/* Designation - Inter 14-15px, Color #6E6E6E */}
-                      <p className="text-[14px] md:text-[15px] text-[#6E6E6E] font-medium mb-1">
-                        {faculty.designation}
-                      </p>
-                      <p className="text-[13px] text-[#8A8A8A]">
-                        {faculty.position}
-                      </p>
-                    </div>
+                    <p className="text-[#3B3B3B] font-medium mb-1">
+                      {faculty.designation}
+                    </p>
+                    <p className="text-sm text-[#3B3B3B]/70">
+                      {faculty.position}
+                    </p>
                   </div>
 
-                  {/* Personal bio - natural language, varying lengths */}
+                  {/* Description */}
                   <div className="mb-6">
-                    {/* Bio - Inter 15-16px, Line-height 1.6, Color #4A4A4A */}
-                    <p className="text-[15px] md:text-[16px] text-[#4A4A4A] leading-[1.6] mb-3">
+                    <p className="text-[#3B3B3B]/80 leading-relaxed text-center">
                       {faculty.description}
                     </p>
-                    {faculty.bio && (
-                      <p className="text-[14px] text-[#6E6E6E] leading-[1.6]">
-                        {faculty.bio}
-                      </p>
-                    )}
                   </div>
 
-                  {/* Expertise - minimal presentation */}
-                  {(faculty.expertise && faculty.expertise.length > 0) && (
-                    <div className="mb-6">
-                      <div className={`flex flex-wrap gap-2 ${textAlignment === 'text-center' ? 'justify-center' : ''}`}>
-                        {faculty.expertise.slice(0, 3).map((skill, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1.5 bg-[#FAFAFA] text-[#4A4A4A] text-[12px] rounded-sm border border-[#EDEDED]"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
+                  {/* Expertise tags with soft rounded corners */}
+                  {faculty.expertise && faculty.expertise.length > 0 && (
+                    <div className="mb-6 flex flex-wrap justify-center gap-2">
+                      {faculty.expertise.slice(0, 3).map((skill, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-[#F7F2EE] border border-[#EADBC8] rounded-full text-xs text-[#3B3B3B] hover:bg-[#A17A74] hover:text-white transition-colors duration-300"
+                        >
+                          {skill}
+                        </span>
+                      ))}
                     </div>
                   )}
 
-                  {/* Contact links - subtle and refined */}
-                  <div className={`space-y-3 ${textAlignment === 'text-center' ? 'text-center' : ''}`}>
+                  {/* Contact links with rounded icons */}
+                  <div className="flex justify-center space-x-4 pt-4 border-t border-[#EADBC8]">
                     {faculty.linkedin && (
                       <a
                         href={faculty.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 text-[13px] text-[#4A4A4A] hover:text-[#2F5D62] transition-colors duration-200"
+                        className="w-10 h-10 rounded-full bg-[#F7F2EE] border border-[#EADBC8] flex items-center justify-center hover:bg-[#A17A74] hover:border-[#A17A74] group/link transition-all duration-300"
                       >
-                        <FaLinkedin className="text-[14px]" />
-                        <span>Connect</span>
+                        <FaLinkedin className="text-[#3B3B3B] group-hover/link:text-white text-sm transition-colors duration-300" />
                       </a>
                     )}
                     
                     {faculty.email && (
                       <a
                         href={`mailto:${faculty.email}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-[13px] text-[#4A4A4A] hover:text-[#2F5D62] transition-colors duration-200"
+                        className="w-10 h-10 rounded-full bg-[#F7F2EE] border border-[#EADBC8] flex items-center justify-center hover:bg-[#C99789] hover:border-[#C99789] group/link transition-all duration-300"
                       >
-                        <FaEnvelope className="text-[14px]" />
-                        <span>Email</span>
+                        <FaEnvelope className="text-[#3B3B3B] group-hover/link:text-white text-sm transition-colors duration-300" />
                       </a>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* Faculty Philosophy - replacing highlights with a story */}
-        <div className="max-w-3xl mx-auto mb-20">
-          <div className="bg-white border border-[#EDEDED] rounded-sm p-8 md:p-12">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-3 mb-6">
-                <div className="w-6 h-px bg-[#E0E0E0]"></div>
-                <FaChalkboardTeacher className="text-[#2F5D62] text-lg" />
-                <div className="w-6 h-px bg-[#E0E0E0]"></div>
+        {/* Teaching Philosophy Section */}
+        <motion.div 
+          className="max-w-4xl mx-auto mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="bg-white border border-[#EADBC8] rounded-2xl p-8 md:p-12 shadow-sm">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-4 mb-6">
+                <div className="w-8 h-0.5 rounded-full bg-gradient-to-r from-transparent to-[#A17A74]"></div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#A17A74] to-[#C99789] flex items-center justify-center">
+                  <FaChalkboardTeacher className="text-white text-lg" />
+                </div>
+                <div className="w-8 h-0.5 rounded-full bg-gradient-to-r from-[#A17A74] to-transparent"></div>
               </div>
-              <h2 className="text-[22px] font-serif font-medium text-[#1E1E1E] mb-4">
-                Our approach to <span className="text-[#2F5D62]">teaching</span>
+              <h2 className="text-3xl font-bold text-[#3B3B3B] mb-4">
+                Our Teaching <span className="text-[#A17A74]">Philosophy</span>
               </h2>
             </div>
             
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center">
-                    <FaHeart className="text-[#2F5D62] text-sm" />
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Philosophy 1 */}
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F7F2EE] to-white border border-[#EADBC8] flex items-center justify-center mx-auto mb-4">
+                  <FaHeart className="text-[#A17A74] text-xl" />
                 </div>
-                <div>
-                  <h3 className="text-[15px] font-medium text-[#1E1E1E] mb-2">
-                    Relationship first
-                  </h3>
-                  <p className="text-[15px] md:text-[16px] text-[#4A4A4A] leading-[1.6]">
-                    We believe meaningful learning happens in the context of trust and connection. 
-                    Our faculty prioritize getting to know students as individuals.
-                  </p>
-                </div>
+                <h3 className="text-lg font-bold text-[#3B3B3B] mb-3">Student-Centered Approach</h3>
+                <p className="text-[#3B3B3B]/80">
+                  We believe in tailoring education to individual needs and learning styles.
+                </p>
               </div>
               
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center">
-                    <FaCompass className="text-[#1E1E1E] text-sm" />
-                  </div>
+              {/* Philosophy 2 */}
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F7F2EE] to-white border border-[#EADBC8] flex items-center justify-center mx-auto mb-4">
+                  <FaLightbulb className="text-[#C99789] text-xl" />
                 </div>
-                <div>
-                  <h3 className="text-[15px] font-medium text-[#1E1E1E] mb-2">
-                    Practical wisdom
-                  </h3>
-                  <p className="text-[15px] md:text-[16px] text-[#4A4A4A] leading-[1.6]">
-                    Balancing theoretical knowledge with real-world application, 
-                    ensuring students graduate with both understanding and capability.
-                  </p>
-                </div>
+                <h3 className="text-lg font-bold text-[#3B3B3B] mb-3">Innovative Methods</h3>
+                <p className="text-[#3B3B3B]/80">
+                  Combining traditional wisdom with modern teaching techniques for optimal results.
+                </p>
               </div>
               
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 rounded-sm bg-[#FAFAFA] border border-[#EDEDED] flex items-center justify-center">
-                    <FaLightbulb className="text-[#1E1E1E] text-sm" />
-                  </div>
+              {/* Philosophy 3 */}
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F7F2EE] to-white border border-[#EADBC8] flex items-center justify-center mx-auto mb-4">
+                  <FaHandsHelping className="text-[#A17A74] text-xl" />
                 </div>
-                <div>
-                  <h3 className="text-[15px] font-medium text-[#1E1E1E] mb-2">
-                    Curiosity-driven learning
-                  </h3>
-                  <p className="text-[15px] md:text-[16px] text-[#4A4A4A] leading-[1.6]">
-                    Encouraging questions and exploration over rote memorization, 
-                    creating classrooms where curiosity is the starting point for everything.
-                  </p>
-                </div>
+                <h3 className="text-lg font-bold text-[#3B3B3B] mb-3">Mentorship Focus</h3>
+                <p className="text-[#3B3B3B]/80">
+                  Going beyond teaching to provide guidance, support, and career development.
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Closing statement */}
-        <div className="text-center">
-          <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-12 h-px bg-[#F0F0F0]"></div>
-            <div className="text-[13px] text-[#8A8A8A] tracking-[0.2em] uppercase">
-              Across Departments
-            </div>
-            <div className="w-12 h-px bg-[#F0F0F0]"></div>
+        {/* Closing Section */}
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-6 mb-8">
+            <div className="w-16 h-0.5 rounded-full bg-gradient-to-r from-transparent to-[#EADBC8]"></div>
+            <span className="text-sm text-[#A17A74] tracking-widest uppercase font-medium">
+              Excellence in Education
+            </span>
+            <div className="w-16 h-0.5 rounded-full bg-gradient-to-r from-[#EADBC8] to-transparent"></div>
           </div>
-          <p className="text-[16px] text-[#4A4A4A] max-w-xl mx-auto leading-[1.6]">
-            From arts to sciences, business to healthcare—our educators share a common commitment 
-            to thoughtful, student-centered teaching.
+          <p className="text-lg text-[#3B3B3B]/80 max-w-xl mx-auto leading-relaxed">
+            Dedicated faculty committed to nurturing the next generation of thinkers, leaders, and innovators.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

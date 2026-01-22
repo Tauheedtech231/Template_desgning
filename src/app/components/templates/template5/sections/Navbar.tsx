@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
-import { Menu, X, Search, ChevronDown } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -61,11 +61,11 @@ export const Navbar: React.FC = () => {
   // ==================== ANIMATION VARIANTS ====================
   const mobileSliderVariants: Variants = {
     hidden: { 
-      y: "100%",
+      x: "100%",
       opacity: 0
     },
     visible: { 
-      y: 0,
+      x: 0,
       opacity: 1,
       transition: {
         type: "spring",
@@ -75,7 +75,7 @@ export const Navbar: React.FC = () => {
       }
     },
     exit: { 
-      y: "100%",
+      x: "100%",
       opacity: 0,
       transition: {
         duration: 0.25,
@@ -250,7 +250,7 @@ export const Navbar: React.FC = () => {
   // ==================== DESKTOP NAVIGATION ====================
   const DesktopNav = () => (
     <div className="hidden lg:flex items-center gap-6">
-      {/* Navigation Links - NO ICONS */}
+      {/* Navigation Links */}
       <nav className="flex items-center gap-0">
         {[
           { name: "Home", href: "/", id: "home" },
@@ -288,9 +288,11 @@ export const Navbar: React.FC = () => {
                 : `text-[#2C3E50] hover:text-[#8B6B61]`
             }`}
           >
-            <span className="relative flex items-center gap-2">
+            <span className="relative flex items-center gap-1">
               Programs
-              <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showCoursesDropdown ? 'rotate-180' : ''}`} />
+              <span className={`text-[12px] transition-transform duration-300 ${showCoursesDropdown ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
               <span className={`absolute -bottom-[2px] left-1/2 -translate-x-1/2 h-[2px] rounded-full transition-all duration-300 ${
                 activeLink === "courses" || showCoursesDropdown
                   ? 'w-[70%] bg-[#8B6B61] opacity-100' 
@@ -299,7 +301,7 @@ export const Navbar: React.FC = () => {
             </span>
           </button>
 
-          {/* Cool Courses Dropdown */}
+          {/* Courses Dropdown */}
           <AnimatePresence>
             {showCoursesDropdown && (
               <motion.div
@@ -390,7 +392,6 @@ export const Navbar: React.FC = () => {
             onFocus={() => searchQuery.trim() && setShowSearchResults(true)}
             className="w-56 px-5 py-3 bg-[#F8F8F8] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#8B6B61] text-[#2C3E50] placeholder:text-[#7F8C8D] text-[15px] tracking-[0.15px] font-normal transition-all duration-300 hover:border-[#D0C9C6]"
           />
-          <Search className="absolute right-5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#7F8C8D]" />
           {searchQuery && (
             <button
               type="button"
@@ -398,7 +399,7 @@ export const Navbar: React.FC = () => {
                 setSearchQuery("");
                 setShowSearchResults(false);
               }}
-              className="absolute right-12 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50] transition-colors duration-200 text-[18px] leading-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50] transition-colors duration-200 text-[18px] leading-none"
             >
               ×
             </button>
@@ -448,7 +449,7 @@ export const Navbar: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* Contact Button - NO ICON */}
+      {/* Contact Button */}
       <Link
         href="/components/templates/template5/contact"
         onClick={() => setActiveLink("contact")}
@@ -468,15 +469,15 @@ export const Navbar: React.FC = () => {
     <div className="flex items-center gap-4 lg:hidden">
       <button
         onClick={() => setIsMenuOpen(true)}
-        className="p-3 text-[#8B6B61] hover:text-[#A17A74] transition-colors duration-300 mobile-menu-button rounded-full hover:bg-[#F8F8F8]"
+        className="mobile-menu-button px-4 py-2 text-[#2C3E50] hover:text-[#8B6B61] transition-colors duration-300 font-medium text-[15px]"
       >
-        <Menu className="h-6 w-6" />
+        <MenuIcon />
       </button>
     </div>
   );
 
-  // ==================== BOTTOM SLIDER MENU ====================
-  const BottomSliderMenu = () => (
+  // ==================== RIGHT SLIDER MENU ====================
+  const RightSliderMenu = () => (
     <AnimatePresence>
       {isMenuOpen && isMobile && (
         <>
@@ -493,50 +494,51 @@ export const Navbar: React.FC = () => {
             animate="visible"
             exit="exit"
             variants={mobileSliderVariants}
-            className="mobile-menu-container fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl border-t border-[#E0E0E0] z-40 max-h-[85vh] overflow-hidden"
+            className="mobile-menu-container fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white z-40 overflow-hidden"
           >
-            {/* Header with Cool Close Button */}
-            <div className="sticky top-0 bg-white z-10 border-b border-[#E0E0E0]">
-              <div className="flex items-center justify-between px-6 py-4">
-                <div>
-                  <span className="font-bold text-[18px] text-[#2C3E50] tracking-[0.2px] block">
-                    Excellence College
-                  </span>
-                  <span className="text-[12px] text-[#7F8C8D] font-medium tracking-[0.1px]">
-                    Menu
-                  </span>
+            {/* Header with Logo and Close */}
+            <div className="sticky top-0 bg-white z-10 border-b border-[#E0E0E0] px-5 py-4">
+              <div className="flex items-center justify-between">
+                {/* Logo Section */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#8B6B61] rounded-full"></div>
+                  <div>
+                    <span className="font-bold text-[16px] text-[#2C3E50] block">
+                      Excellence College
+                    </span>
+                    <span className="text-[11px] text-[#7F8C8D] font-medium">
+                      Since 1995
+                    </span>
+                  </div>
                 </div>
                 
-                {/* Cool Rounded Circle Close Button */}
+                {/* Close Button */}
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-3 hover:bg-[#F8F8F8] rounded-full transition-all duration-300 group/close"
+                  className="text-[#2C3E50] hover:text-[#8B6B61] text-[20px] font-light"
                 >
-                  <div className="relative w-6 h-6">
-                    <X className="w-6 h-6 text-[#8B6B61] group-hover/close:text-[#A17A74] transition-colors duration-300" />
-                  </div>
+                  ×
                 </button>
               </div>
             </div>
 
             <div className="overflow-y-auto h-full">
-              <div className="p-6">
-                {/* Mobile में सिर्फ Search Input */}
-                <form onSubmit={handleSearchSubmit} className="relative mb-8">
+              <div className="p-5">
+                {/* Search Input */}
+                <form onSubmit={handleSearchSubmit} className="relative mb-6">
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#7F8C8D]" />
                     <input
                       type="text"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => handleSearchInputChange(e.target.value)}
-                      className="w-full pl-12 pr-10 py-3.5 bg-[#F8F8F8] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#8B6B61] text-[#2C3E50] placeholder:text-[#7F8C8D] text-[15px] tracking-[0.15px] font-medium"
+                      className="w-full px-4 py-3 bg-[#F8F8F8] border border-[#E0E0E0] rounded-full focus:outline-none focus:border-[#8B6B61] text-[#2C3E50] placeholder:text-[#7F8C8D] text-[14px]"
                     />
                     {searchQuery && (
                       <button
                         type="button"
                         onClick={() => setSearchQuery("")}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50] transition-colors duration-200"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7F8C8D] hover:text-[#2C3E50]"
                       >
                         ×
                       </button>
@@ -545,7 +547,7 @@ export const Navbar: React.FC = () => {
                 </form>
 
                 {/* Navigation Links */}
-                <div className="space-y-1 mb-8">
+                <div className="space-y-1 mb-6">
                   {[
                     { name: "Home", href: "/", id: "home" },
                     { name: "About Us", href: "/components/templates/template5/about", id: "about" },
@@ -564,67 +566,65 @@ export const Navbar: React.FC = () => {
                           : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
                       }`}
                     >
-                      <div className="font-medium text-[16px] tracking-[0.15px]">
+                      <div className="font-medium text-[15px]">
                         {item.name}
                       </div>
                     </Link>
                   ))}
 
-                  {/* Mobile Courses Dropdown Toggle */}
-                  <button
-                    onClick={() => setShowMobileCoursesDropdown(!showMobileCoursesDropdown)}
-                    className={`w-full text-left px-4 py-3.5 rounded-xl transition-all duration-300 flex items-center justify-between ${
-                      activeLink === "courses" || showMobileCoursesDropdown
-                        ? 'bg-[#F8F8F8] text-[#8B6B61] font-semibold'
-                        : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
-                    }`}
-                  >
-                    <div className="font-medium text-[16px] tracking-[0.15px]">
-                      Programs
-                    </div>
-                    <ChevronDown 
-                      className={`h-4 w-4 transition-transform duration-300 ${
-                        showMobileCoursesDropdown ? 'rotate-180' : ''
-                      }`} 
-                    />
-                  </button>
+                  {/* Mobile Courses Dropdown */}
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setShowMobileCoursesDropdown(!showMobileCoursesDropdown)}
+                      className={`w-full text-left px-4 py-3.5 rounded-xl transition-all duration-300 ${
+                        activeLink === "courses" || showMobileCoursesDropdown
+                          ? 'bg-[#F8F8F8] text-[#8B6B61] font-semibold'
+                          : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
+                      }`}
+                    >
+                      <div className="font-medium text-[15px]">
+                        Programs
+                      </div>
+                    </button>
 
-                  {/* Mobile Courses Dropdown Content */}
-                  <AnimatePresence>
-                    {showMobileCoursesDropdown && (
-                      <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        variants={mobileCoursesDropdownVariants}
-                        className="overflow-hidden"
-                      >
-                        <div className="space-y-2 pl-4 mt-2 border-l border-[#E0E0E0] ml-2">
-                          {coursesData.map((course, index) => (
-                            <Link
-                              key={index}
-                              href="/components/templates/template5/courses"
-                              onClick={() => {
-                                setIsMenuOpen(false);
-                                setActiveLink("courses");
-                              }}
-                              className="block px-4 py-3 rounded-xl hover:bg-[#F8F8F8] transition-colors duration-300"
-                            >
-                              <div className="font-medium text-[15px] text-[#2C3E50]">
-                                {course.name}
-                              </div>
-                              <div className="text-[13px] text-[#7F8C8D] mt-1">
-                                {course.duration}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                    {/* Mobile Courses Dropdown Content */}
+                    <AnimatePresence>
+                      {showMobileCoursesDropdown && (
+                        <motion.div
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          variants={mobileCoursesDropdownVariants}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-2 pl-4 mt-2 ml-2">
+                            {coursesData.map((course, index) => (
+                              <Link
+                                key={index}
+                                href="/components/templates/template5/courses"
+                                onClick={() => {
+                                  setIsMenuOpen(false);
+                                  setActiveLink("courses");
+                                }}
+                                className="block px-4 py-2.5 rounded-xl hover:bg-[#F8F8F8] transition-colors duration-300"
+                              >
+                                <div className="font-medium text-[14px] text-[#2C3E50]">
+                                  {course.name}
+                                </div>
+                                <div className="text-[12px] text-[#7F8C8D] mt-1">
+                                  {course.duration}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
                   {[
                     { name: "Gallery", href: "/components/templates/template5/gallery", id: "gallery" },
+                    { name: "Contact", href: "/components/templates/template5/contact", id: "contact" },
                   ].map((item) => (
                     <Link
                       key={item.id}
@@ -639,44 +639,30 @@ export const Navbar: React.FC = () => {
                           : 'text-[#2C3E50] hover:bg-[#F8F8F8]'
                       }`}
                     >
-                      <div className="font-medium text-[16px] tracking-[0.15px]">
+                      <div className="font-medium text-[15px]">
                         {item.name}
                       </div>
                     </Link>
                   ))}
                 </div>
 
-                {/* Contact Section */}
-                <div className="mb-6">
-                  <div className="space-y-3">
-                    <Link
-                      href="/components/templates/template5/contact"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        setActiveLink("contact");
-                      }}
-                      className="block w-full px-5 py-4 bg-[#8B6B61] text-white rounded-xl font-semibold text-[15px] text-center hover:bg-[#7A5D54] transition-all duration-300"
-                    >
-                      Contact Us
-                    </Link>
-                    
-                    <Link
-                      href="/components/templates/template5/courses"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        setActiveLink("courses");
-                      }}
-                      className="block w-full px-5 py-4 bg-white text-[#2C3E50] border border-[#E0E0E0] rounded-xl font-semibold text-[15px] text-center hover:border-[#8B6B61] hover:text-[#8B6B61] transition-all duration-300"
-                    >
-                      View All Programs
-                    </Link>
-                  </div>
-                </div>
+                {/* View All Programs Button */}
+                <Link
+                  href="/components/templates/template5/courses"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setActiveLink("courses");
+                  }}
+                  className="block w-full px-4 py-3.5 bg-[#F8F8F8] text-[#2C3E50] border border-[#E0E0E0] rounded-xl font-medium text-[14px] text-center hover:border-[#8B6B61] hover:text-[#8B6B61] mb-4"
+                >
+                  View All Programs
+                </Link>
 
-                {/* Footer Info */}
-                <div className="pt-6 border-t border-[#E0E0E0]">
-                  <div className="text-[13px] text-[#7F8C8D] tracking-[0.08px] text-center">
-                    <p>Quality Education Since 1995</p>
+                {/* College Info */}
+                <div className="pt-4 border-t border-[#E0E0E0]">
+                  <div className="text-[12px] text-[#7F8C8D]">
+                    <p>Quality Education</p>
+                    <p>Since 1995</p>
                   </div>
                 </div>
               </div>
@@ -711,17 +697,20 @@ export const Navbar: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-full">
           <div className="flex items-center justify-between h-full">
-            {/* Logo */}
+            {/* Logo - Properly Visible */}
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#8B6B61] rounded-full flex items-center justify-center">
-                {/* NO ICON - Just a circle */}
+                <span className="text-white font-bold text-[18px]">EC</span>
               </div>
               <div>
-                <span className="font-bold text-[20px] text-[#2C3E50] tracking-[0.2px] block leading-tight">
+                <span className="font-bold text-[20px] text-[#2C3E50] block leading-tight">
                   Excellence College
                 </span>
-                <span className="text-[13px] text-[#7F8C8D] font-medium tracking-[0.1px] hidden md:block">
+                <span className="text-[13px] text-[#7F8C8D] font-medium hidden md:block">
                   Quality Education Since 1995
+                </span>
+                <span className="text-[12px] text-[#7F8C8D] font-medium md:hidden">
+                  Since 1995
                 </span>
               </div>
             </div>
@@ -738,8 +727,8 @@ export const Navbar: React.FC = () => {
       {/* Spacer */}
       <div style={{ height: isScrolled ? '72px' : '76px' }} />
 
-      {/* Bottom Slider Menu */}
-      <BottomSliderMenu />
+      {/* Right Slider Menu */}
+      <RightSliderMenu />
     </>
   );
 };
