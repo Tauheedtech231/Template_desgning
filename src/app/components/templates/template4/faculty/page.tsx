@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { 
   FaLinkedin, 
   FaEnvelope,
-  FaArrowRight,
   FaArrowLeft,
   FaQuoteLeft,
   FaQuoteRight,
-  FaStar
+  FaUsers
 } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
+
+// Prevent prerendering - only render on-demand since we need search params
+export const dynamic = 'force-dynamic';
 
 interface Faculty {
   id: number;
@@ -27,83 +29,79 @@ interface Faculty {
   description: string;
 }
 
-const FacultySection: React.FC = () => {
+// Component that uses useSearchParams - wrapped in Suspense boundary
+function FacultyContent() {
+  const searchParams = useSearchParams();
+  const [collegeId, setCollegeId] = useState<string | null>(null);
   const [activeFaculty, setActiveFaculty] = useState<Faculty | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [startX, setStartX] = useState<number>(0);
   const [scrollLeft, setScrollLeft] = useState<number>(0);
+  const [facultyMembers, setFacultyMembers] = useState<Faculty[]>([]);
+  const [loading, setLoading] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const facultyMembers: Faculty[] = [
-    {
-      id: 1,
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80",
-      name: "Dr. Sarah Johnson",
-      position: "Dean of Academic Affairs",
-      designation: "Professor of Computer Science",
-      linkedin: "https://linkedin.com",
-      email: "sarah.johnson@college.edu",
-      quote: "Education is not the learning of facts, but the training of the mind to think.",
-      expertise: ["AI Research", "Machine Learning", "Data Science"],
-      experience: "15+ Years",
-      description: "A visionary educator who bridges cutting-edge technology with accessible learning. Her innovative teaching methods have transformed how computer science is taught."
-    },
-    {
-      id: 2,
-      image: "https://images.unsplash.com/photo-1551836026-d5c2c5af78e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80",
-      name: "Prof. Michael Chen",
-      position: "Department Head",
-      designation: "Professor of Business Administration",
-      linkedin: "https://linkedin.com",
-      email: "michael.chen@college.edu",
-      quote: "The classroom is where theory meets practice, and ideas become action.",
-      expertise: ["Strategic Management", "Entrepreneurship", "Finance"],
-      experience: "12+ Years",
-      description: "Brings real-world corporate experience into the classroom, focusing on ethical leadership and innovative business strategies."
-    },
-    {
-      id: 3,
-      image: "https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80",
-      name: "Dr. Robert Williams",
-      position: "Research Director",
-      designation: "Professor of Engineering",
-      linkedin: "https://linkedin.com",
-      email: "robert.williams@college.edu",
-      quote: "Engineering is the art of directing the great sources of power in nature.",
-      expertise: ["Structural Design", "Project Management", "Innovation"],
-      experience: "18+ Years",
-      description: "Combines theoretical knowledge with practical application, emphasizing sustainable and innovative engineering solutions."
-    },
-    {
-      id: 4,
-      image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80",
-      name: "Dr. Lisa Anderson",
-      position: "Director of Health Sciences",
-      designation: "Professor of Nursing",
-      linkedin: "https://linkedin.com",
-      email: "lisa.anderson@college.edu",
-      quote: "The best way to find yourself is to lose yourself in the service of others.",
-      expertise: ["Clinical Practice", "Healthcare Management", "Public Health"],
-      experience: "20+ Years",
-      description: "Passionate about creating healthcare professionals who see patients as whole people, not just cases."
-    },
-    {
-      id: 5,
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1976&q=80",
-      name: "Prof. David Miller",
-      position: "Director of Arts",
-      designation: "Professor of Fine Arts",
-      linkedin: "https://linkedin.com",
-      email: "david.miller@college.edu",
-      quote: "Art enables us to find ourselves and lose ourselves at the same time.",
-      expertise: ["Visual Arts", "Art History", "Creative Theory"],
-      experience: "14+ Years",
-      description: "Encourages students to see art as vital human expression and inquiry."
+  // Get college ID from URL
+  useEffect(() => {
+    let id = searchParams.get('college_id');
+    if (!id) {
+      id = sessionStorage.getItem('college_id');
     }
-  ];
+    if (id) {
+      setCollegeId(id);
+      sessionStorage.setItem('college_id', id);
+      console.log('🏫 [Faculty] College ID loaded:', id);
+    }
+  }, [searchParams]);
+
+  // Fetch faculty data from API
+  useEffect(() => {
+    async function fetchFacultyData() {
+      if (!collegeId) {
+        console.log('⚠️ [Faculty] No college ID, skipping fetch');
+        setLoading(false);
+        return;
+      }
+      
+      setLoading(true);
+      console.log('🔄 [Faculty] Fetching faculty data for college ID:', collegeId);
+      
+      try {
+        const response = await fetch(`/api/public/sections?college_id=${collegeId}&section_name=Faculty`);
+        console.log('📡 [Faculty] API Response Status:', response.status);
+        
+        const data = await response.json();
+        console.log('📦 [Faculty] Full API Response:', JSON.stringify(data, null, 2));
+        
+        if (data.success && data.content) {
+          if (data.content.faculty && Array.isArray(data.content.faculty)) {
+            // Sort by order
+            const sortedFaculty = [...data.content.faculty].sort((a, b) => (a.order || 0) - (b.order || 0));
+            setFacultyMembers(sortedFaculty);
+            console.log('✅ [Faculty] Loaded', sortedFaculty.length, 'faculty members');
+          } else {
+            console.log('⚠️ [Faculty] No faculty array in content');
+            setFacultyMembers([]);
+          }
+        } else {
+          console.log('❌ [Faculty] No content or success false');
+          setFacultyMembers([]);
+        }
+      } catch (error) {
+        console.error('❌ [Faculty] Error fetching faculty data:', error);
+        setFacultyMembers([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchFacultyData();
+  }, [collegeId]);
 
   // Continuous right-to-left slider effect
   useEffect(() => {
+    if (loading || facultyMembers.length === 0) return;
+    
     const slider = sliderRef.current;
     if (!slider || activeFaculty) return;
 
@@ -130,7 +128,7 @@ const FacultySection: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [isDragging, activeFaculty]);
+  }, [isDragging, activeFaculty, loading, facultyMembers.length]);
 
   // Handle drag for manual control
   const handleDragStart = (e: React.MouseEvent) => {
@@ -162,6 +160,18 @@ const FacultySection: React.FC = () => {
     setActiveFaculty(null);
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <section className="relative py-16 bg-[#0B1220] min-h-[400px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading faculty...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative py-16 bg-[#0B1220]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -177,96 +187,121 @@ const FacultySection: React.FC = () => {
             Our Faculty
           </h1>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Click on any faculty member to see their details
+            {facultyMembers.length > 0 
+              ? "Click on any faculty member to see their details" 
+              : "Faculty members will be added soon"}
           </p>
         </motion.div>
 
-        {/* Continuous Slider */}
-        <div className="mb-12">
-          <div className="relative overflow-hidden">
-            {/* Gradient overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0B1220] to-transparent z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0B1220] to-transparent z-10" />
-            
-            {/* Continuous slider */}
-            <div
-              ref={sliderRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing py-4"
-              onMouseDown={handleDragStart}
-              onMouseMove={handleDragMove}
-              onMouseUp={handleDragEnd}
-              onMouseLeave={handleDragEnd}
-            >
-              {/* First set of cards */}
-              {facultyMembers.map((faculty) => (
-                <motion.div
-                  key={`first-${faculty.id}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="flex-shrink-0 w-64 cursor-pointer"
-                  onClick={() => handleFacultyClick(faculty)}
-                >
-                  <div className="bg-[#0F1729] border border-gray-800 rounded-xl p-4 hover:border-teal-400 transition-all duration-300 hover:scale-[1.02]">
-                    <div className="relative w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                      <Image
-                        src={faculty.image}
-                        alt={faculty.name}
-                        fill
-                        className="object-cover"
-                        sizes="128px"
-                      />
-                    </div>
-                    <h3 className="text-lg font-bold text-white text-center mb-2">
-                      {faculty.name}
-                    </h3>
-                    <p className="text-teal-400 text-sm text-center mb-2">
-                      {faculty.designation}
-                    </p>
-                    <div className="px-3 py-1 bg-[#1E293B] text-gray-300 text-xs rounded-full text-center">
-                      {faculty.experience}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+        {/* Continuous Slider - Only show if faculty exists */}
+        {facultyMembers.length > 0 ? (
+          <div className="mb-12">
+            <div className="relative overflow-hidden">
+              {/* Gradient overlays */}
+              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0B1220] to-transparent z-10" />
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0B1220] to-transparent z-10" />
               
-              {/* Duplicate set for seamless loop */}
-              {facultyMembers.map((faculty) => (
-                <motion.div
-                  key={`second-${faculty.id}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="flex-shrink-0 w-64 cursor-pointer"
-                  onClick={() => handleFacultyClick(faculty)}
-                >
-                  <div className="bg-[#0F1729] border border-gray-800 rounded-xl p-4 hover:border-teal-400 transition-all duration-300 hover:scale-[1.02]">
-                    <div className="relative w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                      <Image
-                        src={faculty.image}
-                        alt={faculty.name}
-                        fill
-                        className="object-cover"
-                        sizes="128px"
-                      />
+              {/* Continuous slider */}
+              <div
+                ref={sliderRef}
+                className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing py-4"
+                onMouseDown={handleDragStart}
+                onMouseMove={handleDragMove}
+                onMouseUp={handleDragEnd}
+                onMouseLeave={handleDragEnd}
+              >
+                {/* First set of cards */}
+                {facultyMembers.map((faculty) => (
+                  <motion.div
+                    key={`first-${faculty.id}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4 }}
+                    className="flex-shrink-0 w-64 cursor-pointer"
+                    onClick={() => handleFacultyClick(faculty)}
+                  >
+                    <div className="bg-[#0F1729] border border-gray-800 rounded-xl p-4 hover:border-teal-400 transition-all duration-300 hover:scale-[1.02]">
+                      <div className="relative w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
+                        {faculty.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={faculty.image}
+                            alt={faculty.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                            <FaUsers className="w-12 h-12 text-gray-500" />
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-white text-center mb-2">
+                        {faculty.name}
+                      </h3>
+                      <p className="text-teal-400 text-sm text-center mb-2">
+                        {faculty.designation}
+                      </p>
+                      <div className="px-3 py-1 bg-[#1E293B] text-gray-300 text-xs rounded-full text-center">
+                        {faculty.experience}
+                      </div>
                     </div>
-                    <h3 className="text-lg font-bold text-white text-center mb-2">
-                      {faculty.name}
-                    </h3>
-                    <p className="text-teal-400 text-sm text-center mb-2">
-                      {faculty.designation}
-                    </p>
-                    <div className="px-3 py-1 bg-[#1E293B] text-gray-300 text-xs rounded-full text-center">
-                      {faculty.experience}
+                  </motion.div>
+                ))}
+                
+                {/* Duplicate set for seamless loop */}
+                {facultyMembers.map((faculty) => (
+                  <motion.div
+                    key={`second-${faculty.id}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4 }}
+                    className="flex-shrink-0 w-64 cursor-pointer"
+                    onClick={() => handleFacultyClick(faculty)}
+                  >
+                    <div className="bg-[#0F1729] border border-gray-800 rounded-xl p-4 hover:border-teal-400 transition-all duration-300 hover:scale-[1.02]">
+                      <div className="relative w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
+                        {faculty.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={faculty.image}
+                            alt={faculty.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                            <FaUsers className="w-12 h-12 text-gray-500" />
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-white text-center mb-2">
+                        {faculty.name}
+                      </h3>
+                      <p className="text-teal-400 text-sm text-center mb-2">
+                        {faculty.designation}
+                      </p>
+                      <div className="px-3 py-1 bg-[#1E293B] text-gray-300 text-xs rounded-full text-center">
+                        {faculty.experience}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Empty State */
+          <div className="text-center py-16 bg-[#0F1729] rounded-2xl border border-gray-800 mb-12">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
+              <FaUsers className="w-10 h-10 text-gray-500" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-3">No Faculty Members Yet</h3>
+            <p className="text-gray-400 max-w-md mx-auto">
+              Faculty members will be added soon. Check back later!
+            </p>
+          </div>
+        )}
 
         {/* Faculty Details Section */}
         <AnimatePresence>
@@ -299,7 +334,6 @@ const FacultySection: React.FC = () => {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    {/* Name and Title */}
                     <div>
                       <h2 className="text-2xl font-bold text-white mb-2">
                         {activeFaculty.name}
@@ -312,7 +346,6 @@ const FacultySection: React.FC = () => {
                       </p>
                     </div>
 
-                    {/* Experience Badge */}
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -323,7 +356,6 @@ const FacultySection: React.FC = () => {
                       </div>
                     </motion.div>
 
-                    {/* Quote */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -339,7 +371,6 @@ const FacultySection: React.FC = () => {
                       </div>
                     </motion.div>
 
-                    {/* Description */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -350,7 +381,6 @@ const FacultySection: React.FC = () => {
                       </p>
                     </motion.div>
 
-                    {/* Expertise */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -374,7 +404,6 @@ const FacultySection: React.FC = () => {
                       </div>
                     </motion.div>
 
-                    {/* Contact Links */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -413,15 +442,19 @@ const FacultySection: React.FC = () => {
                     transition={{ delay: 0.2 }}
                   >
                     <div className="relative h-96 rounded-xl overflow-hidden">
-                      <Image
-                        src={activeFaculty.image}
-                        alt={activeFaculty.name}
-                        fill
-                        className="object-cover rounded-xl"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
+                      {activeFaculty.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={activeFaculty.image}
+                          alt={activeFaculty.name}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-800 flex items-center justify-center rounded-xl">
+                          <FaUsers className="w-20 h-20 text-gray-600" />
+                        </div>
+                      )}
                       
-                      {/* Experience badge */}
                       <motion.div 
                         className="absolute bottom-6 left-6"
                         initial={{ y: 30, opacity: 0 }}
@@ -441,7 +474,7 @@ const FacultySection: React.FC = () => {
         </AnimatePresence>
 
         {/* CTA Section */}
-        {!activeFaculty && (
+        {!activeFaculty && facultyMembers.length > 0 && (
           <motion.div 
             className="text-center"
             initial={{ opacity: 0, y: 20 }}
@@ -479,6 +512,22 @@ const FacultySection: React.FC = () => {
         }
       `}</style>
     </section>
+  );
+}
+
+// Main component with Suspense boundary
+const FacultySection: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <section className="relative py-16 bg-[#0B1220] min-h-[400px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading faculty...</p>
+        </div>
+      </section>
+    }>
+      <FacultyContent />
+    </Suspense>
   );
 };
 

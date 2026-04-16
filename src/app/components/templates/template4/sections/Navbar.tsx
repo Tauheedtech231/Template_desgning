@@ -1,40 +1,123 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaBars, FaTimes, FaChevronDown, FaChevronRight, FaGraduationCap, FaImages, FaCalendarAlt, FaEye } from "react-icons/fa";
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaBars, FaTimes, FaChevronDown, FaGraduationCap, FaImages, FaCalendarAlt, FaEye } from "react-icons/fa";
 import Link from "next/link";
 
-const Navbar = () => {
+// Separate component that uses useSearchParams
+function NavbarContent() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  // State for college ID
+  const [collegeId, setCollegeId] = useState<string | null>(null);
+  const [collegeName, setCollegeName] = useState<string>("College");
+  const [collegeLogo, setCollegeLogo] = useState<string | null>(null);
+  const [contactInfo, setContactInfo] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeNav, setActiveNav] = useState("Home");
   const [scrolled, setScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [mobileContactSlide, setMobileContactSlide] = useState(0);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const contactSliderRef = useRef<HTMLDivElement>(null);
 
-  // Contact info for slider
-  const contactSlides = [
-    { 
-      icon: FaMapMarkerAlt, 
-      text: "Q Kamboh Plaza, Lahore, Pakistan",
-      color: "text-teal-400"
-    },
-    { 
-      icon: FaEnvelope, 
-      text: "college@starlysoft.com",
-      color: "text-teal-400"
-    },
-    { 
-      icon: FaPhone, 
-      text: "+92 333 754144",
-      color: "text-teal-400"
+  // Load college ID from URL or sessionStorage
+  useEffect(() => {
+    let id = searchParams?.get('college_id');
+    if (!id && typeof window !== 'undefined') {
+      id = sessionStorage.getItem('college_id');
     }
-  ];
+    if (id) {
+      setCollegeId(id);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('college_id', id);
+      }
+      console.log('✅ College ID loaded:', id);
+      
+      // Fetch college details
+      fetchCollegeDetails(id);
+      fetchContactDetails(id);
+    }
+  }, [searchParams]);
 
-  // Courses submenu items
+  // Fetch college details
+  const fetchCollegeDetails = async (id: string) => {
+    try {
+      const response = await fetch(`/api/public/college?id=${id}`);
+      const data = await response.json();
+      
+      if (data.success && data.college) {
+        setCollegeName(data.college.name || "College");
+        console.log('✅ College name loaded:', data.college.name);
+      }
+      
+      // Fetch about section for logo
+      const aboutResponse = await fetch(`/api/public/sections?college_id=${id}&section_name=About`);
+      const aboutData = await aboutResponse.json();
+      
+      if (aboutData.success && aboutData.content) {
+        if (aboutData.content.logo) {
+          setCollegeLogo(aboutData.content.logo);
+          console.log('✅ College logo loaded');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch college details:', error);
+    }
+  };
+
+  // Fetch contact details
+  const fetchContactDetails = async (id: string) => {
+    try {
+      const response = await fetch(`/api/public/sections?college_id=${id}&section_name=Contact`);
+      const data = await response.json();
+      
+      if (data.success && data.content) {
+        setContactInfo(data.content);
+        console.log('✅ Contact info loaded:', data.content);
+      }
+    } catch (error) {
+      console.error('Failed to fetch contact details:', error);
+    }
+  };
+
+  // Dynamic link generator
+  const getDynamicLink = (basePath: string) => {
+    if (collegeId) {
+      const separator = basePath.includes('?') ? '&' : '?';
+      return `${basePath}${separator}college_id=${collegeId}`;
+    }
+    return basePath;
+  };
+
+  // Real contact slides from API
+  const getContactSlides = () => {
+    return [
+      { 
+        icon: FaMapMarkerAlt, 
+        text: contactInfo?.address || "Q Kamboh Plaza, Lahore, Pakistan", 
+        color: "text-teal-400" 
+      },
+      { 
+        icon: FaEnvelope, 
+        text: contactInfo?.email || "college@starlysoft.com", 
+        color: "text-teal-400" 
+      },
+      { 
+        icon: FaPhone, 
+        text: contactInfo?.contactNumbers?.phone || contactInfo?.phone || "+92 333 754144", 
+        color: "text-teal-400" 
+      },
+    ];
+  };
+
+  const contactSlides = getContactSlides();
+
+  // Courses items with dynamic links
   const coursesItems = [
     { name: "Computer Science", link: "/components/templates/template4/courses" },
     { name: "Business Administration", link: "/components/templates/template4/courses" },
@@ -43,54 +126,42 @@ const Navbar = () => {
     { name: "Arts & Humanities", link: "/components/templates/template4/courses" },
   ];
 
-  // About submenu items with icons
+  // About items with dynamic links
   const aboutItems = [
     { 
       name: "Gallery", 
-      link: "/components/templates/template4/gallery",
-      icon: FaImages,
-      description: "View our campus photos"
+      link: getDynamicLink("/components/templates/template4/gallery"),
+      icon: FaImages, 
+      description: "View our campus photos" 
     },
     { 
       name: "Events", 
-      link: "/components/templates/template4/events",
-      icon: FaCalendarAlt,
-      description: "Upcoming college events"
+      link: getDynamicLink("/components/templates/template4/events"),
+      icon: FaCalendarAlt, 
+      description: "Upcoming college events" 
     },
     { 
       name: "Vision", 
-      link: "/components/templates/template4/about#vision",
-      icon: FaEye,
-      description: "Our vision and mission"
+      link: getDynamicLink("/components/templates/template4/about"),
+      icon: FaEye, 
+      description: "Our vision and mission" 
     }
   ];
 
-  // Navigation items
+  // Navigation items with dynamic links
   const navItems = [
-    { name: "Home", link: "/" },
-    { name: "About", link: "/components/templates/template4/about" },
-    { name: "Courses", link: "/components/templates/template4/courses" },
-    { name: "Faculty", link: "/components/templates/template4/faculty" },
-    { name: "Contact", link: "/components/templates/template4/contact" },
+    { name: "Home", link: getDynamicLink("/") },
+    { name: "About", link: getDynamicLink("/components/templates/template4/about") },
+    { name: "Courses", link: getDynamicLink("/components/templates/template4/courses") },
+    { name: "Faculty", link: getDynamicLink("/components/templates/template4/faculty") },
+    { name: "Contact", link: getDynamicLink("/components/templates/template4/contact") },
   ];
 
-  // Handle scroll effect
+  // Handle scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Auto-rotate contact slider on mobile
-  useEffect(() => {
-    if (window.innerWidth < 640) {
-      const interval = setInterval(() => {
-        setMobileContactSlide(prev => (prev + 1) % contactSlides.length);
-      }, 3000);
-      return () => clearInterval(interval);
-    }
   }, []);
 
   // Close menu when clicking outside
@@ -116,39 +187,34 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  // Smooth dropdown handling with delay
+  // Set active nav based on current path
+  useEffect(() => {
+    if (pathname?.includes('/about')) setActiveNav('About');
+    else if (pathname?.includes('/courses')) setActiveNav('Courses');
+    else if (pathname?.includes('/faculty')) setActiveNav('Faculty');
+    else if (pathname?.includes('/contact')) setActiveNav('Contact');
+    else setActiveNav('Home');
+  }, [pathname]);
+
+  // Dropdown handlers
   const handleDropdownEnter = (dropdown: string) => {
-    if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current);
-    }
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
     setActiveDropdown(dropdown);
   };
 
   const handleDropdownLeave = () => {
-    dropdownTimeoutRef.current = setTimeout(() => {
-      setActiveDropdown(null);
-    }, 150);
+    dropdownTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 150);
   };
 
   const handleDropdownClick = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
-  // Handle mobile contact slider navigation
-  const handleContactSlide = (index: number) => {
-    setMobileContactSlide(index);
-    if (contactSliderRef.current) {
-      contactSliderRef.current.style.transform = `translateX(-${index * 100}%)`;
-    }
-  };
-
-  // Handle menu close
   const handleCloseMenu = () => {
     setIsMenuOpen(false);
     setActiveDropdown(null);
   };
 
-  // Handle navigation clicks
   const handleNavClick = (navItem: string) => {
     setActiveNav(navItem);
     setActiveDropdown(null);
@@ -157,51 +223,31 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Top Bar - Professional Design with Responsive Contact Slider */}
+      {/* Top Bar - Real Contact Info */}
       <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-1 sm:py-2 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Desktop Contact Info - Horizontal Layout */}
           <div className="hidden sm:flex justify-center items-center space-x-8">
             {contactSlides.map((slide, index) => {
               const Icon = slide.icon;
               return (
                 <div key={index} className="flex items-center space-x-3 group">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-teal-500/20 rounded-full blur-sm group-hover:blur-md transition-all duration-300"></div>
-                    <Icon className={`relative ${slide.color} text-sm transition-transform duration-300 group-hover:scale-110`} />
-                  </div>
-                  <span className="text-gray-300 text-sm font-medium tracking-wide group-hover:text-white transition-colors duration-300">
-                    {slide.text}
-                  </span>
-                  {index < contactSlides.length - 1 && (
-                    <div className="w-[1px] h-4 bg-gray-600/50 rotate-[15deg]"></div>
-                  )}
+                  <Icon className={`${slide.color} text-sm transition-transform duration-300 group-hover:scale-110`} />
+                  <span className="text-gray-300 text-sm font-medium">{slide.text}</span>
+                  {index < contactSlides.length - 1 && <div className="w-[1px] h-4 bg-gray-600/50 rotate-[15deg]"></div>}
                 </div>
               );
             })}
           </div>
 
-          {/* Mobile Contact Slider - Continuous */}
+          {/* Mobile Contact Slider */}
           <div className="sm:hidden relative overflow-hidden py-2">
-            <div 
-              ref={contactSliderRef}
-              className="flex animate-scroll"
-              style={{ 
-                animation: 'scroll 25s linear infinite',
-                width: 'fit-content'
-              }}
-            >
+            <div ref={contactSliderRef} className="flex animate-scroll" style={{ animation: 'scroll 25s linear infinite', width: 'fit-content' }}>
               {[...contactSlides, ...contactSlides, ...contactSlides].map((slide, index) => {
                 const Icon = slide.icon;
                 return (
-                  <div 
-                    key={index} 
-                    className="flex-shrink-0 flex items-center justify-center space-x-3 px-6 h-6 whitespace-nowrap"
-                  >
+                  <div key={index} className="flex-shrink-0 flex items-center justify-center space-x-3 px-6 h-6 whitespace-nowrap">
                     <Icon className={slide.color} />
-                    <span className="text-xs font-medium text-gray-300">
-                      {slide.text}
-                    </span>
+                    <span className="text-xs font-medium text-gray-300">{slide.text}</span>
                   </div>
                 );
               })}
@@ -211,119 +257,83 @@ const Navbar = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <nav className={`bg-white transition-all duration-500 sticky top-0 z-50 ${
-        scrolled ? 'border-b border-gray-100' : ''
-      }`}>
+      <nav className={`bg-white transition-all duration-500 sticky top-0 z-50 ${scrolled ? 'border-b border-gray-100 shadow-sm' : ''}`}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-10 sm:h-12">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-teal-500/10 rounded-full blur-sm"></div>
-                <FaGraduationCap className="relative text-teal-600 text-2xl" />
+          <div className="flex justify-between items-center h-14 sm:h-16">
+            {/* Logo with College Name */}
+            <Link href={getDynamicLink("/")} className="flex items-center space-x-3 group">
+              {collegeLogo ? (
+                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 shadow-md group-hover:shadow-lg transition-all duration-300">
+                  <img 
+                    src={collegeLogo} 
+                    alt={collegeName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                  <FaGraduationCap className="text-white text-xl" />
+                </div>
+              )}
+              
+              <div className="text-xl sm:text-2xl font-bold tracking-tight">
+                <span className="text-gray-900">{collegeName}</span>
               </div>
-              <div className="text-2xl font-bold tracking-tight">
-                <span className="text-gray-900">Coll</span>
-                <span className="text-teal-500">e</span>
-                <span className="text-gray-900">ge</span>
-              </div>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-8">
               {navItems.map((item) => (
-                <div 
-                  key={item.name} 
-                  className="relative"
-                  onMouseEnter={() => setHoveredItem(item.name)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                >
-                  {item.name === 'Courses' || item.name === 'About' ? (
+                <div key={item.name} className="relative">
+                  {(item.name === 'Courses' || item.name === 'About') ? (
                     <div className="relative">
                       <button
                         onMouseEnter={() => handleDropdownEnter(item.name)}
                         onMouseLeave={handleDropdownLeave}
                         onClick={() => handleDropdownClick(item.name)}
-                        className="group flex items-center space-x-1 text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-all duration-300 relative pb-1"
+                        className="group flex items-center space-x-1 text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide"
                       >
-                        <span className="relative">
-                          {item.name}
-                          <span className={`absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 transition-all duration-300 ease-out shadow-[0_2px_8px_rgba(20,184,166,0.3)] ${
-                            activeDropdown === item.name || hoveredItem === item.name ? 'w-full' : ''
-                          }`}></span>
-                        </span>
-                        <div className="relative">
-                          <FaChevronDown className={`transition-transform duration-300 ${
-                            activeDropdown === item.name ? 'rotate-180' : ''
-                          }`} size={10} />
-                        </div>
+                        <span>{item.name}</span>
+                        <FaChevronDown className={`transition-transform duration-300 ${activeDropdown === item.name ? 'rotate-180' : ''}`} size={10} />
                       </button>
 
-                      {/* Smooth Dropdown */}
                       <div
                         onMouseEnter={() => handleDropdownEnter(item.name)}
                         onMouseLeave={handleDropdownLeave}
-                        className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-4 w-64 bg-white rounded-xl overflow-hidden transition-all duration-300 ${
-                          activeDropdown === item.name
-                            ? 'opacity-100 visible translate-y-0'
-                            : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                        className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-4 w-64 bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 z-50 ${
+                          activeDropdown === item.name ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                         }`}
                       >
-                        {/* Animated border container */}
-                        <div className="relative p-0.5 rounded-xl bg-gradient-to-br from-gray-50 via-white to-gray-50">
-                          <div className="bg-white rounded-xl">
-                            {item.name === 'Courses' ? (
-                              <>
-                                {coursesItems.map((course, index) => (
-                                  <a
-                                    key={course.name}
-                                    href={course.link}
-                                    onClick={() => handleNavClick('Courses')}
-                                    className="block px-6 py-3 text-sm text-gray-700 hover:text-teal-600 transition-all duration-300 group/item relative"
-                                  >
-                                    <div className="flex items-center">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 group-hover/item:bg-teal-500 transition-all duration-300"></div>
-                                      <span className="flex-1">{course.name}</span>
-                                      <div className="opacity-0 group-hover/item:opacity-100 transform translate-x-2 group-hover/item:translate-x-0 transition-all duration-300">
-                                        <div className="w-0 group-hover/item:w-4 h-[1px] bg-teal-400 transition-all duration-300"></div>
-                                      </div>
-                                    </div>
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 to-teal-500 group-hover/item:w-full transition-all duration-300"></span>
-                                  </a>
-                                ))}
-                              </>
-                            ) : item.name === 'About' ? (
-                              <>
-                                {aboutItems.map((subItem) => {
-                                  const Icon = subItem.icon;
-                                  return (
-                                    <a
-                                      key={subItem.name}
-                                      href={subItem.link}
-                                      onClick={() => handleNavClick('About')}
-                                      className="block px-6 py-4 text-sm hover:bg-teal-50/30 transition-all duration-300 group/item relative"
-                                    >
-                                      <div className="flex items-start space-x-3">
-                                        <div className="relative">
-                                          <div className="absolute inset-0 bg-teal-500/10 rounded-full blur-sm group-hover/item:blur-md transition-all duration-300"></div>
-                                          <Icon className="relative text-teal-500 text-sm transition-transform duration-300 group-hover/item:scale-110" />
-                                        </div>
-                                        <div className="flex-1">
-                                          <div className="font-medium text-gray-800 group-hover/item:text-teal-600 transition-colors duration-300">
-                                            {subItem.name}
-                                          </div>
-                                          <div className="text-xs text-gray-500 mt-0.5">
-                                            {subItem.description}
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 group-hover/item:w-full transition-all duration-300 ease-out shadow-[0_1px_4px_rgba(20,184,166,0.4)]"></span>
-                                    </a>
-                                  );
-                                })}
-                              </>
-                            ) : null}
-                          </div>
+                        <div className="bg-white rounded-xl">
+                          {item.name === 'Courses' ? (
+                            coursesItems.map((course) => (
+                              <Link
+                                key={course.name}
+                                href={getDynamicLink(course.link)}
+                                onClick={() => setActiveDropdown(null)}
+                                className="block px-6 py-3 text-sm text-gray-700 hover:text-teal-600 hover:bg-teal-50 transition-all"
+                              >
+                                {course.name}
+                              </Link>
+                            ))
+                          ) : (
+                            aboutItems.map((subItem) => {
+                              const Icon = subItem.icon;
+                              return (
+                                <Link
+                                  key={subItem.name}
+                                  href={subItem.link}
+                                  onClick={() => setActiveDropdown(null)}
+                                  className="block px-6 py-3 text-sm text-gray-700 hover:text-teal-600 hover:bg-teal-50 transition-all"
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <Icon className="text-teal-500 text-sm" />
+                                    <span>{subItem.name}</span>
+                                  </div>
+                                </Link>
+                              );
+                            })
+                          )}
                         </div>
                       </div>
                     </div>
@@ -331,10 +341,12 @@ const Navbar = () => {
                     <Link
                       href={item.link}
                       onClick={() => handleNavClick(item.name)}
-                      className="relative text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide transition-colors duration-300 pb-1 group"
+                      className={`relative text-gray-700 hover:text-teal-600 font-medium text-sm uppercase tracking-wide pb-1 group ${
+                        activeNav === item.name ? 'text-teal-600' : ''
+                      }`}
                     >
                       {item.name}
-                      <span className={`absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 transition-all duration-300 ease-out shadow-[0_2px_8px_rgba(20,184,166,0.3)] ${
+                      <span className={`absolute -bottom-2 left-0 w-0 h-0.5 bg-teal-500 transition-all duration-300 ${
                         activeNav === item.name ? 'w-full' : 'group-hover:w-full'
                       }`}></span>
                     </Link>
@@ -343,246 +355,94 @@ const Navbar = () => {
               ))}
               
               {/* Get Started Button */}
-              <button 
-                onClick={() => handleNavClick('Courses')}
-                className="relative overflow-hidden group bg-teal-600 text-white rounded-full px-6 py-2.5 font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              <Link
+                href={getDynamicLink("/components/templates/template4/courses")}
+                className="bg-teal-600 text-white rounded-full px-6 py-2.5 font-medium text-sm hover:bg-teal-700 transition-all"
               >
-                <span className="relative  z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-teal-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </button>
+                Get Started
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden relative p-2 text-gray-700 hover:text-teal-600 transition-colors duration-300"
-            >
-              <div className="relative w-6 h-6">
-                <div className={`absolute inset-0 transition-all duration-300 ${
-                  isMenuOpen ? 'opacity-0' : 'opacity-100'
-                }`}>
-                  <FaBars className="w-full h-full" />
-                </div>
-                <div className={`absolute inset-0 transition-all duration-300 ${
-                  isMenuOpen ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <FaTimes className="w-full h-full" />
-                </div>
-              </div>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-700">
+              {isMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        <div className="lg:hidden">
-          {/* Backdrop */}
-          <div 
-            className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-all duration-500 ${
-              isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-            }`}
-            onClick={handleCloseMenu}
-          />
-
-          {/* Menu Panel */}
-          <div
-            ref={mobileMenuRef}
-            className={`fixed inset-y-0 left-0 w-80 bg-white z-50 transform transition-all duration-500 ease-out shadow-2xl ${
-              isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
-            }`}
-          >
-            {/* Menu Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <div className="flex items-center space-x-3">
-                <FaGraduationCap className="text-teal-600 text-2xl" />
-                <div className="text-xl font-bold">
-                  <span className="text-gray-900">Coll</span>
-                  <span className="text-teal-500">e</span>
-                  <span className="text-gray-900">ge</span>
-                </div>
-              </div>
-              <button
-                onClick={handleCloseMenu}
-                className="relative w-10 h-10 flex items-center justify-center rounded-full bg-teal-50 hover:bg-teal-100 text-gray-500 hover:text-teal-600 transition-all duration-300 group"
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
-
-            {/* Menu Content */}
-            <div className="h-full overflow-y-auto">
-              <div className="p-4">
-                {/* Navigation Links */}
-                <div className="space-y-1">
-                  {navItems.map((item) => (
-                    <div key={item.name} className="relative">
-                      {item.name === 'Courses' || item.name === 'About' ? (
-                        <>
-                          <button
-                            onClick={() => handleDropdownClick(item.name)}
-                            className={`flex items-center justify-between w-full p-4 text-left transition-all duration-300 rounded-lg border-l-4 relative ${
-                              activeDropdown === item.name ? 'text-teal-600 bg-teal-50 border-teal-600' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50 border-transparent'
-                            }`}
-                          >
-                            <span className="font-medium">{item.name}</span>
-                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                              activeDropdown === item.name ? 'bg-teal-500/20' : ''
-                            }`}>
-                              <FaChevronDown className={`transition-transform duration-300 ${
-                                activeDropdown === item.name ? 'rotate-180' : ''
-                              }`} />
-                            </div>
-                          </button>
-                          
-                          {/* Mobile Submenu */}
-                          <div className={`overflow-hidden transition-all duration-500 ease-out ${
-                            activeDropdown === item.name ? 'max-h-96 opacity-100 visible' : 'max-h-0 opacity-0 invisible'
-                          }`}>
-                            <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-4">
-                              {item.name === 'Courses' ? (
-                                coursesItems.map((course) => (
-                                  <a
-                                    key={course.name}
-                                    href={course.link}
-                                    onClick={() => handleNavClick('Courses')}
-                                    className="block p-3 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 rounded hover:bg-teal-50/50"
-                                  >
-                                    <div className="flex items-center">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-3 hover:bg-teal-500 transition-colors duration-300"></div>
-                                      {course.name}
-                                    </div>
-                                  </a>
-                                ))
-                              ) : item.name === 'About' ? (
-                                aboutItems.map((subItem) => {
-                                  const Icon = subItem.icon;
-                                  return (
-                                    <a
-                                      key={subItem.name}
-                                      href={subItem.link}
-                                      onClick={() => handleNavClick('About')}
-                                      className="block p-3 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 rounded hover:bg-teal-50/50"
-                                    >
-                                      <div className="flex items-center space-x-3">
-                                        <Icon className="text-teal-500 text-sm" />
-                                        <div>
-                                          <div className="font-medium">{subItem.name}</div>
-                                          <div className="text-xs text-gray-500 mt-0.5">{subItem.description}</div>
-                                        </div>
-                                      </div>
-                                    </a>
-                                  );
-                                })
-                              ) : null}
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <a
-                          href={item.link}
-                          onClick={() => handleNavClick(item.name)}
-                          className={`block p-4 rounded-lg border-l-4 transition-all duration-300 ${
-                            activeNav === item.name ? 'text-teal-600 font-medium bg-teal-50 border-teal-600' : 'text-gray-800 hover:text-teal-600 hover:bg-gray-50 border-transparent'
-                          }`}
-                        >
-                          {item.name}
-                        </a>
-                      )}
+        {isMenuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-black/50 z-40" onClick={handleCloseMenu}>
+            <div className="fixed inset-y-0 left-0 w-80 bg-white z-50 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <Link href={getDynamicLink("/components/templates/template4")} className="flex items-center space-x-3" onClick={handleCloseMenu}>
+                    {collegeLogo ? (
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100">
+                        <img src={collegeLogo} alt={collegeName} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <FaGraduationCap className="text-teal-600 text-2xl" />
+                    )}
+                    <div className="text-xl font-bold">
+                      <span className="text-gray-900">{collegeName.substring(0, 4)}</span>
+                      <span className="text-teal-500">{collegeName.substring(4)}</span>
                     </div>
-                  ))}
+                  </Link>
+                  <button onClick={handleCloseMenu} className="p-2 text-gray-500">
+                    <FaTimes size={20} />
+                  </button>
                 </div>
 
-                {/* Get Started Button */}
-                <button 
-                  onClick={() => {
-                    handleNavClick('Courses');
-                    handleCloseMenu();
-                  }}
-                  className="w-full mt-6 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full px-4 py-3 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Get Started
-                </button>
-
-                {/* Social Links */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex justify-center space-x-6">
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
-                      <FaFacebook size={20} />
-                    </a>
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
-                      <FaTwitter size={20} />
-                    </a>
-                    <a href="#" className="text-gray-400 hover:text-teal-600 transition-colors duration-300 p-2">
-                      <FaInstagram size={20} />
-                    </a>
-                  </div>
+                <div className="space-y-2">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.link}
+                      onClick={() => {
+                        setActiveNav(item.name);
+                        handleCloseMenu();
+                      }}
+                      className={`block p-3 rounded-lg ${
+                        activeNav === item.name ? 'bg-teal-50 text-teal-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                  
+                  <Link
+                    href={getDynamicLink("/components/templates/template4/courses")}
+                    onClick={handleCloseMenu}
+                    className="block w-full mt-4 bg-teal-600 text-white text-center rounded-full px-4 py-3 font-medium"
+                  >
+                    Get Started
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </nav>
 
-      {/* Custom animation styles */}
       <style jsx global>{`
-        @keyframes slideIn {
-          0% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slideOut {
-          0% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-        }
-
         @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-33.33%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.33%); }
         }
-
-        /* Smooth scrollbar */
-        .overflow-y-auto {
-          scrollbar-width: thin;
-          scrollbar-color: #cbd5e1 transparent;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar {
-          width: 4px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-          background-color: #cbd5e1;
-          border-radius: 20px;
-        }
-
-        /* Gradient animations */
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        .animate-scroll {
+          animation: scroll 25s linear infinite;
         }
       `}</style>
     </>
   );
-};
+}
 
-export default Navbar;
+// ✅ Main export with Suspense boundary
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-16 bg-white border-b animate-pulse" />}>
+      <NavbarContent />
+    </Suspense>
+  );
+}

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserFriends, FaSearch } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
 
 interface Event {
   id: number;
@@ -17,7 +18,11 @@ interface Event {
   featuredImage: string;
 }
 
-const EventsSection: React.FC = () => {
+// Component that uses useSearchParams - wrapped in Suspense boundary
+function EventsContent() {
+  const searchParams = useSearchParams();
+  const [collegeId, setCollegeId] = useState<string | null>(null);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -26,27 +31,78 @@ const EventsSection: React.FC = () => {
   const [isSubtitleVisible, setIsSubtitleVisible] = useState(false);
   const [scrollingUp, setScrollingUp] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [eventsData, setEventsData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Get college ID from URL
+  useEffect(() => {
+    let id = searchParams.get('college_id');
+    if (!id) {
+      id = sessionStorage.getItem('college_id');
+    }
+    if (id) {
+      setCollegeId(id);
+      sessionStorage.setItem('college_id', id);
+      console.log('🏫 [Events] College ID loaded:', id);
+    }
+  }, [searchParams]);
+
+  // Fetch events data from API
+  useEffect(() => {
+    async function fetchEventsData() {
+      if (!collegeId) {
+        console.log('⚠️ [Events] No college ID, skipping fetch');
+        setLoading(false);
+        return;
+      }
+      
+      setLoading(true);
+      console.log('🔄 [Events] Fetching events data for college ID:', collegeId);
+      
+      try {
+        const response = await fetch(`/api/public/sections?college_id=${collegeId}&section_name=Events`);
+        console.log('📡 [Events] API Response Status:', response.status);
+        
+        const data = await response.json();
+        console.log('📦 [Events] Full API Response:', JSON.stringify(data, null, 2));
+        
+        if (data.success && data.content) {
+          if (data.content.events && Array.isArray(data.content.events)) {
+            setEventsData(data.content.events);
+            setFilteredEvents(data.content.events);
+            console.log('✅ [Events] Loaded', data.content.events.length, 'events');
+          } else {
+            console.log('⚠️ [Events] No events array in content');
+          }
+        } else {
+          console.log('❌ [Events] No content or success false');
+        }
+      } catch (error) {
+        console.error('❌ [Events] Error fetching events data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchEventsData();
+  }, [collegeId]);
 
   // Animation triggers
   useEffect(() => {
-    // Heading animation
     const headingTimer = setTimeout(() => {
       setIsHeadingVisible(true);
     }, 300);
 
-    // Subtitle animation
     const subtitleTimer = setTimeout(() => {
       setIsSubtitleVisible(true);
     }, 800);
 
-    // Scroll animation setup
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrollingUp(currentScrollY < lastScrollY);
       setLastScrollY(currentScrollY);
 
-      // Animate cards on scroll
       const cards = document.querySelectorAll('.event-card');
       cards.forEach(card => {
         const rect = card.getBoundingClientRect();
@@ -59,7 +115,6 @@ const EventsSection: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Initial animation trigger
     setTimeout(() => {
       const cards = document.querySelectorAll('.event-card');
       cards.forEach((card, index) => {
@@ -74,101 +129,21 @@ const EventsSection: React.FC = () => {
       clearTimeout(subtitleTimer);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, eventsData]);
 
-  const eventsData: Event[] = [
-    // ... (events data remains the same)
-    {
-      id: 1,
-      title: "Campus Open House 2024",
-      date: "December 15",
-      day: "Friday",
-      time: "9:00 AM - 4:00 PM",
-      location: "Main Campus Auditorium",
-      description: "Explore our campus facilities and academic programs. Meet faculty and current students during guided tours.",
-      capacity: 200,
-      category: "Admission",
-      featuredImage: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2064&auto=format&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Tech Career Development Workshop",
-      date: "January 22",
-      day: "Monday",
-      time: "2:00 PM - 5:00 PM",
-      location: "Engineering Building, Room 302",
-      description: "Learn about career opportunities in technology. Industry experts will share insights and opportunities.",
-      capacity: 80,
-      category: "Career",
-      featuredImage: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      id: 3,
-      title: "Annual Research Symposium",
-      date: "February 8",
-      day: "Thursday",
-      time: "10:00 AM - 4:00 PM",
-      location: "Science Research Center",
-      description: "Annual showcase of student research projects across all disciplines. Open to public and industry partners.",
-      capacity: 150,
-      category: "Academic",
-      featuredImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      id: 4,
-      title: "Alumni Networking Night",
-      date: "March 5",
-      day: "Wednesday",
-      time: "6:00 PM - 9:00 PM",
-      location: "University Club Lounge",
-      description: "Connect with successful alumni from various industries. Networking opportunities for current students.",
-      capacity: 120,
-      category: "Networking",
-      featuredImage: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      id: 5,
-      title: "Sports Tournament Finals",
-      date: "April 12",
-      day: "Saturday",
-      time: "11:00 AM - 6:00 PM",
-      location: "University Sports Ground",
-      description: "Annual inter-department sports tournament finals. Cricket, Football, and Basketball championship matches.",
-      capacity: 500,
-      category: "Sports",
-      featuredImage: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      id: 6,
-      title: "Cultural Fest 2024",
-      date: "May 18",
-      day: "Saturday",
-      time: "4:00 PM - 10:00 PM",
-      location: "Central Campus Lawn",
-      description: "Annual cultural festival featuring music, dance, food stalls, and performances from different states.",
-      capacity: 1000,
-      category: "Cultural",
-      featuredImage: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop"
-    }
-  ];
-
+  // Filter events based on search term
   useEffect(() => {
-    let results = eventsData;
-    
     if (searchTerm.trim() !== "") {
       const searchLower = searchTerm.toLowerCase();
-      results = results.filter(event => 
+      const results = eventsData.filter(event => 
         event.title.toLowerCase().includes(searchLower) ||
         event.description.toLowerCase().includes(searchLower) ||
         event.location.toLowerCase().includes(searchLower) ||
         event.category.toLowerCase().includes(searchLower)
       );
-    }
-    
-    setFilteredEvents(results);
-    
-    // Generate suggestions
-    if (searchTerm.trim() !== "") {
+      setFilteredEvents(results);
+      
+      // Generate suggestions
       const allSuggestions = eventsData.flatMap(event => [
         event.title,
         event.category,
@@ -180,13 +155,22 @@ const EventsSection: React.FC = () => {
       );
       setSuggestions(filteredSuggestions.slice(0, 5));
     } else {
+      setFilteredEvents(eventsData);
       setSuggestions([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, eventsData]);
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchTerm(suggestion);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center bg-[#0B1220]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0B1220] text-white" ref={containerRef}>
@@ -246,7 +230,7 @@ const EventsSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Search Bar with Suggestions - Z-index issue fixed */}
+          {/* Search Bar with Suggestions */}
           <div 
             className={`
               max-w-2xl mx-auto transition-all duration-1000 ease-out delay-1000
@@ -271,7 +255,7 @@ const EventsSection: React.FC = () => {
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 />
 
-                {/* Search Suggestions - Fixed z-index issue */}
+                {/* Search Suggestions */}
                 {suggestions.length > 0 && (searchTerm || isSearchFocused) && (
                   <div className="absolute w-full mt-2 bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-2xl overflow-hidden animate-fadeIn z-50">
                     {suggestions.map((suggestion, index) => (
@@ -290,10 +274,10 @@ const EventsSection: React.FC = () => {
                 )}
               </div>
 
-              {/* Events Counter - Right Side */}
+              {/* Events Counter */}
               <div className="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-3 bg-gray-900/50 rounded-full border border-gray-800 whitespace-nowrap flex-shrink-0">
                 <span className="text-xs md:text-sm text-gray-300">Total</span>
-                <span className="text-lg md:text-xl font-bold text-teal-400">{filteredEvents.length} </span>
+                <span className="text-lg md:text-xl font-bold text-teal-400">{filteredEvents.length}</span>
               </div>
             </div>
 
@@ -307,11 +291,9 @@ const EventsSection: React.FC = () => {
 
       {/* Events Grid */}
       <div className="max-w-7xl mx-auto px-4 pb-16">
-        {/* Events Grid with Enhanced Animations */}
         {filteredEvents.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
             {filteredEvents.map((event, index) => {
-              // Determine animation direction based on index
               const isEven = index % 2 === 0;
               const animationDirection = isEven ? 'slide-from-left' : 'slide-from-right';
               
@@ -332,12 +314,18 @@ const EventsSection: React.FC = () => {
                 >
                   {/* Event Image */}
                   <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={event.featuredImage}
-                      alt={event.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                    {event.featuredImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={event.featuredImage}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                        <FaCalendarAlt className="h-12 w-12 text-gray-600" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
                     
                     {/* Category Badge */}
@@ -350,17 +338,14 @@ const EventsSection: React.FC = () => {
 
                   {/* Event Details */}
                   <div className="p-6 flex flex-col flex-1">
-                    {/* Title */}
                     <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-teal-400 transition-colors duration-300">
                       {event.title}
                     </h3>
                     
-                    {/* Description */}
                     <p className="text-gray-400 text-sm mb-6 line-clamp-2">
                       {event.description}
                     </p>
 
-                    {/* Event Details List */}
                     <div className="space-y-3 mb-6 flex-1">
                       {/* Date & Time */}
                       <div className="flex items-start gap-3">
@@ -400,7 +385,7 @@ const EventsSection: React.FC = () => {
 
                     {/* CTA Button */}
                     <button
-                      onClick={() => window.location.href = "/components/templates/template4/contact"}
+                      onClick={() => window.location.href = `/components/templates/template4/contact?college_id=${collegeId}`}
                       className="w-full py-3 bg-gray-800 hover:bg-teal-600 text-white font-medium rounded-full transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
                     >
                       Register Now
@@ -417,14 +402,16 @@ const EventsSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-300 mb-2">No events found</h3>
             <p className="text-gray-500 max-w-md mx-auto mb-6">
-              No events match your search for {searchTerm}. Try different keywords.
+              {searchTerm ? `No events match your search for "${searchTerm}".` : "No events scheduled yet. Check back later!"}
             </p>
-            <button
-              onClick={() => setSearchTerm("")}
-              className="px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all duration-300 transform hover:scale-105"
-            >
-              Show All Events
-            </button>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all duration-300 transform hover:scale-105"
+              >
+                Show All Events
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -432,122 +419,55 @@ const EventsSection: React.FC = () => {
       {/* Animations */}
       <style jsx>{`
         @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes slideInFromLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-80px) rotateY(10deg);
-            filter: blur(5px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0) rotateY(0);
-            filter: blur(0);
-          }
+          from { opacity: 0; transform: translateX(-80px) rotateY(10deg); filter: blur(5px); }
+          to { opacity: 1; transform: translateX(0) rotateY(0); filter: blur(0); }
         }
 
         @keyframes slideInFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(80px) rotateY(-10deg);
-            filter: blur(5px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0) rotateY(0);
-            filter: blur(0);
-          }
+          from { opacity: 0; transform: translateX(80px) rotateY(-10deg); filter: blur(5px); }
+          to { opacity: 1; transform: translateX(0) rotateY(0); filter: blur(0); }
         }
 
         @keyframes cardEnter {
-          from {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            filter: blur(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-          }
+          from { opacity: 0; transform: translateY(50px) scale(0.95); filter: blur(10px); }
+          to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
 
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-card-enter { animation: cardEnter 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .slide-from-left { animation: slideInFromLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .slide-from-right { animation: slideInFromRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+        .event-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(45, 212, 191, 0.25); }
 
-        .animate-slideUp {
-          opacity: 0;
-          animation: slideUp 0.6s ease-out forwards;
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .animate-card-enter {
-          animation: cardEnter 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .slide-from-left {
-          animation: slideInFromLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .slide-from-right {
-          animation: slideInFromRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .line-clamp-2 {
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-        }
-
-        /* Hover effects for cards */
-        .event-card:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 25px 50px -12px rgba(45, 212, 191, 0.25);
-        }
-
-        /* Mobile responsive animations */
         @media (max-width: 768px) {
-          .slide-from-left,
-          .slide-from-right {
-            animation: cardEnter 0.6s ease-out forwards;
-          }
+          .slide-from-left, .slide-from-right { animation: cardEnter 0.6s ease-out forwards; }
         }
       `}</style>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+const EventsSection: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[400px] flex items-center justify-center bg-[#0B1220]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      </div>
+    }>
+      <EventsContent />
+    </Suspense>
   );
 };
 

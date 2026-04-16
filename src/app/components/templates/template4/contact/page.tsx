@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaEnvelope, 
@@ -8,17 +8,45 @@ import {
   FaPhone, 
   FaPaperPlane,
   FaUser,
-  FaBuilding,
   FaClock,
   FaArrowRight,
-  FaArrowLeft,
   FaCheck,
   FaGraduationCap,
   FaHandshake,
   FaUsers
 } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
 
-const ContactSection = () => {
+interface ContactInfo {
+  email: string;
+  phone: string;
+  address: string;
+  website: string;
+  mapLink: string;
+  appointmentLink: string;
+  socialMedia: {
+    facebook: string;
+    twitter: string;
+    linkedin: string;
+    instagram: string;
+  };
+  workingHours: {
+    weekdays: string;
+    saturday: string;
+    sunday: string;
+  };
+  contactNumbers: {
+    phone: string;
+    whatsapp: string;
+    office: string;
+  };
+}
+
+// Component that uses useSearchParams - wrapped in Suspense boundary
+function ContactContent() {
+  const searchParams = useSearchParams();
+  const [collegeId, setCollegeId] = useState<string | null>(null);
+  
   const sectionRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -28,35 +56,86 @@ const ContactSection = () => {
   });
   const [selectedContact, setSelectedContact] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [contactData, setContactData] = useState<ContactInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Get college ID from URL
+  useEffect(() => {
+    let id = searchParams.get('college_id');
+    if (!id) {
+      id = sessionStorage.getItem('college_id');
+    }
+    if (id) {
+      setCollegeId(id);
+      sessionStorage.setItem('college_id', id);
+      console.log('🏫 [Contact] College ID loaded:', id);
+    }
+  }, [searchParams]);
+
+  // Fetch contact data from API
+  useEffect(() => {
+    async function fetchContactData() {
+      if (!collegeId) {
+        console.log('⚠️ [Contact] No college ID, skipping fetch');
+        setLoading(false);
+        return;
+      }
+      
+      setLoading(true);
+      console.log('🔄 [Contact] Fetching contact data for college ID:', collegeId);
+      
+      try {
+        const response = await fetch(`/api/public/sections?college_id=${collegeId}&section_name=Contact`);
+        console.log('📡 [Contact] API Response Status:', response.status);
+        
+        const data = await response.json();
+        console.log('📦 [Contact] Full API Response:', JSON.stringify(data, null, 2));
+        
+        if (data.success && data.content) {
+          setContactData(data.content);
+          console.log('✅ [Contact] Loaded contact data');
+        } else {
+          console.log('⚠️ [Contact] No content found');
+        }
+      } catch (error) {
+        console.error('❌ [Contact] Error fetching contact data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchContactData();
+  }, [collegeId]);
+
+  // Contacts array based on real data
   const contacts = [
     {
       title: "Admissions & Enrollment",
-      email: "admissions@college.edu",
-      location: "123 Education Street, Academic District",
-      phone: "+1 (555) 123-4567",
+      email: contactData?.email || "admissions@college.edu",
+      location: contactData?.address || "123 Education Street, Academic District",
+      phone: contactData?.contactNumbers?.phone || "+1 (555) 123-4567",
       description: "Questions about joining our community, application process, or visiting campus",
-      hours: "Weekdays 9–5, Saturday 10–2",
+      hours: contactData?.workingHours?.weekdays || "Weekdays 9–5, Saturday 10–2",
       icon: FaGraduationCap,
       color: "from-gray-800 to-gray-900"
     },
     {
       title: "Academic Support",
-      email: "academic@college.edu",
-      location: "456 University Avenue, Campus Center",
-      phone: "+1 (555) 987-6543",
+      email: contactData?.email || "academic@college.edu",
+      location: contactData?.address || "456 University Avenue, Campus Center",
+      phone: contactData?.contactNumbers?.office || "+1 (555) 987-6543",
       description: "For course information, program details, or academic advising",
-      hours: "Weekdays 8–6, by appointment",
+      hours: contactData?.workingHours?.weekdays || "Weekdays 8–6, by appointment",
       icon: FaHandshake,
       color: "from-gray-700 to-gray-800"
     },
     {
       title: "Student Services",
-      email: "support@college.edu",
-      location: "789 Student Union Building, Campus West",
-      phone: "+1 (555) 456-7890",
+      email: contactData?.email || "support@college.edu",
+      location: contactData?.address || "789 Student Union Building, Campus West",
+      phone: contactData?.contactNumbers?.whatsapp || "+1 (555) 456-7890",
       description: "General questions, campus life, or student support resources",
-      hours: "Weekdays 8–7, Saturday 9–1",
+      hours: contactData?.workingHours?.saturday || "Weekdays 8–7, Saturday 9–1",
       icon: FaUsers,
       color: "from-gray-600 to-gray-700"
     },
@@ -79,6 +158,17 @@ const ContactSection = () => {
       setFormData({ name: "", email: "", subject: "", message: "" });
     }, 3000);
   };
+
+  if (loading) {
+    return (
+      <section className="relative bg-[#0B1220] min-h-[400px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading contact information...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -141,7 +231,6 @@ const ContactSection = () => {
                     }`}
                     onClick={() => setSelectedContact(index)}
                   >
-                    {/* Selection indicator */}
                     {selectedContact === index && (
                       <motion.div 
                         className="absolute top-4 right-4"
@@ -318,7 +407,6 @@ const ContactSection = () => {
                     onSubmit={handleSubmit}
                     className="space-y-6"
                   >
-                    {/* Name Field */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -345,7 +433,6 @@ const ContactSection = () => {
                       </div>
                     </motion.div>
 
-                    {/* Email Field */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -372,7 +459,6 @@ const ContactSection = () => {
                       </div>
                     </motion.div>
 
-                    {/* Subject Field */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -394,7 +480,6 @@ const ContactSection = () => {
                       />
                     </motion.div>
 
-                    {/* Message Field */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -426,7 +511,6 @@ const ContactSection = () => {
                       </div>
                     </motion.div>
 
-                    {/* Submit Button */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -456,15 +540,6 @@ const ContactSection = () => {
                   </motion.form>
                 )}
               </AnimatePresence>
-
-              <motion.div 
-                className="mt-8 pt-6 border-t border-gray-800"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-               
-              </motion.div>
             </motion.div>
           </motion.div>
         </div>
@@ -505,17 +580,25 @@ const ContactSection = () => {
                 </h4>
               </div>
               <div className="space-y-4">
-                {contacts.map((contact, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-1">
-                      <div className={`w-2 h-2 rounded-full ${index === selectedContact ? 'bg-teal-500' : 'bg-gray-700'}`} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-white">{contact.title}</p>
-                      <p className="text-xs text-gray-400 mt-1">{contact.location}</p>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-2 h-2 rounded-full bg-teal-500" />
                   </div>
-                ))}
+                  <div>
+                    <p className="text-sm font-medium text-white">Main Campus</p>
+                    <p className="text-xs text-gray-400 mt-1">{contactData?.address || "Address not available"}</p>
+                  </div>
+                </div>
+                {contactData?.mapLink && (
+                  <a 
+                    href={contactData.mapLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-teal-400 hover:text-teal-300 text-sm mt-2"
+                  >
+                    <FaArrowRight className="mr-2 text-xs" /> View on Map
+                  </a>
+                )}
               </div>
             </motion.div>
 
@@ -537,32 +620,40 @@ const ContactSection = () => {
                 </h4>
               </div>
               <div className="space-y-3">
-                {[
-                  { day: "Monday–Thursday", time: "8:30 AM – 6:00 PM" },
-                  { day: "Friday", time: "8:30 AM – 5:00 PM" },
-                  { day: "Saturday", time: "9:00 AM – 2:00 PM" },
-                  { day: "Sunday", time: "By Appointment" }
-                ].map((schedule, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex justify-between items-center"
-                  >
-                    <span className="text-sm text-gray-300">{schedule.day}</span>
-                    <span className={`text-sm font-medium ${index === 3 ? 'text-teal-400' : 'text-gray-400'}`}>
-                      {schedule.time}
-                    </span>
-                  </motion.div>
-                ))}
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">Weekdays</span>
+                  <span className="text-sm text-gray-400">{contactData?.workingHours?.weekdays || "9:00 AM - 6:00 PM"}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">Saturday</span>
+                  <span className="text-sm text-gray-400">{contactData?.workingHours?.saturday || "9:00 AM - 2:00 PM"}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">Sunday</span>
+                  <span className="text-sm font-medium text-teal-400">{contactData?.workingHours?.sunday || "Closed"}</span>
+                </div>
               </div>
             </motion.div>
           </div>
         </motion.div>
       </div>
     </section>
+  );
+}
+
+// Main component with Suspense boundary
+const ContactSection = () => {
+  return (
+    <Suspense fallback={
+      <section className="relative bg-[#0B1220] min-h-[400px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading contact information...</p>
+        </div>
+      </section>
+    }>
+      <ContactContent />
+    </Suspense>
   );
 };
 
