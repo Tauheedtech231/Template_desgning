@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/public/college/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
     
     // Only select columns that actually exist in the table
     let query = "SELECT id, name, email, website, city, country, phone, template_id, is_active, created_at, updated_at FROM colleges WHERE 1=1";
-    let params: any[] = [];
+    const params: any[] = [];
     
     if (id) {
       query += " AND id = ?";
